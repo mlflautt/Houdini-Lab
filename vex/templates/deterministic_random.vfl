@@ -1,0 +1,11 @@
+// template: deterministic_random
+// attributes in:  none (uses @ptnum + seed)
+// attributes out: float rnd
+// variables: seed (int)
+int seed = 42;
+float hash(int x, int s) {
+    int h = x * 374761393 + s * 668265263;
+    h = (h ^ (h >> 13)) * 1274126177;
+    return float(h & 0x7fffffff) / float(0x7fffffff);
+}
+@rnd = hash(@ptnum, seed);

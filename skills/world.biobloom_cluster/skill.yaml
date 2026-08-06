@@ -1,0 +1,42 @@
+id: world.biobloom_cluster
+version: 0.1.0
+summary: Generate a clustered procedural alien botanical form.
+contexts: [SOP]
+intent_tags: [organic, growth, alien, procedural, world-building]
+inputs:
+  parent_node_id: {type: string}
+  seed: {type: integer, default: 42}
+  cluster_count: {type: integer, min: 3, max: 200, default: 24}
+  growth_bias: {type: number, min: 0.0, max: 1.0, default: 0.65}
+  detail_level: {enum: [draft, preview, final], default: preview}
+preconditions:
+  - parent resolves to a SOP-capable geometry container
+risk: medium
+checkpoint: before_execute
+cook_budget:
+  max_points: 3000000
+  max_seconds: 90
+  max_frames: 1
+steps:
+  - graph.instantiate_recipe: scatter.cluster_points@1
+  - graph.instantiate_recipe: sweep_petals@1
+  - geometry.validate
+  - viewport.capture
+verification:
+  graph_checks:
+    - all public inputs are promoted or documented
+    - all major branches end in named null nodes
+    - no node errors
+  data_checks:
+    - finite bounds
+    - no NaN point positions
+    - point count below budget
+  visual_checks:
+    - readable primary silhouette
+    - visible hierarchical branching
+    - seed produces deterministic output
+outputs:
+  - output_node_id
+  - graph_manifest_path
+  - preview_path
+rollback: restore_checkpoint

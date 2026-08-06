@@ -1,0 +1,14 @@
+{
+  "enable": true,
+  "env": [
+    {
+      "HERMES_HOUDINI_ROOT": "$HOUDINI_PACKAGE_PATH/.."
+    },
+    {
+      "HOUDINI_PATH": {
+        "method": "prepend",
+        "value": "$HERMES_HOUDINI_ROOT"
+      }
+    }
+  ]
+}

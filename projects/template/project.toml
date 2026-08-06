@@ -1,0 +1,31 @@
+# Project manifest
+
+[project]
+name = "template"
+codename = "hermes-procedural-lab"
+houdini_build = "22.0"          # pin exact production build, e.g. 22.5.493
+python_build = "3.13.10"
+
+[license]
+mode = "houdini-apprentice-noncommercial"
+commercial_use = false
+scene_extension = ".hipnc"
+hda_extension = ".hdanc"
+watermarked_renders = true
+engine_export_allowed = false
+third_party_renderer_allowed = false
+
+[render]
+ceiling = [1280, 720]
+renderer = "karma_cpu"          # Apprentice: Karma CPU / Mantra only
+
+[paths]
+job = "."                       # $JOB
+cache = "cache"
+renders = "renders"
+hda_source = "hda/source"
+
+[provenance]
+owner = "Mitchell Flautt"
+created = "2026-08-06"
+notes = "Non-commercial personal/educational work."

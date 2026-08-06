@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Minimal Hermes Houdini Python Panel definition. Keep small (docs §4.11). -->
+<pypanel>
+  <name>Hermes Houdini</name>
+  <id>hermes_houdini</id>
+  <script>
+    import hou
+    import PyQt5.QtWidgets as QtWidgets
+
+    class HermesHoudiniPanel(QtWidgets.QWidget):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            layout = QtWidgets.QVBoxLayout(self)
+            self.status = QtWidgets.QLabel("Bridge: --")
+            self.license = QtWidgets.QLabel("License: --")
+            self.job = QtWidgets.QLabel("Job: idle")
+            self.cancel = QtWidgets.QPushButton("Cancel job")
+            layout.addWidget(self.status)
+            layout.addWidget(self.license)
+            layout.addWidget(self.job)
+            layout.addWidget(self.cancel)
+
+        def refresh(self):
+            try:
+                from hermes_houdini.inspect import describe_hip
+                info = describe_hip()
+                self.license.setText("License/build: " + info.get("version", "?"))
+            except Exception as exc:
+                self.status.setText("Bridge: error " + str(exc))
+
+    def createInterface(parent):
+        return HermesHoudiniPanel(parent)
+  </script>
+</pypanel>

@@ -1,0 +1,31 @@
+MIT License
+
+Copyright (c) 2026 Mitchell Flautt
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+NOTE ON HOUDINI ARTIFACTS: This repository's *code* is MIT licensed. Any
+Houdini scene file (*.hipnc / *.hiplc) or digital asset (*.hdanc / *.hda)
+produced or referenced through this system remains governed by the SideFX
+Houdini Apprentice / Non-Commercial license: non-commercial use only,
+watermarked restricted-resolution renders, HDAs not usable with Houdini
+Engine, and no third-party renderers. Nothing in this license removes those
+restrictions. Keep `license.mode` explicit in every project manifest.

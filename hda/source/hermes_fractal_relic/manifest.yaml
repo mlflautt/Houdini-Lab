@@ -1,0 +1,26 @@
+id: hermes::fractal_relic::1.0
+namespace: hermes
+name: fractal_relic
+version: "1.0"
+summary: Radial fractal relic form generator (native SOPs).
+license: noncommercial
+help: |
+  Builds a seeded, parameterized alien-relic form.
+  Controls: seed, iterations, detail_level.
+  Apprentice/non-commercial. HDAs cannot be used with Houdini Engine.
+parameters:
+  - name: seed
+    label: "Seed"
+    type: int
+    default: 42
+  - name: iterations
+    label: "Iterations"
+    type: int
+    min: 1
+    max: 8
+    default: 4
+  - name: detail_level
+    label: "Detail Level"
+    type: menu
+    default: preview
+    menu: [draft, preview, final]

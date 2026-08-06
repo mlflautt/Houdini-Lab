@@ -1,0 +1,45 @@
+# === Houdini binary / work artifacts (binary, not source-of-truth) ===
+*.hip
+*.hipnc
+*.hiplc
+*.hipnc.autosave
+*.hiplc.autosave
+*.hdanc
+*.hda
+*.otl
+*.otllc
+*.ves
+*.vflc
+*.pdt
+*.csh
+*.job
+
+# Houdini caches
+cache/
+/renders/
+/exports/
+**/checkpoints/
+**/work/
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+*.log
+
+# === Tooling / OS ===
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# === Secrets / local auth ===
+bridge_secret.txt
+*.session

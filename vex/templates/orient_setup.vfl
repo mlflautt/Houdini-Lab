@@ -1,0 +1,11 @@
+// template: orient_setup
+// attributes in:  v@N (normal)
+// attributes out: p@orient (quaternion)
+// builds a stable orientation quaternion aligned to the normal.
+vector n = normalize(@N);
+vector up = set(0, 1, 0);
+if (abs(dot(n, up)) > 0.99) up = set(1, 0, 0);
+vector t = normalize(cross(up, n));
+vector b = cross(n, t);
+matrix3 m = set(t, n, b);
+@orient = quaternion(m);
