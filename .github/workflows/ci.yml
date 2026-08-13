@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-tests:
+    name: Unit Tests (no Houdini)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pyyaml ruff
+      - name: Run unit tests
+        run: pytest tests/unit -q
+      - name: Ruff lint
+        run: ruff check .
+
+  hython-tests:
+    name: Hython Integration Tests (requires Houdini)
+    runs-on: macos-latest
+    # This job requires Houdini 22 on the runner. For now, skip if not available.
+    if: false  # Set to true when runners have Houdini
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pytest in Houdini Python
+        run: |
+          export PATH="/Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin:$PATH"
+          hython -m pip install -q pytest
+      - name: Run hython integration tests
+        run: |
+          export PATH="/Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin:$PATH"
+          cd ${{ github.workspace }}
+          hython -m pytest tests/hython -v
