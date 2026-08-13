@@ -80,7 +80,7 @@ def geometry_metrics(node_path: str) -> dict[str, Any]:
 
 
 # ---------------- foundational graph edit ----------------
-@tool("node.create", risk="medium",
+@tool("node.create", risk="low",
       doc="Create a node with stable id + comment; supports exact operator type.")
 def node_create(parent_path: str, operator_type: str, name: str = "",
                 category: str = "Sop", role: str = "",

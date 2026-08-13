@@ -29,16 +29,17 @@ _VERSION_RE = re.compile(r"v(\d+)")
 def next_checkpoint_path(base_path: str) -> str:
     """Given a .hipnc base path, return the next incremented version path."""
     base, _ = os.path.splitext(base_path)
-    m = _VERSION_RE.search(base)
+    # Match patterns: optional _v prefix then digits at end; capture prefix and digits separately
+    m = re.search(r"(.*?)(?:_(?:v)?)?(\d+)$", base)
     if m:
-        start = int(m.group(1))
-        prefix = base[: m.start()]
-        verlen = len(m.group(1))
-        i = start
+        prefix = m.group(1)
+        num = m.group(2)
+        verlen = len(num)
+        i = int(num) + 1
         while os.path.exists(f"{prefix}{i:0{verlen}d}.hipnc"):
             i += 1
         return f"{prefix}{i:0{verlen}d}.hipnc"
-    # no version present: append v001
+    # no version present: append _v001
     i = 1
     while os.path.exists(f"{base}_v{i:03d}.hipnc"):
         i += 1

@@ -37,4 +37,5 @@ def test_create_node_and_describe():
 def test_checkpoint_path_increment(tmp_path):
     base = str(tmp_path / "shot_v001.hipnc")
     p1 = next_checkpoint_path(base)
-    assert p1.endswith("_v001.hipnc") or p1.endswith("v001.hipnc")
+    # Should increment to shot002.hipnc (preserving the _v prefix in the version)
+    assert p1.endswith("002.hipnc"), f"got {p1}"
