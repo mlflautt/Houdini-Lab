@@ -35,7 +35,11 @@ from ..graph_batch import apply_batch
 from ..growth import populate_growth_solver
 from ..ids import make_id
 from ..inspect import describe_hip, describe_network, describe_node
-from ..kinetic import cook_validate_kinetic_reliquary, validate_kinetic_stage
+from ..kinetic import (
+    cook_validate_kinetic_presentation,
+    cook_validate_kinetic_reliquary,
+    validate_kinetic_stage,
+)
 from ..labs_atlas import cook_validate_labs_atlas
 from ..material_foundry import cook_validate_material_foundry, validate_material_foundry_stage
 from ..membrane import cook_validate_membranes
@@ -700,6 +704,15 @@ def world_seed_labs_validate(**arguments: Any) -> dict[str, Any]:
 )
 def motion_kinetic_reliquary_validate(**arguments: Any) -> dict[str, Any]:
     return cook_validate_kinetic_reliquary(**arguments)
+
+
+@tool(
+    "motion.kinetic_reliquary.presentation.validate",
+    risk="low",
+    doc="Validate camera-facing layered presentation bounds, color, budgets, and temporal change.",
+)
+def motion_kinetic_reliquary_presentation_validate(**arguments: Any) -> dict[str, Any]:
+    return cook_validate_kinetic_presentation(**arguments)
 
 
 @tool(

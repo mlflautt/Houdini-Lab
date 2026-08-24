@@ -179,7 +179,7 @@ must not make the asset unreadable when absent.
    and curvature branches; working package-skipped native fallback; six-panel proof.
 4. **Sprint 22 — MOPs kinetic reliquary (complete):** pinned isolated v1.12 audit, native plus
    three MOPs motion branches, zero-MOPs fallback, and three-frame proof.
-5. **Sprint 23 — staged reliquary and perceptual verification (in progress):** grid-aware
+5. **Sprint 23 — staged reliquary and perceptual verification (complete):** grid-aware
    composition and motion diagnostics plus a layered camera-facing presentation branch; human taste
    remains authoritative.
 6. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
@@ -201,6 +201,12 @@ pinned, isolated from global preferences, and certified only for Plain/Noise/Sha
 Transform Modifier. Native and three MOPs branches pass identical attribute contracts and distinct
 deterministic frame digests; all twelve render panels across three frames pass mechanical visual QA.
 See [`mops-kinetic-reliquary.md`](mops-kinetic-reliquary.md).
+
+Sprint 23 completed in package `0.23.0`: presentation-only native SOP layers turn the four
+verified motion contracts toward the camera and add counter-rotating inner orbits plus focal cores.
+The enhanced verifier measures panel-grid composition and consecutive-frame motion. Final evidence
+passes with motion across 89% of image width and 40% of height; the native-only fallback remains
+plugin-free. See [`sprint23-aesthetic-verification.md`](sprint23-aesthetic-verification.md).
 
 ## Decision
 

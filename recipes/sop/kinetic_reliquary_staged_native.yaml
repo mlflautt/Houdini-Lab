@@ -1,0 +1,22 @@
+{
+  "id": "sop.kinetic_reliquary_staged_native",
+  "version": "1.0.0",
+  "summary": "Create the same layered camera-facing presentation for the native fallback without any MOPs nodes.",
+  "contexts": ["SOP"],
+  "inputs": {"run_code": {"type": "string", "default": "KINETIC_RELIQUARY"}},
+  "references": {"native": "{{parent_path}}/OUT_{{run_code}}_NATIVE"},
+  "nodes": [
+    {"id": "unpack", "type": "unpack", "name": "{{run_code}}_STAGED_NATIVE_ONLY_UNPACK", "role": "kinetic_staged_native_only_unpack", "position": [0, -22], "params": {}, "comment": "Presentation begins after the verified native packed contract"},
+    {"id": "face", "type": "xform", "name": "{{run_code}}_STAGED_NATIVE_ONLY_FACE", "role": "kinetic_staged_native_only_face", "position": [0, -24], "params": {"rx": 90.0, "tx": 9.0, "scale": 0.88, "px": -9.0}, "comment": "Face, recenter, and frame the native orbit"},
+    {"id": "outer", "type": "color", "name": "{{run_code}}_STAGED_NATIVE_ONLY_OUTER", "role": "kinetic_staged_native_only_outer", "position": [-2, -26], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.22, 0.045]}, "comment": "Warm outer orbit"},
+    {"id": "inner_xform", "type": "xform", "name": "{{run_code}}_STAGED_NATIVE_ONLY_INNER_XFORM", "role": "kinetic_staged_native_only_inner_xform", "position": [1, -26], "params": {"scale": 0.58}, "expressions": {"rz": "-$FF*2.5"}, "comment": "Counter-rotating native inner orbit"},
+    {"id": "inner", "type": "color", "name": "{{run_code}}_STAGED_NATIVE_ONLY_INNER", "role": "kinetic_staged_native_only_inner", "position": [1, -28], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.58, 0.16]}, "comment": "Native rhythm layer"},
+    {"id": "core", "type": "sphere", "name": "{{run_code}}_STAGED_NATIVE_ONLY_CORE", "role": "kinetic_staged_native_only_core", "position": [4, -26], "params": {"type": "poly", "radx": 0.78, "rady": 0.78, "radz": 0.48, "ty": 0.25, "tz": -0.35}, "comment": "Native focal core"},
+    {"id": "core_color", "type": "color", "name": "{{run_code}}_STAGED_NATIVE_ONLY_CORE_COLOR", "role": "kinetic_staged_native_only_core_color", "position": [4, -28], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.82, 0.48]}, "comment": "Native focal hierarchy"},
+    {"id": "merge", "type": "merge", "name": "{{run_code}}_STAGED_NATIVE_ONLY_MERGE", "role": "kinetic_staged_native_only_merge", "position": [0, -31], "params": {}, "comment": "Layered native presentation"},
+    {"id": "out", "type": "null", "name": "OUT_{{run_code}}_KINETIC_STAGED", "role": "kinetic_staged_contract", "position": [0, -33], "params": {}, "flags": {"display": true, "render": true}, "comment": "Native-only staged fallback; no plugin nodes"}
+  ],
+  "connections": [["native", 0, "unpack", 0], ["unpack", 0, "face", 0], ["face", 0, "outer", 0], ["face", 0, "inner_xform", 0], ["inner_xform", 0, "inner", 0], ["core", 0, "core_color", 0], ["outer", 0, "merge", 0], ["inner", 0, "merge", 1], ["core_color", 0, "merge", 2], ["merge", 0, "out", 0]],
+  "outputs": ["out"],
+  "meta": {"graph_first": true, "plugin_nodes_instantiated": false, "presentation_after_verified_contracts": true, "automatic_ranking": false, "license": {"mode": "houdini-apprentice-noncommercial"}}
+}

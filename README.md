@@ -222,9 +222,11 @@ color-separated 640×360 Karma proofs pass four-panel presence and nonduplicate-
 zero-MOPs launch retains the native graph and an explicit unavailable marker. See
 [`docs/mops-kinetic-reliquary.md`](docs/mops-kinetic-reliquary.md).
 
-Sprint 23 is developing a staged, camera-facing reliquary presentation and a stronger deterministic
-visual gate. The analyzer will measure panel-grid composition and sampled-frame motion while keeping
-all aesthetic ratings and winner selection human-owned. See
+Sprint 23 adds `motion.kinetic_reliquary@1.1.0`: a presentation-only native SOP layer turns the
+verified orbits toward the camera, adds counter-rotating inner rings and focal cores, and retains a
+plugin-free native fallback. Grid composition and sampled-frame motion diagnostics now reject the
+old narrow-band proof while the final four-mechanism render passes. All aesthetic ratings and winner
+selection remain human-owned. See
 [`docs/sprint23-aesthetic-verification.md`](docs/sprint23-aesthetic-verification.md).
 
 ### 4. Tests

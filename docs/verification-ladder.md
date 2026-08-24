@@ -38,6 +38,12 @@ the final framing passed the stricter gate. Apprentice watermarks can still crea
 inside the lower-right panel, so clean viewport captures are preferred for panel-presence checks and
 the critique rubric must explicitly inspect watermark overlap on Karma evidence.
 
+Sprint 23 adds panel grids, normalized subject centers, margin balance, consecutive-frame changed
+fractions, mean luminance deltas, and motion bounding-box coverage. This distinguishes a genuinely
+animated but compositionally flattened strip from a staged sequence: the Sprint 22 proof now warns
+at 12.8–14.2% vertical motion coverage, while the staged Sprint 23 proof passes at 40%. The metrics
+remain mechanical and the Apprentice watermark can still inflate lower-right panel bounds.
+
 ## 3. Local vision-language critique
 
 Local inference is preferred because renders, graphs, and source remain on the workstation. No model

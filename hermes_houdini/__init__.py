@@ -7,7 +7,7 @@ inside functions guarded by :func:`has_hou`.
 
 from __future__ import annotations
 
-__version__ = "0.22.0"
+__version__ = "0.23.0"
 
 import importlib.util
 

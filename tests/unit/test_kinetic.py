@@ -55,6 +55,16 @@ def test_mops_recipe_uses_only_pinned_types_and_native_default():
     assert not any(node_type.startswith("MOPS::") for node_type in native_types)
     assert "attribwrangle" not in native_types
 
+    staged = load_recipe(ROOT / "recipes" / "sop" / "kinetic_reliquary_staged.yaml")
+    staged_types = [
+        operation["operator_type"]
+        for operation in staged.render_fragment("/obj/KINETIC")["operations"]
+        if operation["op"] == "create"
+    ]
+    assert not any(node_type.startswith("MOPS::") for node_type in staged_types)
+    assert staged_types.count("sphere") == 4
+    assert staged_types.count("unpack") == 4
+
 
 def test_kinetic_skill_selects_mops_or_native_fallback(tmp_path):
     skill = load_skill(ROOT / "skills" / "motion.kinetic_reliquary")
@@ -69,12 +79,19 @@ def test_kinetic_skill_selects_mops_or_native_fallback(tmp_path):
     assert recipes == [
         "sop.kinetic_reliquary_native",
         "sop.kinetic_reliquary_mops",
-        "lop.kinetic_reliquary_stage",
+        "sop.kinetic_reliquary_staged",
+        "lop.kinetic_reliquary_staged_stage",
     ]
     validation = next(
         call for call in enabled if call["tool"] == "motion.kinetic_reliquary.validate"
     )
     assert validation["arguments"]["mops_available"] is True
+    presentation = next(
+        call
+        for call in enabled
+        if call["tool"] == "motion.kinetic_reliquary.presentation.validate"
+    )
+    assert presentation["arguments"]["presentation_path"].endswith("_KINETIC_STAGED")
     fallback = skill.plan(
         artifact_dir=str(tmp_path),
         run_id="unit_native",
@@ -88,6 +105,18 @@ def test_kinetic_skill_selects_mops_or_native_fallback(tmp_path):
     ]
     assert "sop.kinetic_reliquary_mops_unavailable" in fallback_recipes
     assert "sop.kinetic_reliquary_mops" not in fallback_recipes
+    assert "sop.kinetic_reliquary_staged_native" in fallback_recipes
+
+    rendered = skill.plan(
+        artifact_dir=str(tmp_path),
+        run_id="unit_rendered",
+        mops_available=True,
+        render_preview=True,
+    )
+    visual = next(call for call in rendered if call["tool"] == "visual.analyze")
+    assert visual["arguments"]["expect_motion"] is True
+    assert visual["arguments"]["panel_count"] == 4
+    assert visual["arguments"]["panel_rows"] == 1
 
 
 def test_mops_registry_record_is_pinned_and_apprentice_allowed():
