@@ -137,15 +137,23 @@ def _entropy(values: list[int]) -> float:
 
 
 def _occupancy(
-    values: list[int], width: int, height: int, *, x0: int = 0, x1: int | None = None
+    values: list[int],
+    width: int,
+    height: int,
+    *,
+    x0: int = 0,
+    x1: int | None = None,
+    y0: int = 0,
+    y1: int | None = None,
 ) -> tuple[float, tuple[int, int, int, int] | None]:
     x1 = width if x1 is None else x1
+    y1 = height if y1 is None else y1
     corners = [values[0], values[width - 1], values[(height - 1) * width], values[-1]]
     background = sorted(corners)[len(corners) // 2]
     threshold = 12
     occupied: list[tuple[int, int]] = []
-    region_pixels = max(1, (x1 - x0) * height)
-    for y in range(height):
+    region_pixels = max(1, (x1 - x0) * (y1 - y0))
+    for y in range(y0, y1):
         row = y * width
         for x in range(x0, x1):
             if abs(values[row + x] - background) >= threshold:
@@ -157,7 +165,40 @@ def _occupancy(
     return len(occupied) / region_pixels, (min(xs), min(ys), max(xs), max(ys))
 
 
-def analyze_png(path: str, *, panel_count: int = 1) -> dict[str, Any]:
+def _panel_composition(
+    bbox: tuple[int, int, int, int] | None,
+    *,
+    x0: int,
+    x1: int,
+    y0: int,
+    y1: int,
+) -> dict[str, Any] | None:
+    if bbox is None:
+        return None
+    region_width = max(1, x1 - x0)
+    region_height = max(1, y1 - y0)
+    bbox_width = bbox[2] - bbox[0] + 1
+    bbox_height = bbox[3] - bbox[1] + 1
+    center_x = (bbox[0] + bbox[2]) / 2
+    center_y = (bbox[1] + bbox[3]) / 2
+    region_center_x = (x0 + x1 - 1) / 2
+    region_center_y = (y0 + y1 - 1) / 2
+    left = bbox[0] - x0
+    right = (x1 - 1) - bbox[2]
+    top = bbox[1] - y0
+    bottom = (y1 - 1) - bbox[3]
+    return {
+        "bbox_fill_width": round(bbox_width / region_width, 6),
+        "bbox_fill_height": round(bbox_height / region_height, 6),
+        "center_offset_x": round((center_x - region_center_x) / max(1.0, region_width / 2), 6),
+        "center_offset_y": round((center_y - region_center_y) / max(1.0, region_height / 2), 6),
+        "horizontal_margin_balance": round(abs(left - right) / region_width, 6),
+        "vertical_margin_balance": round(abs(top - bottom) / region_height, 6),
+        "margins": {"left": left, "right": right, "top": top, "bottom": bottom},
+    }
+
+
+def analyze_png(path: str, *, panel_count: int = 1, panel_rows: int = 1) -> dict[str, Any]:
     """Return deterministic exposure, occupancy, crop, entropy, edge, and panel diagnostics."""
     image = _existing_absolute(path, "path", {".png"})
     if (
@@ -166,6 +207,14 @@ def analyze_png(path: str, *, panel_count: int = 1) -> dict[str, Any]:
         or not 1 <= panel_count <= 12
     ):
         raise ValueError("panel_count must be an integer between 1 and 12")
+    if (
+        not isinstance(panel_rows, int)
+        or isinstance(panel_rows, bool)
+        or not 1 <= panel_rows <= panel_count
+        or panel_count % panel_rows
+    ):
+        raise ValueError("panel_rows must be a positive divisor of panel_count")
+    panel_columns = panel_count // panel_rows
     width, height, values = _decode_png(image)
     total = len(values)
     mean = sum(values) / total
@@ -189,16 +238,28 @@ def analyze_png(path: str, *, panel_count: int = 1) -> dict[str, Any]:
     )
     panels = []
     for index in range(panel_count):
-        x0 = round(index * width / panel_count)
-        x1 = round((index + 1) * width / panel_count)
-        panel_occupancy, panel_bbox = _occupancy(values, width, height, x0=x0, x1=x1)
+        row = index // panel_columns
+        column = index % panel_columns
+        x0 = round(column * width / panel_columns)
+        x1 = round((column + 1) * width / panel_columns)
+        y0 = round(row * height / panel_rows)
+        y1 = round((row + 1) * height / panel_rows)
+        panel_occupancy, panel_bbox = _occupancy(
+            values, width, height, x0=x0, x1=x1, y0=y0, y1=y1
+        )
         panels.append(
             {
                 "index": index,
+                "row": row,
+                "column": column,
                 "x_range": [x0, x1],
+                "y_range": [y0, y1],
                 "occupancy_fraction": round(panel_occupancy, 6),
                 "subject_bbox": list(panel_bbox) if panel_bbox else None,
                 "present": panel_occupancy >= 0.002,
+                "composition": _panel_composition(
+                    panel_bbox, x0=x0, x1=x1, y0=y0, y1=y1
+                ),
             }
         )
     flags = []
@@ -226,6 +287,15 @@ def analyze_png(path: str, *, panel_count: int = 1) -> dict[str, Any]:
         flags.append("possible_crop")
     if any(not panel["present"] for panel in panels):
         flags.append("missing_comparison_panel")
+    if any(
+        panel["composition"]
+        and (
+            panel["composition"]["horizontal_margin_balance"] > 0.65
+            or panel["composition"]["vertical_margin_balance"] > 0.65
+        )
+        for panel in panels
+    ):
+        flags.append("severe_panel_margin_imbalance")
     hard_failures = {"blank_or_nearly_blank", "crushed_black", "blown_white"}
     status = "fail" if hard_failures.intersection(flags) else ("warn" if flags else "pass")
     return {
@@ -243,23 +313,103 @@ def analyze_png(path: str, *, panel_count: int = 1) -> dict[str, Any]:
         "entropy_32_bin": round(_entropy(values), 6),
         "edge_density": round(edge_density, 6),
         "panels": panels,
+        "panel_grid": {"rows": panel_rows, "columns": panel_columns},
         "flags": flags,
         "status": status,
     }
 
 
+def _sequence_difference(first_path: str, second_path: str) -> dict[str, Any]:
+    first_width, first_height, first = _decode_png(Path(first_path))
+    second_width, second_height, second = _decode_png(Path(second_path))
+    if (first_width, first_height) != (second_width, second_height):
+        return {
+            "from_path": first_path,
+            "to_path": second_path,
+            "comparable": False,
+            "from_dimensions": [first_width, first_height],
+            "to_dimensions": [second_width, second_height],
+        }
+    differences = [abs(left - right) for left, right in zip(first, second, strict=True)]
+    changed = [index for index, value in enumerate(differences) if value >= 12]
+    motion_bbox = None
+    if changed:
+        xs = [index % first_width for index in changed]
+        ys = [index // first_width for index in changed]
+        motion_bbox = [min(xs), min(ys), max(xs), max(ys)]
+    motion_width = (motion_bbox[2] - motion_bbox[0] + 1) if motion_bbox else 0
+    motion_height = (motion_bbox[3] - motion_bbox[1] + 1) if motion_bbox else 0
+    return {
+        "from_path": first_path,
+        "to_path": second_path,
+        "comparable": True,
+        "dimensions": [first_width, first_height],
+        "changed_fraction": round(len(changed) / len(differences), 6),
+        "mean_absolute_luminance_delta": round(sum(differences) / len(differences), 6),
+        "motion_bbox": motion_bbox,
+        "motion_bbox_fill_width": round(motion_width / first_width, 6),
+        "motion_bbox_fill_height": round(motion_height / first_height, 6),
+    }
+
+
 def analyze_visual_evidence(
-    *, image_paths: list[str], output_path: str, panel_count: int = 1
+    *,
+    image_paths: list[str],
+    output_path: str,
+    panel_count: int = 1,
+    panel_rows: int = 1,
+    expect_motion: bool = False,
 ) -> dict[str, Any]:
     """Analyze one or more PNGs, detect exact duplicates, and write a durable report."""
     if not isinstance(image_paths, list) or not 1 <= len(image_paths) <= 24:
         raise ValueError("image_paths must contain 1-24 absolute PNG paths")
     output = _new_json_path(output_path)
-    images = [analyze_png(path, panel_count=panel_count) for path in image_paths]
+    if not isinstance(expect_motion, bool):
+        raise ValueError("expect_motion must be boolean")
+    images = [
+        analyze_png(path, panel_count=panel_count, panel_rows=panel_rows)
+        for path in image_paths
+    ]
     hashes = Counter(item["sha256"] for item in images)
     duplicate_hashes = sorted(digest for digest, count in hashes.items() if count > 1)
+    pairs = [
+        _sequence_difference(image_paths[index], image_paths[index + 1])
+        for index in range(len(image_paths) - 1)
+    ]
+    sequence_flags = []
+    if any(not pair["comparable"] for pair in pairs):
+        sequence_flags.append("incompatible_sequence_dimensions")
+    comparable_pairs = [pair for pair in pairs if pair["comparable"]]
+    if expect_motion and len(image_paths) < 2:
+        sequence_flags.append("insufficient_motion_samples")
+    if expect_motion and duplicate_hashes:
+        sequence_flags.append("duplicate_motion_frame")
+    if expect_motion and comparable_pairs and max(
+        pair["changed_fraction"] for pair in comparable_pairs
+    ) < 0.005:
+        sequence_flags.append("motion_too_subtle")
+    if expect_motion and comparable_pairs and all(
+        pair["motion_bbox_fill_width"] < 0.2 or pair["motion_bbox_fill_height"] < 0.2
+        for pair in comparable_pairs
+    ):
+        sequence_flags.append("motion_confined_to_narrow_band")
+    sequence_failures = {
+        "duplicate_motion_frame",
+        "incompatible_sequence_dimensions",
+        "insufficient_motion_samples",
+        "motion_too_subtle",
+    }
+    sequence_status = (
+        "fail"
+        if sequence_failures.intersection(sequence_flags)
+        else ("warn" if sequence_flags else "pass")
+    )
     statuses = [item["status"] for item in images]
-    overall = "fail" if "fail" in statuses else ("warn" if "warn" in statuses else "pass")
+    overall = (
+        "fail"
+        if "fail" in statuses or sequence_status == "fail"
+        else ("warn" if "warn" in statuses or sequence_status == "warn" else "pass")
+    )
     report = {
         "schema": "hermes.visual_verification",
         "schema_version": SCHEMA_VERSION,
@@ -268,6 +418,12 @@ def analyze_visual_evidence(
         "images": images,
         "duplicate_sha256": duplicate_hashes,
         "duplicate_images": bool(duplicate_hashes),
+        "sequence": {
+            "expected_motion": expect_motion,
+            "pairs": pairs,
+            "flags": sequence_flags,
+            "status": sequence_status,
+        },
         "decision_authority": "mechanical_quality_gate_only",
         "aesthetic_winner": None,
         "automatic_ranking": False,

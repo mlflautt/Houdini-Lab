@@ -798,7 +798,7 @@ def viewport_capture_tool(
 @tool(
     "visual.analyze",
     risk="low",
-    doc="Run deterministic blank, exposure, crop, occupancy, edge, panel, and duplicate checks.",
+    doc="Run deterministic exposure, grid composition, sequence motion, and duplicate checks.",
 )
 def visual_analyze(**arguments: Any) -> dict[str, Any]:
     return analyze_visual_evidence(**arguments)
