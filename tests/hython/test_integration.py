@@ -68,6 +68,10 @@ def test_registry_has_tools():
     assert "motion.calligraphy.apply_audio_envelope" in names
     assert "visual.analyze" in names
     assert "verification.critique.package" in names
+    assert "verification.local_critic.probe" in names
+    assert "verification.local_critic.run" in names
+    assert "verification.local_critic.calibrate" in names
+    assert "verification.local_critic.corpus.build" in names
     assert "simulate.membrane.validate" in names
     assert "simulate.mpm.validate" in names
     assert "simulate.rbd.validate" in names

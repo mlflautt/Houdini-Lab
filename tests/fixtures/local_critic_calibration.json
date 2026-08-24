@@ -1,0 +1,33 @@
+{
+  "schema": "hermes.local_critic_calibration_corpus",
+  "schema_version": "1.0",
+  "description": "Minimum mechanical-failure cases required before a local VLM may be called calibrated.",
+  "cases": [
+    {
+      "id": "crushed_black",
+      "generator": "solid_black",
+      "expected_labels": ["crushed_black"],
+      "fixture_intent": "Near-uniform black evidence must be rejected."
+    },
+    {
+      "id": "blown_white",
+      "generator": "solid_white",
+      "expected_labels": ["blown_white"],
+      "fixture_intent": "Near-uniform white evidence must be rejected."
+    },
+    {
+      "id": "missing_panel",
+      "generator": "missing_third_panel",
+      "panel_count": 3,
+      "expected_labels": ["missing_comparison_panel"],
+      "fixture_intent": "A requested comparison grid with an empty panel must be detected."
+    },
+    {
+      "id": "duplicate_motion",
+      "generator": "duplicate_motion",
+      "expect_motion": true,
+      "expected_labels": ["duplicate_image", "duplicate_motion_frame", "motion_too_subtle"],
+      "fixture_intent": "Exact duplicate frames in a claimed motion proof must be rejected."
+    }
+  ]
+}

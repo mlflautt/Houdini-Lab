@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "houdini-creative-dev"
-version = "0.23.0"
+version = "0.24.0"
 description = "Agentic Houdini development repo: bridge, recipes, HDAs, VEX templates, and skills for graph-first procedural creative work (Apprentice-aware)."
 readme = "README.md"
 license = { text = "MIT" }
