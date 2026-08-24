@@ -362,6 +362,12 @@ calibration scoring. Exact packet hashes and structured response provenance are 
 installation/startup is never implicit, and aesthetic selection remains human-owned. Live Qwen3-VL
 calibration is pending. See [`local-vision-critic.md`](local-vision-critic.md).
 
+**Sprint 25 — verification routing and human gates.** Implemented in package `0.25.0` as
+`verification.route@1.0.0`. The pure router hashes every report, preserves the mechanical gate,
+requires exact local-model calibration identity, and emits explicit repair, calibration, external
+approval, or human-review routes. It performs no inference and cannot rank candidates. See
+[`sprint25-verification-routing.md`](sprint25-verification-routing.md).
+
 The license analysis, live H22.0.368 Apprentice inventory, World Seed Atlas brief, plugin risk
 matrix, Labs/MOPs acceptance gates, and Sprints 19–24 are maintained in
 [`apprentice-creative-expansion-plan.md`](apprentice-creative-expansion-plan.md).

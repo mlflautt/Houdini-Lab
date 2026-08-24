@@ -184,7 +184,9 @@ must not make the asset unreadable when absent.
    remains authoritative.
 6. **Sprint 24 — bounded local visual critic (code complete, live calibration pending):**
    loopback-only Ollama adapter, exact Qwen3-VL allowlist, response schema, and mechanical corpus.
-7. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
+7. **Sprint 25 — deterministic verification routing (complete):** mechanical gates, exact model
+   calibration identity, explicit external eligibility, and narrow human-review triggers.
+8. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
    asset/plugin trials chosen by a concrete creative need.
 
 Sprint 20 completed on 2026-08-24 in package `0.20.0`: the production archive exactly matches host
@@ -215,6 +217,12 @@ endpoints and unlisted models, revalidates packet hashes, and cannot choose a wi
 Ollama client/service has nine text models, but live inference/calibration remains pending because
 no allowlisted vision model was installed or downloaded. See
 [`local-vision-critic.md`](local-vision-critic.md).
+
+Sprint 25 is implemented in package `0.25.0` as `verification.route@1.0.0`. It combines hashed
+structural, pixel, probe, critique, and calibration reports without running a model. Mechanical
+failures remain authoritative, external transfer remains separately approved, and only defined
+disagreements or final taste request immediate human review. See
+[`sprint25-verification-routing.md`](sprint25-verification-routing.md).
 
 ## Decision
 

@@ -236,6 +236,12 @@ model against known mechanical failures. It never starts Ollama, downloads a mod
 or fills human-owned selection fields. See
 [`docs/local-vision-critic.md`](docs/local-vision-critic.md).
 
+Sprint 25 adds `verification.route@1.0.0`, a pure deterministic escalation router. It hashes
+structural, visual, local-critic, and calibration evidence; blocks model overrides of mechanical
+failures; checks exact model identity before trusting calibration; and emits named human-review and
+external-approval routes. It executes no model or network call and never fills winner/rating fields.
+See [`docs/sprint25-verification-routing.md`](docs/sprint25-verification-routing.md).
+
 ### 4. Tests
 ```bash
 python -m pytest tests/unit -q         # pure Python, no Houdini needed
