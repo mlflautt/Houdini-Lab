@@ -179,7 +179,10 @@ must not make the asset unreadable when absent.
    and curvature branches; working package-skipped native fallback; six-panel proof.
 4. **Sprint 22 — MOPs kinetic reliquary (complete):** pinned isolated v1.12 audit, native plus
    three MOPs motion branches, zero-MOPs fallback, and three-frame proof.
-5. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
+5. **Sprint 23 — staged reliquary and perceptual verification (in progress):** grid-aware
+   composition and motion diagnostics plus a layered camera-facing presentation branch; human taste
+   remains authoritative.
+6. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
    asset/plugin trials chosen by a concrete creative need.
 
 Sprint 20 completed on 2026-08-24 in package `0.20.0`: the production archive exactly matches host

@@ -222,6 +222,11 @@ color-separated 640×360 Karma proofs pass four-panel presence and nonduplicate-
 zero-MOPs launch retains the native graph and an explicit unavailable marker. See
 [`docs/mops-kinetic-reliquary.md`](docs/mops-kinetic-reliquary.md).
 
+Sprint 23 is developing a staged, camera-facing reliquary presentation and a stronger deterministic
+visual gate. The analyzer will measure panel-grid composition and sampled-frame motion while keeping
+all aesthetic ratings and winner selection human-owned. See
+[`docs/sprint23-aesthetic-verification.md`](docs/sprint23-aesthetic-verification.md).
+
 ### 4. Tests
 ```bash
 python -m pytest tests/unit -q         # pure Python, no Houdini needed
