@@ -1,0 +1,62 @@
+{
+  "id": "sop.world_seed_labs_enhancement",
+  "version": "1.0.0",
+  "summary": "Add a reversible SideFX Labs terrain, instancing, and curvature branch beside one native World Seed biome.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "WORLD_SEED"},
+    "native_shift": {"type": "number", "default": -2.25},
+    "labs_translation_x": {"type": "number", "default": 2.25},
+    "candidate_index": {"type": "integer", "min": 0, "max": 1, "default": 0},
+    "pscale_min": {"type": "number", "min": 0.05, "max": 1.0, "default": 0.65},
+    "pscale_max": {"type": "number", "min": 0.05, "max": 1.5, "default": 1.25},
+    "attribute_seed": {"type": "integer", "min": 0, "max": 2147483647, "default": 19420}
+  },
+  "references": {
+    "terrain_heightfield": "{{parent_path}}/{{run_code}}_TERRACES",
+    "biome_points": "{{parent_path}}/OUT_{{run_code}}_BIOME_POINTS",
+    "biome_form": "{{parent_path}}/{{run_code}}_BIOME_COLOR",
+    "hero_form": "{{parent_path}}/{{run_code}}_HERO_COLOR",
+    "native_world": "{{parent_path}}/OUT_{{run_code}}_WORLD"
+  },
+  "nodes": [
+    {"id": "terrain_analysis", "type": "labs::terrain_analysis::1.0", "name": "{{run_code}}_LABS_TERRAIN_ANALYSIS", "role": "labs_atlas_terrain_analysis", "position": [-10, -6], "params": {"slope": 1, "slopeattributename": "slope", "horizontalcurvature": 1, "enablevisualization": 1, "visualizemenu": 1, "visualizeattribute": "slope"}, "comment": "Certified Labs slope and curvature cartography; optional branch"},
+    {"id": "terrain_convert", "type": "convertheightfield", "name": "{{run_code}}_LABS_TERRAIN_MESH", "role": "labs_atlas_terrain_convert", "position": [-10, -8], "params": {"layer": "height", "conversion": 0, "surftype": 4, "lod": 1.0, "bakecd": 1, "doextrude": 1, "depth": -0.2}, "comment": "Native editable mesh boundary after Labs analysis"},
+    {"id": "terrain_place", "type": "xform", "name": "{{run_code}}_LABS_TERRAIN_PLACE", "role": "labs_atlas_terrain_place", "position": [-10, -10], "params": {"tx": "{{labs_translation_x}}"}, "comment": "Pair-comparison placement only"},
+    {"id": "terrain_out", "type": "null", "name": "OUT_{{run_code}}_LABS_TERRAIN", "role": "labs_atlas_terrain_contract", "position": [-10, -12], "params": {}, "comment": "Labs cartography terrain contract"},
+
+    {"id": "instance_attributes", "type": "labs::instance_attributes::1.0", "name": "{{run_code}}_LABS_INSTANCE_ATTRIBUTES", "role": "labs_atlas_instance_attributes", "position": [-4, -6], "params": {"randpscale": 1, "pscalemin": "{{pscale_min}}", "pscalemax": "{{pscale_max}}", "spinamountmode": 1, "spin_min": 0.0, "spin_max": 360.0, "spinrandseed": "{{attribute_seed}}", "rand3drot": 1, "rotrandseed": "{{attribute_seed}}"}, "comment": "Certified Labs orient, pscale, and scale attributes"},
+    {"id": "instance_copy", "type": "copytopoints::2.0", "name": "{{run_code}}_LABS_COPY_BIOME", "role": "labs_atlas_instance_copy", "position": [-4, -8], "params": {"pack": 0, "transform": 1}, "comment": "Native Copy to Points consumes Labs-authored attributes"},
+    {"id": "instance_place", "type": "xform", "name": "{{run_code}}_LABS_BIOME_PLACE", "role": "labs_atlas_instance_place", "position": [-4, -10], "params": {"tx": "{{labs_translation_x}}"}, "comment": "Pair-comparison placement only"},
+    {"id": "instance_out", "type": "null", "name": "OUT_{{run_code}}_LABS_BIOME_FORMS", "role": "labs_atlas_instances_contract", "position": [-4, -12], "params": {}, "comment": "Labs instancing contract"},
+
+    {"id": "curvature", "type": "labs::measure_curvature::3.1", "name": "{{run_code}}_LABS_CURVATURE", "role": "labs_atlas_measure_curvature", "position": [2, -6], "params": {"method": 2, "viscolor": 1, "convexityattr": "convexity", "concavityattr": "concavity"}, "comment": "Certified Labs curvature study on the native hero artifact"},
+    {"id": "hero_place", "type": "xform", "name": "{{run_code}}_LABS_HERO_PLACE", "role": "labs_atlas_hero_place", "position": [2, -10], "params": {"tx": "{{labs_translation_x}}", "ty": 2.25}, "comment": "Pair-comparison placement only"},
+    {"id": "hero_out", "type": "null", "name": "OUT_{{run_code}}_LABS_HERO", "role": "labs_atlas_hero_contract", "position": [2, -12], "params": {}, "comment": "Curvature-colored artifact contract"},
+
+    {"id": "labs_merge", "type": "merge", "name": "{{run_code}}_LABS_WORLD_MERGE", "role": "labs_atlas_world_merge", "position": [-4, -14], "params": {}, "comment": "Labs terrain, instancing, and artifact remain separately editable"},
+    {"id": "labs_world", "type": "null", "name": "OUT_{{run_code}}_LABS_WORLD", "role": "labs_atlas_world_contract", "position": [-4, -16], "params": {}, "comment": "Optional Labs-enhanced world contract"},
+    {"id": "native_compare", "type": "xform", "name": "{{run_code}}_NATIVE_COMPARE_PLACE", "role": "labs_atlas_native_compare_place", "position": [4, -14], "params": {"tx": "{{native_shift}}"}, "comment": "Presentation-only offset; source native world remains unchanged"},
+    {"id": "selector", "type": "switch", "name": "{{run_code}}_SELECT_NATIVE_OR_LABS", "role": "labs_atlas_human_selector", "position": [0, -18], "params": {"input": "{{candidate_index}}"}, "comment": "Defaults to native; human may inspect Labs without deleting either branch"},
+    {"id": "selected", "type": "null", "name": "OUT_{{run_code}}_SELECTED_WORLD", "role": "labs_atlas_selected_contract", "position": [0, -20], "params": {}, "comment": "Human-selected branch; no aesthetic winner implied"},
+    {"id": "comparison_merge", "type": "merge", "name": "{{run_code}}_NATIVE_LABS_COMPARISON", "role": "labs_atlas_comparison_merge", "position": [4, -18], "params": {}, "comment": "Fixed order: native, Labs"},
+    {"id": "comparison", "type": "null", "name": "OUT_{{run_code}}_NATIVE_LABS_COMPARE", "role": "labs_atlas_comparison_contract", "position": [4, -20], "params": {}, "flags": {"display": true, "render": true}, "comment": "Equal-status native/Labs pair; ratings empty and automatic ranking disabled"}
+  ],
+  "connections": [
+    ["terrain_heightfield", 0, "terrain_analysis", 0], ["terrain_analysis", 0, "terrain_convert", 0], ["terrain_convert", 0, "terrain_place", 0], ["terrain_place", 0, "terrain_out", 0],
+    ["biome_points", 0, "instance_attributes", 0], ["biome_form", 0, "instance_copy", 0], ["instance_attributes", 0, "instance_copy", 1], ["instance_copy", 0, "instance_place", 0], ["instance_place", 0, "instance_out", 0],
+    ["hero_form", 0, "curvature", 0], ["curvature", 0, "hero_place", 0], ["hero_place", 0, "hero_out", 0],
+    ["terrain_out", 0, "labs_merge", 0], ["instance_out", 0, "labs_merge", 1], ["hero_out", 0, "labs_merge", 2], ["labs_merge", 0, "labs_world", 0],
+    ["native_world", 0, "native_compare", 0], ["native_world", 0, "selector", 0], ["labs_world", 0, "selector", 1], ["selector", 0, "selected", 0],
+    ["native_compare", 0, "comparison_merge", 0], ["labs_world", 0, "comparison_merge", 1], ["comparison_merge", 0, "comparison", 0]
+  ],
+  "outputs": ["terrain_analysis", "instance_attributes", "curvature", "labs_world", "selector", "selected", "comparison"],
+  "meta": {
+    "graph_first": true,
+    "optional_dependency": "SideFXLabs22.0@22.0.368",
+    "certified_node_types": ["labs::terrain_analysis::1.0", "labs::measure_curvature::3.1", "labs::instance_attributes::1.0"],
+    "native_fallback_recipe": "sop.world_seed_labs_unavailable",
+    "automatic_ranking": false,
+    "license": {"mode": "houdini-apprentice-noncommercial"}
+  }
+}

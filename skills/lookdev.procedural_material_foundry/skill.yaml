@@ -1,0 +1,209 @@
+{
+  "id": "lookdev.procedural_material_foundry",
+  "version": "1.0.0",
+  "summary": "Build three native Copernicus PBR channel sets, publish them as MaterialX USD materials, and compare equal Karma swatches without automatic ranking.",
+  "contexts": [
+    "COP",
+    "SOP",
+    "LOP",
+    "ROP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ],
+    "renderer": "Karma CPU"
+  },
+  "intent_tags": [
+    "copernicus",
+    "procedural-material",
+    "pbr",
+    "materialx",
+    "solaris",
+    "karma",
+    "swatches",
+    "human-selection"
+  ],
+  "inputs": {
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "material_foundry_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483647,
+      "default": 18181
+    },
+    "resolution": {
+      "type": "integer",
+      "enum": [
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "default": 512
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "width": {
+      "type": "integer",
+      "min": 1,
+      "max": 1280,
+      "default": 960
+    },
+    "height": {
+      "type": "integer",
+      "min": 1,
+      "max": 720,
+      "default": 540
+    },
+    "frame": {
+      "type": "number",
+      "default": 1
+    },
+    "time_limit": {
+      "type": "number",
+      "min": 1,
+      "max": 120,
+      "default": 60
+    },
+    "max_threads": {
+      "type": "integer",
+      "min": 1,
+      "max": 32,
+      "default": 4
+    },
+    "render_preview": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "preconditions": [
+    "/img, /obj, /stage, and /out exist and exact run-scoped names are unused",
+    "artifact_dir is absolute and inside an approved project root",
+    "preview and validation artifacts do not already exist"
+  ],
+  "risk": "external",
+  "checkpoint": "before_each_network_recipe_and_render_rop_mutation",
+  "cook_budget": {
+    "pattern_and_channel_scope": "three_patterns_and_twelve_channels",
+    "default_resolution": [
+      512,
+      512
+    ],
+    "max_resolution": [
+      1024,
+      1024
+    ],
+    "max_memory_bytes": 1073741824,
+    "max_seconds": 120,
+    "render_frames": 1,
+    "default_render_resolution": [
+      960,
+      540
+    ],
+    "apprentice_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "cop.reaction_diffusion_pattern@1.0.0"
+    },
+    {
+      "recipe.instantiate": "cop.procedural_material_foundry@1.0.0"
+    },
+    {
+      "cop.material_foundry.validate": "named channel and USD Material wiring checks"
+    },
+    {
+      "recipe.instantiate": "sop.material_swatch_gallery@1.0.0"
+    },
+    {
+      "recipe.instantiate": "lop.procedural_material_foundry_stage@1.0.0"
+    },
+    {
+      "solaris.material_foundry.validate": "all USD bindings and MaterialX outputs"
+    },
+    {
+      "solaris.karma_rop.build": "optional editable one-frame Karma CPU boundary"
+    },
+    {
+      "render.karma.preview": "optional separately approved gallery render"
+    },
+    {
+      "graph.capture_svg": "COP and LOP evidence"
+    },
+    {
+      "graph.capture_manifest": "lineage, controls, channels, ratings, and render contract"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "native COP pattern, ramp, remap, height-to-normal, null, and USD Material nodes only",
+      "Texture Material Library LOP consumes exact absolute Material COP paths",
+      "three equal SOP swatches and three explicit simultaneous USD assignments remain editable",
+      "no Python SOP, generated VEX, UI state, or automatic selection dependency"
+    ],
+    "data_checks": [
+      "base_color is three-component scene-linear intent",
+      "roughness and height are one-component raw data",
+      "normal is three-component offset raw data and all channels are finite and varied",
+      "each swatch computes the intended bound MaterialX material"
+    ],
+    "visual_checks": [
+      "one side-by-side Karma gallery shows all candidates under one camera and lighting contract",
+      "output is one frame at or below the Apprentice ceiling",
+      "downstream visual gate may flag defects but never chooses a winner"
+    ],
+    "selection_checks": [
+      "candidate ids, seed, channel paths, and empty human-rating slots are preserved",
+      "no automatic rank or winner is authored"
+    ]
+  },
+  "outputs": [
+    "twelve_named_pbr_channel_contracts",
+    "three_usd_material_cop_contracts",
+    "three_equal_swatch_sop_contracts",
+    "materialx_usd_stage_validation",
+    "optional_karma_gallery_png",
+    "cop_and_lop_graph_svg",
+    "foundry_manifest_json",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_new_run_scoped_nodes",
+  "failure_modes": [
+    "invalid resolution candidate order or artifact path is refused before mutation",
+    "stale channel roles component counts ranges hashes or connections fail validation",
+    "missing MaterialX output or incorrect USD binding fails before render",
+    "external render requires explicit policy approval and never overwrites output"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

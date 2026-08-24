@@ -3,6 +3,7 @@
 These mirror the protocol described in docs/architecture.md §5. A command is a bounded,
 schema-validated request; a result is structured JSON-serializable data the agent consumes.
 """
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
@@ -43,8 +44,12 @@ class Policy:
     allow_arbitrary_code: bool = False
     max_seconds: float = 20.0
     max_points: int = 1_000_000
+    max_primitives: int = 1_000_000
+    max_memory_bytes: int = 536_870_912
     max_voxels: int = 0
     max_frames: int = 1
+    max_work_items: int = 16
+    max_output_bytes: int = 2_147_483_648
     max_resolution: tuple[int, int] = (1280, 720)
     risk: RiskClass = RiskClass.LOW
 
@@ -91,6 +96,11 @@ class CommandEnvelope:
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> CommandEnvelope:
+        protocol_version = d.get("protocol_version", PROTOCOL_VERSION)
+        if protocol_version != PROTOCOL_VERSION:
+            raise ValueError(
+                f"unsupported protocol_version {protocol_version!r}; expected {PROTOCOL_VERSION}"
+            )
         policy = Policy.from_dict(d.get("policy", {})) if d.get("policy") else None
         return cls(
             tool=d["tool"],
@@ -113,10 +123,15 @@ class ChangedNode:
 
 @dataclass
 class CookInfo:
+    node_path: str = ""
     scope: str = ""
     seconds: float = 0.0
     points: int = 0
     primitives: int = 0
+    vertices: int = 0
+    memory_bytes: int = 0
+    frames: list[float] = field(default_factory=list)
+    forced: bool = False
 
 
 @dataclass

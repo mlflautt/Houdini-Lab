@@ -69,14 +69,163 @@ On launch, `scripts/123.py` starts the in-Houdini dispatcher and registers the p
 
 ### 3. Run the outside-Houdini bridge (optional, for remote/agent use)
 ```bash
-python -m bridge.server --port 8765   # binds 127.0.0.1, requires session secret
-python -m bridge.client --port 8765    # from the agent side
+export HERMES_HOUDINI_BRIDGE_SECRET="$(python -c 'from bridge.auth import make_secret; print(make_secret())')"
+export HERMES_HOUDINI_ALLOWED_ROOTS="$PWD/projects:$PWD/.hermes"
+# Launch Houdini from this environment so scripts/123.py starts its localhost runtime.
+python -m bridge.server --mode interactive --port 8765
+python -m bridge.client --tool system.capabilities --port 8765
 ```
+
+Interactive mode forwards authenticated commands to the active Houdini scene. Use
+`--mode hython` explicitly for isolated read-only probes or headless jobs. See
+[`docs/bridge.md`](docs/bridge.md) for ports, approvals, and failure behavior.
+
+Medium-risk multi-node edits use the transactional `graph.apply_batch` tool. Each approved
+batch creates a versioned `.hipnc` checkpoint, runs inside one undo group, returns a graph
+diff, and appends an exact JSONL replay record. See [`docs/graph-kernel.md`](docs/graph-kernel.md).
+
+Cooking is an explicit two-step job contract: submit a scope, resource estimate, policy, and
+JSONL log, then run or cancel it. Geometry metrics never trigger hidden cooks. Structural
+validation, headless graph SVGs, and named camera/viewer captures complete the verification
+loop. See [`docs/resource-control.md`](docs/resource-control.md).
+
+The first executable creative skill is `model.fractal_relic` (Sprint 4). It creates three
+deterministic native-SOP alternatives, keeps them together in `OUT_COMPARISON`, and exposes a
+human-controlled `SELECT_CANDIDATE` Switch feeding `OUT_GEO`. A run produces a checkpoint,
+bounded cook log, validation metrics, graph SVG/JSON manifest, optional explicit-camera viewport
+capture, empty human rating slots, replay log, and incremented `.hipnc` snapshot. The skill never
+auto-ranks the alternatives.
+
+Sprint 5 promotes that verified graph through a shared versioned source: the raw skill and
+`hermes::fractal_relic::2.0` HDA both compose `sop.fractal_relic_candidate@2.0.0`. Registered
+recipes instantiate as approved checkpointed batches; registered HDA builds create new `.hdanc`
+files without overwriting. See [`docs/recipe-hda-system.md`](docs/recipe-hda-system.md).
+
+Sprint 6 adds `generate.fractal_relic_variations@1.0.0`: a native Wedge → ROP Geometry local
+PDG graph with one-slot scheduling, immutable plan/result manifests, per-item resource limits,
+non-overwriting `.bgeo.sc` outputs, and an editable SOP comparison gallery. Local hython jobs need
+exact approval and explicit external-process consent; candidates retain empty human rating slots
+and are never auto-ranked. See [`docs/pdg-variations.md`](docs/pdg-variations.md).
+
+Sprint 7 adds `simulate.vellum_relic_drop@1.0.0`: a native Cloth + Pressure Vellum graph with
+named rest, constraints, collider, raw simulation, File Cache, and human-comparison contracts.
+The cook controller now supports policy-bounded inclusive frame ranges, reports metrics per frame,
+and restores the artist's timeline state. The skill configures but never implicitly writes its
+versioned `.bgeo.sc` sequence. See [`docs/vellum-simulation.md`](docs/vellum-simulation.md).
+
+Sprint 8 adds `lookdev.relic_stage@1.0.0`: an editable SOP Import → Material Library → three
+Assign Material branches → human Switch → light/camera → Karma Render Settings LOP graph. Native
+MaterialX builder subnets preserve three unranked candidates. USD stage composition is an explicit
+bounded validation step; the optional one-frame Karma CPU preview is a separate approved `husk`
+launch through a managed USD Render ROP and never overwrites an image. See
+[`docs/solaris-lookdev.md`](docs/solaris-lookdev.md).
+
+Sprint 9 adds `generate.differential_growth@1.0.0`: three editable native curve sources feed one
+human Switch and a seeded perturbation before a Solver feedback loop. The registered loop is
+Point Relax → Attribute Blur `P` → Resample; HOM constructs and tags it, while native SOPs perform
+all geometry work. A 24-frame in-memory cook records rest-to-fold metrics beneath explicit
+50,000-point/primitive ceilings, captures outer and inner graph evidence, and never writes a cache
+or ranks a source. See [`docs/differential-growth.md`](docs/differential-growth.md).
+
+Sprint 10 adds `generate.reaction_diffusion_pattern@1.0.0`: a Float32 Copernicus network shares
+one seeded activation mask across native Small Waves, Large Waves, and Spots Gray–Scott blocks.
+The graph encodes preset coefficients explicitly because Houdini's preset menu is callback-driven,
+then retains mono masks, three presentation ramps, a human Switch, and a fixed-order Contact Sheet.
+Bounded validation checks finite pixels, range, variance, distinct buffer hashes, memory,
+resolution, and Houdini messages before managed ROP Image nodes may export new PNG evidence. See
+[`docs/reaction-diffusion.md`](docs/reaction-diffusion.md).
+
+Sprint 11 adds `grow.botanical_grammar@1.0.0`: three safe registered native L-System grammars
+produce editable canopy, fern, and coral skeletons with deterministic seeds and documented turtle
+attributes. Native PolyWire branches feed both a human Switch and a fixed-order comparison surface.
+`botanical.validate` proves exact embedded premises/rules, topology, attributes, ordering, framing,
+memory, and time while refusing arbitrary rule text or rule-file IO. The public six-generation
+default remains below 250,000 points/primitives; an optional separately approved Karma reuse
+provides visual proof. See [`docs/botanical-grammars.md`](docs/botanical-grammars.md).
+
+Sprint 12 adds `motion.particle_calligraphy@1.0.0`: arc, fan, and orbit branches built from native
+Particle, Time Blend, Particle Trail, Time Shift, and PolyWire SOPs. The graph visibly normalizes
+legacy particle attributes and preserves a verified Houdini 22 half-frame compatibility boundary.
+Its default 48-frame silent fixture records every frame under a 100,000-trail-point ceiling;
+optional audio response uses only bounded project-relative envelope JSON. A new
+[`verification ladder`](docs/verification-ladder.md) adds deterministic PNG mechanics and a hashed,
+advisory multimodal critique packet before any local or explicitly approved external vision model.
+
+Sprint 13 adds `simulate.vellum_membrane_lab@1.0.0`: three independently simulated pinned Grid
+membranes with silk, rubber, and reinforced material profiles. Exact validation proves the anchor
+mass split, Surface Struts reinforcement, per-frame motion, collision graph, cache non-writing,
+comparison order, and timeline restoration. Optional viewport evidence reuses the deterministic and
+hashed multimodal verification ladder. See
+[`docs/vellum-membrane-lab.md`](docs/vellum-membrane-lab.md).
+
+Sprint 14 adds `simulate.mpm_matter_sculpture@1.0.0`: three seeded native MPM Source branches with
+explicit granular-like, elastic-like, and viscous-like coefficients feed one Container/Collider/
+Solver graph. The safe skill is proxy-first (24 frames, 150,000 particles), records source mass and
+every-frame motion/resource evidence, updates an interruption-safe progress manifest after each
+frame, and leaves its File Cache in `filemode=none`. Native points and MPM Surface outputs remain
+artist-selectable without implying a winner. See
+[`docs/mpm-matter-sculpture.md`](docs/mpm-matter-sculpture.md).
+
+Sprint 16 adds `world.procedural_district@1.0.0`: a registered three-profile native-SOP building
+source feeds a one-slot Wedge → ROP Geometry → Wait for All TOP graph. Twelve immutable lot caches
+are the safe default; exact controls, placements, hashes, and empty human ratings flow into both an
+editable spatial district and a labeled no-winner gallery. Local PDG workers require explicit
+external-process consent and never run in the background. Sprint 15 terrain remains optional and
+deferred rather than becoming a hidden dependency. See
+[`docs/procedural-district.md`](docs/procedural-district.md).
+
+Sprint 17 adds `simulate.rbd_art_directed_fracture@1.0.0`: three retained native impact-point
+profiles feed pinned Material Fracture 4.0, material Glue constraints, RBD Configure, and one
+bounded proxy Bullet Solver. The compact Simulation Points output is a named transform cache
+contract and reconstructs editable rest polygons through Transform Pieces. Exact 48-frame
+validation checks piece/constraint budgets, finite stable transforms and hashes, broken
+constraints, motion, topology preservation, cache non-writing, and timeline restoration before an
+optional before/after Karma proof. See
+[`docs/rbd-art-directed-fracture.md`](docs/rbd-art-directed-fracture.md).
+
+Sprint 18 adds `lookdev.procedural_material_foundry@1.0.0`: reusable native Copernicus patterns
+become twelve named `base_color`, `roughness`, `height`, and `normal` contracts, then three USD
+Material COPs cross Houdini 22's Texture Material Library boundary into explicit MaterialX/USD
+bindings. Equal polygon-sphere swatches keep Verdigris, Emberglaze, and Moonlichen simultaneously
+visible and unranked. Numeric channel checks, full binding inspection, deterministic three-panel
+visual QA, critique-packet packaging, and a crop-safe 768×432 Karma CPU proof close the stage. See
+[`docs/material-foundry.md`](docs/material-foundry.md).
+
+Sprint 19 adds `world.world_seed_atlas@1.0.0`: Amber Mesa, Verdant Rift, and Lunar Basin each use
+an editable native HeightField Noise → Terrace → adaptive mesh branch, bounded biome scattering,
+and one hero form. Named terrain, point, copied-form, hero, and world outputs feed three
+simultaneous SOP Import LOPs. Live H22.0.368 Apprentice acceptance verified 2,442 points, 2,292
+primitives, valid USD descendants, clean messages, no automatic winner, and a crop-safe 768×432
+Karma CPU comparison proof. See [`docs/world-seed-atlas.md`](docs/world-seed-atlas.md).
+
+Sprint 20 adds Apprentice-aware plugin governance and the first reversible external construction
+tool integration. SideFX Labs `22.0.368` is checksum-pinned to the exact Houdini build and installed
+in user package scope. The live inventory expands from three base ZibraVDB types to 450 matching
+types, but certification is deliberately narrower: Measure Curvature 3.1, Terrain Analysis 1.0,
+and Instance Attributes 1.0 pass readable native-input recipes, exact geometry/attribute budgets,
+a saved `.hipnc`, a crop-safe 768×432 Karma proof, and a verified package-skipped launch. See
+[`docs/sidefx-labs-integration.md`](docs/sidefx-labs-integration.md).
+
+Sprint 21 adds `world.world_seed_atlas_labs@1.0.0`: each native biome receives optional Terrain
+Analysis, Instance Attributes, and Measure Curvature branches using only the three Sprint 20
+certified Labs types. Native remains Switch input zero. A package-skipped bare-Hython run creates
+explicit `OPTIONAL_LABS_UNAVAILABLE` contracts without instantiating unknown nodes. Enabled live
+acceptance produced 4,734 points/4,440 primitives and a six-panel, crop-safe 768×432 Karma proof
+with no visual flags. See
+[`docs/labs-enhanced-world-seed-atlas.md`](docs/labs-enhanced-world-seed-atlas.md).
+
+Sprint 22 adds `motion.kinetic_reliquary@1.0.0`: one native packed source feeds a native transform
+baseline plus MOPs 1.12 plain, animated-noise, and moving-shape falloff branches. The pinned
+project-local MOPs checkout never modifies global Houdini preferences. All four 24-piece branches
+preserve `P`, `orient`, `scale`, `v`, seed, and variant ID across frames 1/12/24. Three crop-safe,
+color-separated 640×360 Karma proofs pass four-panel presence and nonduplicate-frame checks. A
+zero-MOPs launch retains the native graph and an explicit unavailable marker. See
+[`docs/mops-kinetic-reliquary.md`](docs/mops-kinetic-reliquary.md).
 
 ### 4. Tests
 ```bash
-pytest tests/unit -q                  # pure Python, no Houdini needed
-pytest tests/hython -q                # requires hython on PATH (skipped otherwise)
+python -m pytest tests/unit -q         # pure Python, no Houdini needed
+hython -m pytest tests/hython -q       # bundled recipes/skills need no injected PyYAML
 ```
 
 ---
@@ -85,7 +234,7 @@ pytest tests/hython -q                # requires hython on PATH (skipped otherwi
 
 | Path | Purpose |
 |------|---------|
-| `hermes_houdini/` | Inside-Houdini package: dispatcher, registry, inspector, transactions, cook, observation, validation, policy, stable IDs, tool impls |
+| `hermes_houdini/` | Inside-Houdini package: dispatcher, graph-batch kernel, cook-job controller, observation/validation, registry, transactions, policy, stable IDs, tool impls |
 | `bridge/` | Outside-Houdini authenticated JSON transport (server/client/auth) |
 | `recipes/` | Declarative graph recipes (YAML) |
 | `skills/` | Agentic skills: manifest + module + shared `_lib` |

@@ -1,0 +1,198 @@
+{
+  "id": "world.world_seed_atlas",
+  "version": "1.0.0",
+  "summary": "Compose three deterministic native HeightField biomes into an equal-status Solaris and Karma atlas without automatic ranking.",
+  "contexts": [
+    "SOP",
+    "LOP",
+    "ROP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ],
+    "renderer": "Karma CPU"
+  },
+  "intent_tags": [
+    "world-building",
+    "heightfield",
+    "terrain",
+    "biome",
+    "scatter",
+    "solaris",
+    "karma",
+    "comparison",
+    "human-selection"
+  ],
+  "inputs": {
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "world_seed_atlas_001"
+    },
+    "base_seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483376,
+      "default": 19019
+    },
+    "terrain_samples": {
+      "type": "integer",
+      "enum": [
+        64,
+        96,
+        128
+      ],
+      "default": 128
+    },
+    "world_size": {
+      "type": "number",
+      "min": 8.0,
+      "max": 10.0,
+      "default": 9.0
+    },
+    "width": {
+      "type": "integer",
+      "min": 1,
+      "max": 1280,
+      "default": 768
+    },
+    "height": {
+      "type": "integer",
+      "min": 1,
+      "max": 720,
+      "default": 432
+    },
+    "frame": {
+      "type": "number",
+      "default": 1
+    },
+    "time_limit": {
+      "type": "number",
+      "min": 1,
+      "max": 180,
+      "default": 90
+    },
+    "max_threads": {
+      "type": "integer",
+      "min": 1,
+      "max": 32,
+      "default": 4
+    },
+    "render_preview": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "preconditions": [
+    "/obj, /stage, and /out exist and exact run-scoped names are unused",
+    "artifact_dir is absolute and inside an approved project root",
+    "output artifacts do not already exist"
+  ],
+  "risk": "external",
+  "checkpoint": "before_each_world_recipe_stage_and_render_rop_mutation",
+  "cook_budget": {
+    "terrain_scope": "three_static_heightfields",
+    "default_terrain_samples": [
+      128,
+      128
+    ],
+    "max_points": 150000,
+    "max_primitives": 150000,
+    "max_memory_bytes": 2147483648,
+    "max_seconds": 180,
+    "render_frames": 1,
+    "default_render_resolution": [
+      768,
+      432
+    ],
+    "apprentice_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "graph.apply_batch": "three run-scoped Object networks"
+    },
+    {
+      "recipe.instantiate": "three sop.world_seed_biome@1.0.0 graphs"
+    },
+    {
+      "world_seed.validate": "exact geology scatter hero topology and budgets"
+    },
+    {
+      "recipe.instantiate": "lop.world_seed_atlas_stage@1.0.0"
+    },
+    {
+      "solaris.world_seed.validate": "all three USD worlds remain simultaneous"
+    },
+    {
+      "solaris.karma_rop.build": "optional editable one-frame Karma CPU boundary"
+    },
+    {
+      "render.karma.preview": "optional separately approved proof render"
+    },
+    {
+      "graph.capture_svg": "Object and LOP evidence"
+    },
+    {
+      "graph.capture_manifest": "lineage controls ratings and render contract"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "each world is native HeightField noise terrace mesh scatter Copy to Points and explicit contracts",
+      "three separate SOP branches feed three simultaneous SOP Import LOPs",
+      "no Python SOP generated VEX UI state plugin or automatic selection dependency"
+    ],
+    "data_checks": [
+      "exact fixed-order world IDs seeds offsets colors scatter counts and terrain samples",
+      "finite nonempty geometry with Cd and total points and primitives below 150000",
+      "all three USD world roots exist with geometry descendants"
+    ],
+    "visual_checks": [
+      "one Karma gallery contains all three worlds under one camera and light contract",
+      "deterministic visual analysis checks blank output crop and three-panel presence only",
+      "visual metrics may flag defects but never choose a winner"
+    ],
+    "selection_checks": [
+      "seed IDs lineage and empty human-rating slots survive every artifact",
+      "no automatic rank or winner is authored"
+    ]
+  },
+  "outputs": [
+    "three_native_world_sop_contracts",
+    "three_world_usd_stage_validation",
+    "optional_karma_atlas_png",
+    "object_and_lop_graph_svg",
+    "world_seed_manifest_json",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_new_run_scoped_nodes",
+  "failure_modes": [
+    "invalid seed sample budget resolution or artifact path is refused before mutation",
+    "stale roles operator types parameters or disconnected contracts fail validation",
+    "missing USD prims or Houdini errors fail before render",
+    "external render requires explicit policy approval and never overwrites output"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

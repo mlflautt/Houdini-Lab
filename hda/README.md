@@ -18,3 +18,8 @@ hda/source/<namespace>_<name>/
 Promote to HDA only when a graph is stable, reusable, has a clear I/O contract, exposes
 only useful controls, includes help + examples, and has regression tests. Always mark
 Apprentice/non-commercial in HDA metadata.
+
+`hermes::fractal_relic::2.0` is the first promoted asset. Its recipe-backed build script exposes
+live artistic controls and human rating fields, embeds Help + JSON provenance, refuses accidental
+`.hdanc` overwrite, and includes a non-destructive v1 control migration helper. See
+[`docs/recipe-hda-system.md`](../docs/recipe-hda-system.md).

@@ -1,26 +1,65 @@
-id: hermes::fractal_relic::1.0
+id: hermes::fractal_relic::2.0
 namespace: hermes
 name: fractal_relic
-version: "1.0"
-summary: Radial fractal relic form generator (native SOPs).
-license: noncommercial
-help: |
-  Builds a seeded, parameterized alien-relic form.
-  Controls: seed, iterations, detail_level.
-  Apprentice/non-commercial. HDAs cannot be used with Houdini Engine.
+version: "2.0"
+summary: Recipe-backed three-candidate fractal relic generator using native SOPs.
+status: promoted
+source:
+  skill: model.fractal_relic@1.1.0
+  recipe: sop.fractal_relic_candidate@2.0.0
+license:
+  mode: houdini-apprentice-noncommercial
+  commercial_use: false
+  engine_export_allowed: false
+  file_extension: .hdanc
+houdini:
+  minimum_version: "22.0"
+  tested_builds: ["22.0.368"]
+contexts: [SOP]
+inputs: []
+outputs:
+  selected: HDA_OUTPUT via SELECT_CANDIDATE and OUT_GEO
+  comparison: HDA_OUTPUT via OUT_COMPARISON when output_mode is comparison
 parameters:
-  - name: seed
-    label: "Seed"
-    type: int
-    default: 42
-  - name: iterations
-    label: "Iterations"
-    type: int
-    min: 1
-    max: 8
-    default: 4
-  - name: detail_level
-    label: "Detail Level"
-    type: menu
-    default: preview
-    menu: [draft, preview, final]
+  - {name: seed, type: int, min: 0, max: 1000000, default: 42}
+  - {name: iterations, type: int, min: 1, max: 8, default: 4}
+  - {name: detail_level, type: menu, menu: [draft, preview, final], default: preview}
+  - {name: base_radius, type: float, min: 0.25, max: 5.0, default: 1.0}
+  - {name: detail_radius, type: float, min: 0.01, max: 0.5, default: 0.08}
+  - {name: noise_amplitude, type: float, min: 0.0, max: 1.5, default: 0.16}
+  - {name: preview_candidate, type: menu, menu: [candidate_A, candidate_B, candidate_C], default: candidate_A}
+  - {name: output_mode, type: menu, menu: [selected, comparison], default: selected}
+  - {name: human_winner, type: menu, menu: [unrated, candidate_A, candidate_B, candidate_C], default: unrated}
+  - {name: candidate_a_rating, type: float, min: 0.0, max: 5.0, default: 0.0}
+  - {name: candidate_a_notes, type: string, default: ""}
+  - {name: candidate_b_rating, type: float, min: 0.0, max: 5.0, default: 0.0}
+  - {name: candidate_b_notes, type: string, default: ""}
+  - {name: candidate_c_rating, type: float, min: 0.0, max: 5.0, default: 0.0}
+  - {name: candidate_c_notes, type: string, default: ""}
+  - {name: source_recipe, type: string, default: sop.fractal_relic_candidate@2.0.0}
+  - {name: license_mode, type: string, default: houdini-apprentice-noncommercial}
+attribute_contract:
+  point: [P]
+  primitive: []
+cook_budget:
+  max_points: 3000000
+  max_primitives: 3000000
+  max_memory_bytes: 536870912
+  max_seconds: 90
+  max_frames: 1
+selection:
+  method: human
+  automatic_ranking: false
+  rating_zero_means: unrated
+checkpoint: required before in-scene replacement or upgrade
+rollback: preserve v1 source and remove new v2 instance
+failure_modes:
+  - exact internal node name already exists during source build
+  - recipe operator or parameter is unavailable in the pinned Houdini build
+  - output .hdanc exists while overwrite is false
+  - promoted expression target is missing
+  - cook exceeds the declared budget
+help: |
+  Adjust form and variation controls, compare all three candidates, then record human ratings.
+  Preview Candidate drives geometry; Human Winner is a decision record and never auto-ranks.
+  Apprentice/non-commercial. The .hdanc cannot be used with Houdini Engine.

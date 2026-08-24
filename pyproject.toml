@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "houdini-creative-dev"
-version = "0.1.0"
+version = "0.22.0"
 description = "Agentic Houdini development repo: bridge, recipes, HDAs, VEX templates, and skills for graph-first procedural creative work (Apprentice-aware)."
 readme = "README.md"
 license = { text = "MIT" }
@@ -16,13 +16,20 @@ classifiers = [
     "Topic :: Multimedia :: Graphics :: 3D Modeling",
     "License :: OSI Approved :: MIT License",
 ]
-dependencies = []
+dependencies = ["PyYAML>=6.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.5"]
 
-[tool.setuptools]
-py-modules = ["hermes_houdini", "bridge"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hermes_houdini*", "bridge*", "recipes*", "skills", "skills._lib", "hda*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+recipes = ["sop/*.yaml", "lop/*.yaml", "cop/*.yaml", "top/*.yaml"]
+skills = ["*/README.md", "*/skill.py", "*/skill.yaml"]
+hda = ["source/*/manifest.yaml"]
 
 [tool.ruff]
 line-length = 100

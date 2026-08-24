@@ -1,0 +1,27 @@
+{
+  "id": "sop.kinetic_reliquary_native",
+  "version": "1.0.0",
+  "summary": "Build a native packed-fragment kinetic reliquary and explicit transform attribute contract.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "KINETIC_RELIQUARY"},
+    "copy_count": {"type": "integer", "min": 8, "max": 64, "default": 24},
+    "radius": {"type": "number", "min": 1.0, "max": 5.0, "default": 3.0},
+    "seed": {"type": "integer", "min": 0, "max": 2147483647, "default": 22012}
+  },
+  "references": {},
+  "nodes": [
+    {"id": "source", "type": "platonic", "name": "{{run_code}}_RELIC_FRAGMENT", "role": "kinetic_fragment_source", "position": [-6, 12], "params": {"type": 3, "radius": 0.42}, "comment": "One editable relic fragment source"},
+    {"id": "source_color", "type": "color", "name": "{{run_code}}_NATIVE_COLOR", "role": "kinetic_native_color", "position": [-6, 10], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.28, 0.06]}, "comment": "Native branch identity; no score implied"},
+    {"id": "ring", "type": "circle", "name": "{{run_code}}_POINT_RING", "role": "kinetic_point_source", "position": [0, 12], "params": {"type": "poly", "orient": "zx", "divs": "{{copy_count}}", "rad": ["{{radius}}", "{{radius}}"]}, "comment": "Deterministic native point domain"},
+    {"id": "points", "type": "add", "name": "{{run_code}}_RING_POINTS", "role": "kinetic_point_contract", "position": [0, 10], "params": {"keep": 1}, "comment": "Points only; fixed order and exact copy count"},
+    {"id": "packed", "type": "copytopoints::2.0", "name": "OUT_{{run_code}}_PACKED_RELICS", "role": "kinetic_packed_source_contract", "position": [-3, 8], "params": {"pack": 1, "transform": 1}, "comment": "Shared packed source for native and optional MOPs branches"},
+    {"id": "native_motion", "type": "xform", "name": "{{run_code}}_NATIVE_MOTION", "role": "kinetic_native_motion", "position": [-3, 6], "params": {}, "expressions": {"ry": "$FF*6", "ty": "$FF*0.025"}, "comment": "Readable native whole-ring motion baseline"},
+    {"id": "native_attributes", "type": "attribcreate::2.0", "name": "{{run_code}}_NATIVE_CONTRACT_ATTRIBUTES", "role": "kinetic_native_attribute_contract", "position": [-3, 4], "params": {"numattr": 5, "name1": "orient", "class1": 2, "type1": 2, "size1": 4, "value1v1": 0.0, "value1v2": 0.0, "value1v3": 0.0, "value1v4": 1.0, "name2": "scale", "class2": 2, "type2": 2, "size2": 3, "value2v1": 1.0, "value2v2": 1.0, "value2v3": 1.0, "name3": "v", "class3": 2, "type3": 2, "size3": 3, "value3v1": 0.0, "value3v2": 0.6, "value3v3": 0.0, "name4": "seed", "class4": 2, "type4": 1, "size4": 1, "value4v1": "{{seed}}", "name5": "variant_id", "class5": 2, "type5": 3, "string5": "native"}, "comment": "Equivalent P orient scale v seed variant_id contract"},
+    {"id": "native_place", "type": "xform", "name": "{{run_code}}_NATIVE_PLACE", "role": "kinetic_native_placement", "position": [-3, 2], "params": {"tx": -9.0}, "comment": "Presentation-only four-way comparison offset"},
+    {"id": "native", "type": "null", "name": "OUT_{{run_code}}_NATIVE", "role": "kinetic_native_contract", "position": [-3, 0], "params": {}, "flags": {"display": true, "render": true}, "comment": "Native kinetic baseline; default candidate and no winner"}
+  ],
+  "connections": [["source", 0, "source_color", 0], ["ring", 0, "points", 0], ["source_color", 0, "packed", 0], ["points", 0, "packed", 1], ["packed", 0, "native_motion", 0], ["native_motion", 0, "native_attributes", 0], ["native_attributes", 0, "native_place", 0], ["native_place", 0, "native", 0]],
+  "outputs": ["packed", "native"],
+  "meta": {"graph_first": true, "depends": [], "fixed_vex": false, "python_geometry_compute": false, "automatic_ranking": false, "cook_budget": {"max_copies": 64, "max_frames": 48, "max_points": 20000, "max_primitives": 20000}, "license": {"mode": "houdini-apprentice-noncommercial"}}
+}

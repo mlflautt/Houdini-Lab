@@ -1,0 +1,46 @@
+{
+  "schema": "hermes.houdini.labs_atlas_acceptance",
+  "schema_version": "1.0",
+  "sprint": 21,
+  "package_version": "0.22.0",
+  "houdini": {"build": "22.0.368", "license": "Apprentice"},
+  "plugin": {
+    "id": "sidefx-labs-22.0.368",
+    "certified_node_types": [
+      "labs::terrain_analysis::1.0",
+      "labs::measure_curvature::3.1",
+      "labs::instance_attributes::1.0"
+    ],
+    "certification_scope": "three_exact_node_types_only"
+  },
+  "enabled_acceptance": {
+    "artifact_run": ".hermes/sprint21-acceptance-20260824-c",
+    "candidate_order": ["amber_mesa", "verdant_rift", "lunar_basin"],
+    "total_points": 4734,
+    "total_primitives": 4440,
+    "elapsed_seconds": 0.669453,
+    "render": {
+      "resolution": [768, 432],
+      "sha256": "764210b38c1c690d4acbed915477fffbc6645ffaf40279d810258f2bd143dc51",
+      "panel_count": 6,
+      "visual_status": "pass",
+      "flags": []
+    }
+  },
+  "plugin_disabled_acceptance": {
+    "environment": "HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json",
+    "artifact_run": ".hermes/sprint21-native-fallback-20260824-a",
+    "total_points": 2442,
+    "total_primitives": 2292,
+    "elapsed_seconds": 0.005009,
+    "missing_node_types": [
+      "labs::terrain_analysis::1.0",
+      "labs::measure_curvature::3.1",
+      "labs::instance_attributes::1.0"
+    ],
+    "fallback_contract": "OPTIONAL_LABS_UNAVAILABLE",
+    "plugin_nodes_instantiated": false,
+    "bare_hython_without_pyyaml": true
+  },
+  "selection": {"winner": null, "automatic_ranking": false, "human_selection_required": true}
+}

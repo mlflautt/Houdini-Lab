@@ -1,0 +1,248 @@
+{
+  "id": "sop.vellum_relic_drop",
+  "version": "1.0.0",
+  "summary": "Build a bounded native Vellum cloth-and-pressure relic drop with rest, collider, cache, and comparison contracts.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "VELLUM_DROP"},
+    "lineage": {"type": "string", "default": "native Vellum relic drop; Houdini 22.0.368"},
+    "radius_x": {"type": "number", "min": 0.1, "max": 5.0, "default": 0.75},
+    "radius_y": {"type": "number", "min": 0.1, "max": 5.0, "default": 1.0},
+    "radius_z": {"type": "number", "min": 0.1, "max": 5.0, "default": 0.75},
+    "sphere_frequency": {"type": "integer", "min": 4, "max": 10, "default": 7},
+    "drop_height": {"type": "number", "min": 0.5, "max": 20.0, "default": 2.5},
+    "mass": {"type": "number", "min": 0.001, "max": 100.0, "default": 0.1},
+    "thickness": {"type": "number", "min": 0.001, "max": 1.0, "default": 0.04},
+    "stretch_stiffness": {"type": "number", "min": 0.001, "max": 10.0, "default": 1.0},
+    "stretch_exponent": {"type": "integer", "min": -10, "max": 10, "default": 5},
+    "bend_stiffness": {"type": "number", "min": 0.001, "max": 10.0, "default": 1.0},
+    "bend_exponent": {"type": "integer", "min": -10, "max": 10, "default": -1},
+    "substeps": {"type": "integer", "min": 1, "max": 5, "default": 2},
+    "constraint_iterations": {"type": "integer", "min": 10, "max": 200, "default": 50},
+    "smoothing_iterations": {"type": "integer", "min": 0, "max": 50, "default": 5},
+    "gravity_y": {"type": "number", "min": -50.0, "max": 50.0, "default": -9.80665},
+    "collider_size": {"type": "number", "min": 1.0, "max": 100.0, "default": 8.0},
+    "collider_thickness": {"type": "number", "min": 0.01, "max": 2.0, "default": 0.25},
+    "collider_center_y": {"type": "number", "min": -10.0, "max": 10.0, "default": -0.125},
+    "start_frame": {"type": "number", "min": -100000.0, "max": 100000.0, "default": 1.0},
+    "end_frame": {"type": "number", "min": -100000.0, "max": 100000.0, "default": 24.0},
+    "frame_step": {"type": "number", "min": 0.001, "max": 1000.0, "default": 1.0},
+    "cache_path": {"type": "string", "default": "$JOB/cache/vellum_relic_drop/v001/vellum_relic_drop.$F4.bgeo.sc"},
+    "rest_compare_x": {"type": "number", "min": -100.0, "max": 100.0, "default": -2.0},
+    "sim_compare_x": {"type": "number", "min": -100.0, "max": 100.0, "default": 2.0}
+  },
+  "references": {},
+  "nodes": [
+    {
+      "id": "source",
+      "type": "sphere",
+      "name": "{{run_code}}_SOURCE",
+      "role": "simulation_source",
+      "position": [-4.0, 10.0],
+      "params": {
+        "type": 2,
+        "rad": ["{{radius_x}}", "{{radius_y}}", "{{radius_z}}"],
+        "freq": "{{sphere_frequency}}",
+        "ty": "{{drop_height}}"
+      },
+      "comment": "{{lineage}}; closed editable polygon source"
+    },
+    {
+      "id": "rest",
+      "type": "null",
+      "name": "OUT_{{run_code}}_REST",
+      "role": "rest_geometry_contract",
+      "position": [-4.0, 8.0],
+      "params": {},
+      "comment": "{{lineage}}; time-independent rest geometry contract"
+    },
+    {
+      "id": "cloth",
+      "type": "vellumconstraints",
+      "name": "{{run_code}}_CLOTH_CONSTRAINTS",
+      "role": "cloth_constraints",
+      "position": [-2.0, 6.0],
+      "params": {
+        "constrainttype": "cloth",
+        "domass": "on",
+        "mass": "{{mass}}",
+        "dothickness": "on",
+        "thickness": "{{thickness}}",
+        "stretchstiffness": "{{stretch_stiffness}}",
+        "stretchstiffnessexp": "{{stretch_exponent}}",
+        "bendstiffness": "{{bend_stiffness}}",
+        "bendstiffnessexp": "{{bend_exponent}}"
+      },
+      "comment": "{{lineage}}; native cloth distance and bend constraints"
+    },
+    {
+      "id": "pressure",
+      "type": "vellumconstraints",
+      "name": "{{run_code}}_PRESSURE_CONSTRAINTS",
+      "role": "pressure_constraints",
+      "position": [-2.0, 4.0],
+      "params": {"constrainttype": "pressure", "piecemode": "connectivity"},
+      "comment": "{{lineage}}; native pressure constraint preserves closed-piece volume"
+    },
+    {
+      "id": "constraints",
+      "type": "null",
+      "name": "OUT_{{run_code}}_CONSTRAINTS",
+      "role": "constraint_geometry_contract",
+      "position": [1.0, 4.0],
+      "params": {},
+      "comment": "{{lineage}}; explicit Vellum constraint-geometry contract"
+    },
+    {
+      "id": "collider_source",
+      "type": "box",
+      "name": "{{run_code}}_COLLIDER_SOURCE",
+      "role": "collision_source",
+      "position": [-6.0, 4.0],
+      "params": {
+        "size": ["{{collider_size}}", "{{collider_thickness}}", "{{collider_size}}"],
+        "ty": "{{collider_center_y}}"
+      },
+      "comment": "{{lineage}}; editable closed floor collider"
+    },
+    {
+      "id": "collider",
+      "type": "null",
+      "name": "OUT_{{run_code}}_COLLIDER",
+      "role": "collision_geometry_contract",
+      "position": [-5.0, 2.0],
+      "params": {},
+      "comment": "{{lineage}}; explicit third-input collider contract"
+    },
+    {
+      "id": "solver",
+      "type": "vellumsolver",
+      "name": "{{run_code}}_SOLVER",
+      "role": "vellum_dynamic_solver",
+      "position": [-2.0, 1.0],
+      "params": {
+        "simulationtype": "dynamic",
+        "substeps": "{{substeps}}",
+        "niter": "{{constraint_iterations}}",
+        "smoothiter": "{{smoothing_iterations}}",
+        "gravityy": "{{gravity_y}}",
+        "enablecollisions": 1,
+        "doselfcollisions": 1,
+        "autoresim": 1
+      },
+      "comment": "{{lineage}}; dynamic native Vellum solve, explicit bounded range required"
+    },
+    {
+      "id": "sim_raw",
+      "type": "null",
+      "name": "OUT_{{run_code}}_SIM_RAW",
+      "role": "raw_simulation_contract",
+      "position": [-2.0, -1.0],
+      "params": {},
+      "comment": "{{lineage}}; uncached temporal simulation output"
+    },
+    {
+      "id": "cache",
+      "type": "filecache",
+      "name": "{{run_code}}_FILE_CACHE",
+      "role": "simulation_cache",
+      "position": [-2.0, -3.0],
+      "params": {
+        "file": "{{cache_path}}",
+        "trange": "normal",
+        "f1": "{{start_frame}}",
+        "f2": "{{end_frame}}",
+        "f3": "{{frame_step}}",
+        "initsim": 1,
+        "loadfromdisk": 0
+      },
+      "comment": "{{lineage}}; project-relative versioned cache path; never saved implicitly"
+    },
+    {
+      "id": "sim_cache",
+      "type": "null",
+      "name": "OUT_{{run_code}}_CACHE",
+      "role": "simulation_cache_contract",
+      "position": [-2.0, -5.0],
+      "params": {},
+      "comment": "{{lineage}}; cache boundary; writing requires a separate approved operation"
+    },
+    {
+      "id": "rest_compare",
+      "type": "xform",
+      "name": "{{run_code}}_REST_COMPARE",
+      "role": "rest_comparison_layout",
+      "position": [-5.0, -7.0],
+      "params": {"tx": "{{rest_compare_x}}"},
+      "comment": "{{lineage}}; rest-state presentation offset only"
+    },
+    {
+      "id": "sim_compare",
+      "type": "xform",
+      "name": "{{run_code}}_SIM_COMPARE",
+      "role": "simulation_comparison_layout",
+      "position": [-1.0, -7.0],
+      "params": {"tx": "{{sim_compare_x}}"},
+      "comment": "{{lineage}}; simulated-state presentation offset only"
+    },
+    {
+      "id": "compare_merge",
+      "type": "merge",
+      "name": "{{run_code}}_COMPARE_MERGE",
+      "role": "rest_sim_comparison",
+      "position": [-3.0, -9.0],
+      "params": {},
+      "comment": "{{lineage}}; rest, simulated, and collider geometry remain editable"
+    },
+    {
+      "id": "compare",
+      "type": "null",
+      "name": "OUT_{{run_code}}_COMPARE",
+      "role": "simulation_comparison_output",
+      "position": [-3.0, -11.0],
+      "params": {},
+      "comment": "{{lineage}}; final comparison contract; no automatic aesthetic ranking",
+      "flags": {"display": true, "render": true}
+    }
+  ],
+  "connections": [
+    ["source", 0, "rest", 0],
+    ["rest", 0, "cloth", 0],
+    ["cloth", 0, "pressure", 0],
+    ["cloth", 1, "pressure", 1],
+    ["pressure", 1, "constraints", 0],
+    ["collider_source", 0, "collider", 0],
+    ["pressure", 0, "solver", 0],
+    ["pressure", 1, "solver", 1],
+    ["collider", 0, "solver", 2],
+    ["solver", 0, "sim_raw", 0],
+    ["sim_raw", 0, "cache", 0],
+    ["cache", 0, "sim_cache", 0],
+    ["rest", 0, "rest_compare", 0],
+    ["sim_cache", 0, "sim_compare", 0],
+    ["rest_compare", 0, "compare_merge", 0],
+    ["sim_compare", 0, "compare_merge", 1],
+    ["collider", 0, "compare_merge", 2],
+    ["compare_merge", 0, "compare", 0]
+  ],
+  "outputs": ["rest", "constraints", "collider", "sim_raw", "sim_cache", "compare"],
+  "meta": {
+    "depends": [],
+    "cook_budget": {
+      "scope": "frame_range",
+      "max_frames": 48,
+      "max_points": 50000,
+      "max_primitives": 50000,
+      "max_memory_bytes": 536870912,
+      "max_seconds": 90
+    },
+    "cache": {
+      "format": ".bgeo.sc",
+      "time_dependent": true,
+      "simulation_sequence": true,
+      "write_implicit": false
+    },
+    "license": "houdini-apprentice-noncommercial"
+  }
+}

@@ -1,4 +1,5 @@
 """Bridge auth unit tests (no Houdini)."""
+
 from __future__ import annotations
 
 import os
@@ -22,9 +23,18 @@ def test_sign_verify_roundtrip():
 def test_load_secret_missing(monkeypatch):
     monkeypatch.delenv("HERMES_HOUDINI_BRIDGE_SECRET", raising=False)
     import bridge.auth as auth
+
     try:
         auth.load_secret()
     except BridgeError:
         pass
     else:
         raise AssertionError("expected BridgeError")
+
+
+def test_bridge_entrypoint_modules_import():
+    import bridge.client
+    import bridge.server
+
+    assert bridge.client.Client
+    assert bridge.server.serve

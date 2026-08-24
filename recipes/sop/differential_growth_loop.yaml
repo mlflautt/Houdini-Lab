@@ -1,0 +1,221 @@
+{
+  "id": "sop.differential_growth_loop",
+  "version": "1.0.0",
+  "summary": "Build three editable source curves around one bounded native Solver differential-growth loop with curve, wire, and comparison contracts.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "DIFF_GROWTH"},
+    "lineage": {"type": "string", "default": "native differential growth; Houdini 22.0.368"},
+    "candidate_index": {"type": "integer", "min": 0, "max": 2, "default": 1},
+    "circle_radius": {"type": "number", "min": 0.25, "max": 5.0, "default": 1.0},
+    "ellipse_radius_x": {"type": "number", "min": 0.25, "max": 5.0, "default": 1.25},
+    "ellipse_radius_y": {"type": "number", "min": 0.25, "max": 5.0, "default": 0.72},
+    "source_divisions": {"type": "integer", "min": 24, "max": 256, "default": 64},
+    "spiral_turns": {"type": "number", "min": 0.5, "max": 6.0, "default": 2.5},
+    "spiral_start_radius": {"type": "number", "min": 0.01, "max": 2.0, "default": 0.18},
+    "spiral_end_radius": {"type": "number", "min": 0.1, "max": 5.0, "default": 1.3},
+    "source_jitter": {"type": "number", "min": 0.0, "max": 0.25, "default": 0.025},
+    "noise_element_size": {"type": "number", "min": 0.05, "max": 5.0, "default": 0.35},
+    "noise_offset_x": {"type": "number", "min": -1000.0, "max": 1000.0, "default": 0.0},
+    "noise_offset_y": {"type": "number", "min": -1000.0, "max": 1000.0, "default": 0.0},
+    "noise_offset_z": {"type": "number", "min": -1000.0, "max": 1000.0, "default": 0.0},
+    "initial_segment_length": {"type": "number", "min": 0.02, "max": 0.25, "default": 0.1},
+    "start_frame": {"type": "number", "min": -100000.0, "max": 100000.0, "default": 1.0},
+    "wire_radius": {"type": "number", "min": 0.002, "max": 0.25, "default": 0.025},
+    "wire_divisions": {"type": "integer", "min": 3, "max": 8, "default": 4},
+    "rest_compare_x": {"type": "number", "min": -100.0, "max": 100.0, "default": -7.0},
+    "growth_compare_x": {"type": "number", "min": -100.0, "max": 100.0, "default": 3.0}
+  },
+  "references": {
+    "sidefx_complex_growth": "https://www.sidefx.com/tutorials/complex-growth-in-2-nodes/",
+    "sidefx_attribute_blur": "https://www.sidefx.com/docs/houdini/nodes/sop/attribblur.html",
+    "sidefx_resample": "https://www.sidefx.com/docs/houdini/nodes/sop/resample.html",
+    "sidefx_polywire": "https://www.sidefx.com/docs/houdini/nodes/sop/polywire.html"
+  },
+  "nodes": [
+    {
+      "id": "source_circle",
+      "type": "circle",
+      "name": "{{run_code}}_SOURCE_CIRCLE",
+      "role": "growth_source_candidate_circle",
+      "position": [-6.0, 12.0],
+      "params": {"type": "poly", "radx": "{{circle_radius}}", "rady": "{{circle_radius}}", "divs": "{{source_divisions}}"},
+      "comment": "{{lineage}}; candidate A; closed circular polygon baseline"
+    },
+    {
+      "id": "source_ellipse",
+      "type": "circle",
+      "name": "{{run_code}}_SOURCE_ELLIPSE",
+      "role": "growth_source_candidate_ellipse",
+      "position": [-2.0, 12.0],
+      "params": {"type": "poly", "radx": "{{ellipse_radius_x}}", "rady": "{{ellipse_radius_y}}", "divs": "{{source_divisions}}"},
+      "comment": "{{lineage}}; candidate B; closed elliptical polygon"
+    },
+    {
+      "id": "source_spiral",
+      "type": "spiral",
+      "name": "{{run_code}}_SOURCE_SPIRAL",
+      "role": "growth_source_candidate_spiral",
+      "position": [2.0, 12.0],
+      "params": {
+        "type": 1,
+        "height": 0.0,
+        "turns": "{{spiral_turns}}",
+        "radiusmode": 0,
+        "startradius": "{{spiral_start_radius}}",
+        "endradius": "{{spiral_end_radius}}",
+        "divsmode": 1,
+        "divsperturn": 48.0
+      },
+      "comment": "{{lineage}}; candidate C; open planar spiral"
+    },
+    {
+      "id": "source_select",
+      "type": "switch",
+      "name": "{{run_code}}_SELECT_SOURCE",
+      "role": "human_source_selector",
+      "position": [-2.0, 10.0],
+      "params": {"input": "{{candidate_index}}"},
+      "comment": "{{lineage}}; explicit human preview choice; no winner implied"
+    },
+    {
+      "id": "source_noise",
+      "type": "mountain::2.0",
+      "name": "{{run_code}}_SEEDED_PERTURB",
+      "role": "deterministic_source_perturbation",
+      "position": [-2.0, 8.0],
+      "params": {
+        "height": "{{source_jitter}}",
+        "elementsize": "{{noise_element_size}}",
+        "offsetx": "{{noise_offset_x}}",
+        "offsety": "{{noise_offset_y}}",
+        "offsetz": "{{noise_offset_z}}",
+        "updatenmls": 0
+      },
+      "comment": "{{lineage}}; native seed-derived symmetry break"
+    },
+    {
+      "id": "initial_resample",
+      "type": "resample",
+      "name": "{{run_code}}_INITIAL_EDGE_SPACING",
+      "role": "initial_edge_spacing",
+      "position": [-2.0, 6.0],
+      "params": {"method": 0, "dolength": 1, "length": "{{initial_segment_length}}", "useattribs": 0},
+      "comment": "{{lineage}}; bounded initial curve spacing"
+    },
+    {
+      "id": "rest_curve",
+      "type": "null",
+      "name": "OUT_{{run_code}}_REST_CURVE",
+      "role": "rest_curve_contract",
+      "position": [-5.0, 4.0],
+      "params": {},
+      "comment": "{{lineage}}; time-independent selected source contract"
+    },
+    {
+      "id": "solver",
+      "type": "solver",
+      "name": "{{run_code}}_SOLVER",
+      "role": "native_differential_growth_solver",
+      "position": [-1.0, 4.0],
+      "params": {"startframe": "{{start_frame}}", "substep": 1, "cacheenabled": 1, "cachetodisk": 0, "cachemaxsize": 512},
+      "comment": "{{lineage}}; editable feedback subnet populated by registered native graph tool"
+    },
+    {
+      "id": "growth_curve",
+      "type": "null",
+      "name": "OUT_{{run_code}}_GROWTH_CURVE",
+      "role": "grown_curve_contract",
+      "position": [-1.0, 2.0],
+      "params": {},
+      "comment": "{{lineage}}; raw time-dependent differential-growth curve"
+    },
+    {
+      "id": "rest_wire",
+      "type": "polywire",
+      "name": "{{run_code}}_REST_WIRE",
+      "role": "rest_renderable_wire",
+      "position": [-5.0, 0.0],
+      "params": {"radius": "{{wire_radius}}", "div": "{{wire_divisions}}", "usescaleattrib": 0},
+      "comment": "{{lineage}}; native renderable rest-state surface"
+    },
+    {
+      "id": "growth_wire",
+      "type": "polywire",
+      "name": "OUT_{{run_code}}_GROWTH_WIRE",
+      "role": "grown_renderable_wire_contract",
+      "position": [-1.0, 0.0],
+      "params": {"radius": "{{wire_radius}}", "div": "{{wire_divisions}}", "usescaleattrib": 0},
+      "comment": "{{lineage}}; renderable grown-surface contract"
+    },
+    {
+      "id": "rest_compare",
+      "type": "xform",
+      "name": "{{run_code}}_REST_COMPARE",
+      "role": "rest_comparison_layout",
+      "position": [-5.0, -2.0],
+      "params": {"tx": "{{rest_compare_x}}"},
+      "comment": "{{lineage}}; presentation-only rest offset"
+    },
+    {
+      "id": "growth_compare",
+      "type": "xform",
+      "name": "{{run_code}}_GROWTH_COMPARE",
+      "role": "growth_comparison_layout",
+      "position": [-1.0, -2.0],
+      "params": {"tx": "{{growth_compare_x}}"},
+      "comment": "{{lineage}}; presentation-only final offset"
+    },
+    {
+      "id": "compare_merge",
+      "type": "merge",
+      "name": "{{run_code}}_COMPARE_MERGE",
+      "role": "rest_growth_comparison",
+      "position": [-3.0, -4.0],
+      "params": {},
+      "comment": "{{lineage}}; rest then growth ordering is a structural contract"
+    },
+    {
+      "id": "compare",
+      "type": "null",
+      "name": "OUT_{{run_code}}_COMPARE",
+      "role": "differential_growth_comparison_output",
+      "position": [-3.0, -6.0],
+      "params": {},
+      "comment": "{{lineage}}; final editable comparison; human judgment retained",
+      "flags": {"display": true, "render": true}
+    }
+  ],
+  "connections": [
+    ["source_circle", 0, "source_select", 0],
+    ["source_ellipse", 0, "source_select", 1],
+    ["source_spiral", 0, "source_select", 2],
+    ["source_select", 0, "source_noise", 0],
+    ["source_noise", 0, "initial_resample", 0],
+    ["initial_resample", 0, "rest_curve", 0],
+    ["rest_curve", 0, "solver", 0],
+    ["solver", 0, "growth_curve", 0],
+    ["rest_curve", 0, "rest_wire", 0],
+    ["growth_curve", 0, "growth_wire", 0],
+    ["rest_wire", 0, "rest_compare", 0],
+    ["growth_wire", 0, "growth_compare", 0],
+    ["rest_compare", 0, "compare_merge", 0],
+    ["growth_compare", 0, "compare_merge", 1],
+    ["compare_merge", 0, "compare", 0]
+  ],
+  "outputs": ["rest_curve", "growth_curve", "growth_wire", "compare"],
+  "meta": {
+    "depends": [],
+    "cook_budget": {
+      "scope": "frame_range",
+      "max_frames": 24,
+      "max_points": 50000,
+      "max_primitives": 50000,
+      "max_memory_bytes": 536870912,
+      "max_seconds": 90
+    },
+    "cache": {"time_dependent": true, "memory_only": true, "write_implicit": false},
+    "license": "houdini-apprentice-noncommercial"
+  }
+}

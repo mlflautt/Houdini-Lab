@@ -1,0 +1,256 @@
+{
+  "id": "sop.lsystem_botanical",
+  "version": "1.0.0",
+  "summary": "Build three safe registered native L-System botanical grammars with editable skeleton, PolyWire, human-selection, and comparison contracts.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "BOTANICAL"},
+    "lineage": {"type": "string", "default": "native L-System botanical grammar; Houdini 22.0.368"},
+    "generations": {"type": "integer", "min": 1, "max": 6, "default": 6},
+    "seed_canopy": {"type": "integer", "min": 0, "max": 2147483647, "default": 4103},
+    "seed_fern": {"type": "integer", "min": 0, "max": 2147483647, "default": 4204},
+    "seed_coral": {"type": "integer", "min": 0, "max": 2147483647, "default": 4314},
+    "candidate_index": {"type": "integer", "min": 0, "max": 2, "default": 0},
+    "wire_radius": {"type": "number", "min": 0.002, "max": 0.06, "default": 0.018}
+  },
+  "references": {},
+  "nodes": [
+    {
+      "id": "skeleton_canopy",
+      "type": "lsystem",
+      "name": "{{run_code}}_CANOPY_SKELETON",
+      "role": "botanical_skeleton_canopy",
+      "position": [-8.0, 8.0],
+      "params": {
+        "type": 0,
+        "generations": "{{generations}}",
+        "randscale": 0.06,
+        "randseed": "{{seed_canopy}}",
+        "contAngl": 0,
+        "contLength": 0,
+        "contWidth": 0,
+        "pointwidth": 1,
+        "stepinit": 0.22,
+        "stepscale": 0.82,
+        "angleinit": 24.0,
+        "anglescale": 1.0,
+        "thickinit": 1.0,
+        "thickscale": 0.82,
+        "usefile": 0,
+        "premise": "a(\"Cd\",0.12,0.65,0.22)F(0.8)A",
+        "numrules": 1,
+        "userule1": 1,
+        "rule1": "A=F[+A][-A][/&A]"
+      },
+      "comment": "{{lineage}}; registered 3D canopy grammar; no arbitrary rule input"
+    },
+    {
+      "id": "wire_canopy",
+      "type": "polywire",
+      "name": "{{run_code}}_CANOPY_POLYWIRE",
+      "role": "botanical_polywire_canopy",
+      "position": [-8.0, 6.0],
+      "params": {"radius": "{{wire_radius}}", "usescaleattrib": 1, "scaleattrib": "width", "div": 3, "usedivattrib": 0, "segs": 1, "dotexture": 1},
+      "comment": "{{lineage}}; native editable curve-to-wire presentation"
+    },
+    {
+      "id": "out_canopy",
+      "type": "null",
+      "name": "OUT_{{run_code}}_CANOPY",
+      "role": "botanical_wire_contract_canopy",
+      "position": [-8.0, 4.0],
+      "comment": "{{lineage}}; canopy wire contract"
+    },
+    {
+      "id": "compare_canopy",
+      "type": "xform",
+      "name": "{{run_code}}_CANOPY_COMPARE_XFORM",
+      "role": "botanical_compare_transform_canopy",
+      "position": [-8.0, 2.0],
+      "params": {"tx": -2.0},
+      "comment": "{{lineage}}; comparison placement only"
+    },
+    {
+      "id": "skeleton_fern",
+      "type": "lsystem",
+      "name": "{{run_code}}_FERN_SKELETON",
+      "role": "botanical_skeleton_fern",
+      "position": [-3.0, 8.0],
+      "params": {
+        "type": 0,
+        "generations": "{{generations}}",
+        "randscale": 0.06,
+        "randseed": "{{seed_fern}}",
+        "contAngl": 0,
+        "contLength": 0,
+        "contWidth": 0,
+        "pointwidth": 1,
+        "stepinit": 0.025,
+        "stepscale": 0.78,
+        "angleinit": 22.5,
+        "anglescale": 1.0,
+        "thickinit": 1.0,
+        "thickscale": 0.78,
+        "usefile": 0,
+        "premise": "a(\"Cd\",0.10,0.35,0.08)X",
+        "numrules": 2,
+        "userule1": 1,
+        "rule1": "X=F[+X]F[-X]+X",
+        "userule2": 1,
+        "rule2": "F=FF"
+      },
+      "comment": "{{lineage}}; registered planar fern grammar; no arbitrary rule input"
+    },
+    {
+      "id": "wire_fern",
+      "type": "polywire",
+      "name": "{{run_code}}_FERN_POLYWIRE",
+      "role": "botanical_polywire_fern",
+      "position": [-3.0, 6.0],
+      "params": {"radius": "{{wire_radius}}", "usescaleattrib": 1, "scaleattrib": "width", "div": 3, "usedivattrib": 0, "segs": 1, "dotexture": 1},
+      "comment": "{{lineage}}; native editable curve-to-wire presentation"
+    },
+    {
+      "id": "out_fern",
+      "type": "null",
+      "name": "OUT_{{run_code}}_FERN",
+      "role": "botanical_wire_contract_fern",
+      "position": [-3.0, 4.0],
+      "comment": "{{lineage}}; fern wire contract"
+    },
+    {
+      "id": "compare_fern",
+      "type": "xform",
+      "name": "{{run_code}}_FERN_COMPARE_XFORM",
+      "role": "botanical_compare_transform_fern",
+      "position": [-3.0, 2.0],
+      "params": {"tx": 0.0},
+      "comment": "{{lineage}}; comparison placement only"
+    },
+    {
+      "id": "skeleton_coral",
+      "type": "lsystem",
+      "name": "{{run_code}}_CORAL_SKELETON",
+      "role": "botanical_skeleton_coral",
+      "position": [2.0, 8.0],
+      "params": {
+        "type": 0,
+        "generations": "{{generations}}",
+        "randscale": 0.06,
+        "randseed": "{{seed_coral}}",
+        "contAngl": 0,
+        "contLength": 0,
+        "contWidth": 0,
+        "pointwidth": 1,
+        "stepinit": 0.3,
+        "stepscale": 0.76,
+        "angleinit": 28.0,
+        "anglescale": 1.0,
+        "thickinit": 1.0,
+        "thickscale": 0.76,
+        "usefile": 0,
+        "premise": "a(\"Cd\",0.75,0.25,0.12)A",
+        "numrules": 1,
+        "userule1": 1,
+        "rule1": "A=F[+A][-A][&A][^A][/A]"
+      },
+      "comment": "{{lineage}}; registered radial coral grammar; no arbitrary rule input"
+    },
+    {
+      "id": "wire_coral",
+      "type": "polywire",
+      "name": "{{run_code}}_CORAL_POLYWIRE",
+      "role": "botanical_polywire_coral",
+      "position": [2.0, 6.0],
+      "params": {"radius": "{{wire_radius}}", "usescaleattrib": 1, "scaleattrib": "width", "div": 3, "usedivattrib": 0, "segs": 1, "dotexture": 1},
+      "comment": "{{lineage}}; native editable curve-to-wire presentation"
+    },
+    {
+      "id": "out_coral",
+      "type": "null",
+      "name": "OUT_{{run_code}}_CORAL",
+      "role": "botanical_wire_contract_coral",
+      "position": [2.0, 4.0],
+      "comment": "{{lineage}}; coral wire contract"
+    },
+    {
+      "id": "compare_coral",
+      "type": "xform",
+      "name": "{{run_code}}_CORAL_COMPARE_XFORM",
+      "role": "botanical_compare_transform_coral",
+      "position": [2.0, 2.0],
+      "params": {"tx": 2.0},
+      "comment": "{{lineage}}; comparison placement only"
+    },
+    {
+      "id": "selector",
+      "type": "switch",
+      "name": "{{run_code}}_SELECT_BOTANICAL",
+      "role": "human_botanical_selector",
+      "position": [7.0, 4.0],
+      "params": {"input": "{{candidate_index}}"},
+      "comment": "{{lineage}}; human selection only; no winner implied"
+    },
+    {
+      "id": "selected",
+      "type": "null",
+      "name": "OUT_{{run_code}}_SELECTED",
+      "role": "botanical_selected_contract",
+      "position": [7.0, 2.0],
+      "comment": "{{lineage}}; selected editable botanical contract"
+    },
+    {
+      "id": "compare_merge",
+      "type": "merge",
+      "name": "{{run_code}}_COMPARE_MERGE",
+      "role": "botanical_compare_merge",
+      "position": [-3.0, 0.0],
+      "comment": "{{lineage}}; exact comparison order canopy, fern, coral"
+    },
+    {
+      "id": "compare_frame",
+      "type": "xform",
+      "name": "{{run_code}}_COMPARE_FRAME",
+      "role": "botanical_compare_frame",
+      "position": [-3.0, -1.0],
+      "params": {"ty": -0.2, "scale": 0.72},
+      "comment": "{{lineage}}; explicit comparison framing transform"
+    },
+    {
+      "id": "compare",
+      "type": "null",
+      "name": "OUT_{{run_code}}_COMPARE",
+      "role": "botanical_compare_contract",
+      "position": [-3.0, -3.0],
+      "flags": {"display": true, "render": true},
+      "comment": "{{lineage}}; all candidates preserved; no automatic ranking"
+    }
+  ],
+  "connections": [
+    ["skeleton_canopy", 0, "wire_canopy", 0],
+    ["wire_canopy", 0, "out_canopy", 0],
+    ["out_canopy", 0, "compare_canopy", 0],
+    ["skeleton_fern", 0, "wire_fern", 0],
+    ["wire_fern", 0, "out_fern", 0],
+    ["out_fern", 0, "compare_fern", 0],
+    ["skeleton_coral", 0, "wire_coral", 0],
+    ["wire_coral", 0, "out_coral", 0],
+    ["out_coral", 0, "compare_coral", 0],
+    ["out_canopy", 0, "selector", 0],
+    ["out_fern", 0, "selector", 1],
+    ["out_coral", 0, "selector", 2],
+    ["selector", 0, "selected", 0],
+    ["compare_canopy", 0, "compare_merge", 0],
+    ["compare_fern", 0, "compare_merge", 1],
+    ["compare_coral", 0, "compare_merge", 2],
+    ["compare_merge", 0, "compare_frame", 0],
+    ["compare_frame", 0, "compare", 0]
+  ],
+  "outputs": ["out_canopy", "out_fern", "out_coral", "selected", "compare"],
+  "meta": {
+    "algorithm": {"context": "SOP", "native_nodes": ["lsystem", "polywire", "xform", "switch", "merge", "null"], "python_geometry_compute": false},
+    "cook_budget": {"scope": "three_static_registered_grammars", "max_generations": 6, "max_points": 250000, "max_primitives": 250000, "max_seconds": 90},
+    "selection": {"method": "human", "winner": null, "automatic_ranking": false, "candidate_order": ["canopy", "fern", "coral"]},
+    "source": "https://www.sidefx.com/docs/houdini/nodes/sop/lsystem"
+  }
+}

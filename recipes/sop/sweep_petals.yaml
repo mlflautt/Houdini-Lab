@@ -1,26 +1,27 @@
-id: sop.sweep_petals
-version: 1.0.0
-summary: Sweep a cross-section curve along a growth curve to form petal/leaf shells.
-contexts: [SOP]
-inputs:
-  parent_path: {type: string}
-  section_path: {type: string, default: "/obj/HERMES_ASSET/SECTION_CURVE"}
-  guide_path: {type: string, default: "/obj/HERMES_ASSET/GROWTH_CURVE"}
-  divisions: {type: integer, min: 2, max: 200, default: 40}
-nodes:
-  - id: sweep
-    type: sweep
-    name: SWEEP_PETALS
-    params:
-      divs: "{{divisions}}"
-      # surface sweep mode; reference curves by connection
-connections:
-  - [section, 0, sweep, 0]
-  - [guide, 1, sweep, 0]
-outputs:
-  - sweep
-meta:
-  depends: []
-  cook_budget:
-    max_points: 3000000
-    max_seconds: 90
+{
+  "id": "sop.sweep_petals",
+  "version": "1.0.0",
+  "summary": "Sweep a cross-section curve along a growth curve to form petal or leaf shells.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "section_path": {"type": "string", "default": "/obj/HERMES_ASSET/SECTION_CURVE"},
+    "guide_path": {"type": "string", "default": "/obj/HERMES_ASSET/GROWTH_CURVE"}
+  },
+  "references": {
+    "section": "{{section_path}}",
+    "guide": "{{guide_path}}"
+  },
+  "nodes": [
+    {"id": "sweep", "type": "sweep::2.0", "name": "SWEEP_PETALS", "params": {}}
+  ],
+  "connections": [
+    ["section", 0, "sweep", 0],
+    ["guide", 0, "sweep", 1]
+  ],
+  "outputs": ["sweep"],
+  "meta": {
+    "depends": [],
+    "cook_budget": {"max_points": 3000000, "max_seconds": 90}
+  }
+}

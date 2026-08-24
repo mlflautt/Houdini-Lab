@@ -1,0 +1,190 @@
+{
+  "id": "generate.reaction_diffusion_pattern",
+  "version": "1.0.0",
+  "summary": "Build, validate, compare, and export three bounded native Copernicus Reaction-Diffusion patterns.",
+  "contexts": [
+    "COP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "generative",
+    "copernicus",
+    "reaction-diffusion",
+    "gray-scott",
+    "texture",
+    "mask",
+    "contact-sheet"
+  ],
+  "inputs": {
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "reaction_diffusion_001"
+    },
+    "network_parent_path": {
+      "type": "string",
+      "default": "/img"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483647,
+      "default": 3109
+    },
+    "resolution": {
+      "type": "integer",
+      "enum": [
+        64,
+        128,
+        256,
+        512
+      ],
+      "default": 256
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "iterations": {
+      "type": "integer",
+      "min": 1,
+      "max": 12,
+      "default": 8
+    },
+    "iterations_per_step": {
+      "type": "integer",
+      "min": 1,
+      "max": 12,
+      "default": 6
+    },
+    "activation_threshold": {
+      "type": "number",
+      "min": 0,
+      "max": 1,
+      "default": 0.62
+    },
+    "activation_width": {
+      "type": "number",
+      "min": 0,
+      "max": 0.5,
+      "default": 0.03
+    },
+    "noise_element_size": {
+      "type": "number",
+      "min": 0.01,
+      "max": 1,
+      "default": 0.12
+    }
+  },
+  "preconditions": [
+    "/img resolves to the Houdini image manager",
+    "the exact run-scoped CopNet name does not already exist",
+    "artifact_dir is absolute and inside an approved project root",
+    "output PNG and evidence paths do not already exist"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_copnet_and_before_recipe",
+  "cook_budget": {
+    "scope": "three_static_image_patterns",
+    "max_resolution": [
+      512,
+      512
+    ],
+    "max_contact_resolution": [
+      768,
+      256
+    ],
+    "max_integration_steps_per_candidate": 48,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_output_bytes": 104857600
+  },
+  "steps": [
+    {
+      "graph.apply_batch": "exact Float32 CopNet at explicit resolution"
+    },
+    {
+      "recipe.instantiate": "cop.reaction_diffusion_pattern@1.0.0"
+    },
+    {
+      "cop.reaction.validate": "explicit native cooks and pixel statistics"
+    },
+    {
+      "cop.image.export": "contact sheet and selected PNG through managed ROP Image nodes"
+    },
+    {
+      "graph.capture_svg": "deterministic Copernicus graph observation"
+    },
+    {
+      "graph.capture_manifest": "parameters, candidates, evidence paths, and source URLs"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "exact Cop category nodes inside an exact CopNet network",
+      "three explicit Reaction-Diffusion Begin and End pairs",
+      "shared activation feeds Small Waves, Large Waves, and Spots in preserved order",
+      "native mono-to-RGB ramps, human Switch, Contact Sheet, Null contracts, and ROP Image boundaries",
+      "no legacy Cop2 nodes, compiled cooks, live simulation, Python COP, generated VEX, or UI-state dependency"
+    ],
+    "data_checks": [
+      "every mono pattern has the requested resolution, Float32 storage, finite pixels, useful dynamic range, and useful standard deviation",
+      "contact-sheet resolution and total observed image-buffer memory remain within policy",
+      "iterations multiplied by iterations_per_step never exceeds 48 per candidate",
+      "Houdini node warnings or errors fail validation"
+    ],
+    "visual_checks": [
+      "contact sheet reads left-to-right as Small Waves, Large Waves, and Spots",
+      "each candidate uses a distinct native color ramp while its mono pattern remains upstream",
+      "selected PNG matches the explicit human Switch without deleting alternatives"
+    ],
+    "export_checks": [
+      "ROP Image uses an explicit connected input, current frame only, compiled cook off, and foreground execution",
+      "PNG header resolution and output-byte limit are verified after render",
+      "existing images are never overwritten"
+    ]
+  },
+  "outputs": [
+    "three_mono_pattern_contracts",
+    "selected_color_pattern_contract",
+    "no_winner_contact_sheet_contract",
+    "pixel_validation_json",
+    "selected_png",
+    "contact_sheet_png",
+    "graph_manifest_json",
+    "graph_svg",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_the_new_managed_copnet",
+  "failure_modes": [
+    "unsupported resolution or more than 48 integration steps is refused before mutation",
+    "exact network or node-name collisions cause transactional rollback",
+    "simulation, Live Simulation, compiled cooks, wrong candidate order, or unrelated ROPs are refused",
+    "nonfinite, flat, warning-bearing, oversized, slow, or incorrectly sized image results fail with evidence retained"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "id": "motion.particle_calligraphy",
+  "version": "1.0.0",
+  "summary": "Build, animate, validate, compare, and package evidence for native Particle Trail calligraphy.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "motion",
+    "particles",
+    "calligraphy",
+    "trails",
+    "generative",
+    "temporal",
+    "audio-reactive",
+    "verification"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "particle_calligraphy_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483436,
+      "default": 5201
+    },
+    "start_frame": {
+      "type": "integer",
+      "default": 1
+    },
+    "end_frame": {
+      "type": "integer",
+      "default": 48
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "birth_rate": {
+      "type": "number",
+      "min": 1,
+      "max": 64,
+      "default": 48
+    },
+    "particle_life": {
+      "type": "number",
+      "min": 0.25,
+      "max": 8,
+      "default": 3
+    },
+    "trail_frames": {
+      "type": "number",
+      "min": 1,
+      "max": 24,
+      "default": 12
+    },
+    "trail_substeps": {
+      "type": "integer",
+      "min": 2,
+      "max": 8,
+      "default": 8
+    },
+    "wire_radius": {
+      "type": "number",
+      "min": 0.002,
+      "max": 0.06,
+      "default": 0.035
+    },
+    "project_root": {
+      "type": "string",
+      "default": ""
+    },
+    "audio_envelope_relative_path": {
+      "type": "string",
+      "default": ""
+    },
+    "audio_modulation_depth": {
+      "type": "number",
+      "min": 0,
+      "max": 1,
+      "default": 0.5
+    }
+  },
+  "preconditions": [
+    "parent_node_id resolves to an explicit SOP-capable geometry object under /obj",
+    "the run-scoped exact node names and batch id do not already exist",
+    "artifact_dir is absolute and inside an approved project root",
+    "baked audio is optional JSON data relative to project_root; audio files and decoders are never invoked",
+    "viewer, viewport, and camera are all explicit when visual capture is requested"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe_and_before_optional_audio_keyframes",
+  "cook_budget": {
+    "scope": "inclusive_frame_range",
+    "max_frames": 48,
+    "max_trail_points": 100000,
+    "max_points": 100000,
+    "max_primitives": 100000,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.particle_calligraphy@1.0.0"
+    },
+    {
+      "motion.calligraphy.apply_audio_envelope": "optional project-relative baked envelope only"
+    },
+    {
+      "motion.calligraphy.validate": "every integer frame plus exact graph, attribute, resource, and selection contracts"
+    },
+    {
+      "graph.capture_svg": "selection-independent graph evidence"
+    },
+    {
+      "graph.capture_manifest": "controls, candidates, empty ratings, compatibility status, and lineage"
+    },
+    {
+      "viewport.capture": "optional explicit-camera comparison at the final frame"
+    },
+    {
+      "visual.analyze": "optional deterministic mechanical image gate after capture"
+    },
+    {
+      "verification.critique.package": "optional hashed local/external multimodal handoff; inference is not performed"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "three exact native Particle to Add to Attribute Create/Delete to Time Blend to Particle Trail to Time Shift to PolyWire branches",
+      "legacy vector2 life is normalized to scalar age and life through readable native SOPs",
+      "Time Shift half-frame compatibility is named, expression-visible, and integer rounding is disabled",
+      "fixed arc, fan, orbit Switch and comparison ordering; no deleted alternatives or automatic winner",
+      "geometry-only comparison and a separate native ID/seed label contract avoid render contamination",
+      "no Python SOP, generated VEX, selection, pane, display-chain, or hidden-frame dependency"
+    ],
+    "data_checks": [
+      "every requested frame records trail and tube points, primitives, bounds, memory, and cook time",
+      "non-empty frames expose scalar id, age, and life and all branches remain warning-free",
+      "final candidates are non-empty and spatially distinct; selection matches the human Switch",
+      "peak trail points and per-candidate topology stay below policy ceilings; original global frame is restored"
+    ],
+    "visual_checks": [
+      "comparison reads left-to-right as labeled arc, fan, orbit candidates with explicit seeds",
+      "deterministic PNG checks reject blank, crushed, blown, missing-panel, duplicate, tiny-subject, or likely-cropped evidence",
+      "a vision model may advise on composition and next edits only after deterministic gates pass"
+    ],
+    "model_checks": [
+      "no model download or inference occurs implicitly",
+      "local vision inference is preferred; external transfer is a separately approved operation",
+      "model, prompt, artifact hashes, response, and uncertainty must be recorded",
+      "model scores are advisory and cannot populate winner or human rating fields"
+    ]
+  },
+  "outputs": [
+    "three_editable_particle_trail_curve_contracts",
+    "three_editable_polywire_tube_contracts",
+    "human_selected_contract",
+    "no_winner_comparison_contract",
+    "separate_candidate_id_and_seed_label_contract",
+    "per_frame_validation_json",
+    "graph_manifest_json",
+    "graph_svg",
+    "optional_viewport_png_and_deterministic_visual_report",
+    "optional_hashed_multimodal_critique_packet",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_the_new_managed_branch_and_restore_prior_keyframes",
+  "failure_modes": [
+    "more than 48 frames or more than 100000 trail points is refused or fails validation",
+    "wrong Particle age/life shape, source primitive leakage, missing Time Blend, or missing half-frame shim is diagnosed explicitly",
+    "existing wind keyframes are never overwritten by baked audio modulation",
+    "invalid, traversing, out-of-project, wrong-fps, non-finite, or overlong envelope data is refused",
+    "viewport or model verification remains available_unverified when its explicit prerequisites are absent"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

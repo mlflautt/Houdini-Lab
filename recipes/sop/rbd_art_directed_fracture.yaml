@@ -1,0 +1,98 @@
+{
+  "id": "sop.rbd_art_directed_fracture",
+  "version": "1.0.0",
+  "summary": "Build a bounded native concrete-fracture study with three retained impact profiles, proxy Bullet solving, transform-point cache boundaries, and before/after comparison.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "RBD_FRACTURE"},
+    "lineage": {"type": "string", "default": "native H22 RBD art-directed fracture"},
+    "seed_radial": {"type": "integer", "min": 0, "max": 2147483647, "default": 1717},
+    "seed_offset": {"type": "integer", "min": 0, "max": 2147483647, "default": 1818},
+    "seed_layered": {"type": "integer", "min": 0, "max": 2147483647, "default": 1919},
+    "profile_index": {"type": "integer", "min": 0, "max": 2, "default": 0},
+    "start_frame": {"type": "integer", "min": 1, "max": 100000, "default": 1},
+    "end_frame": {"type": "integer", "min": 1, "max": 100000, "default": 48},
+    "bullet_substeps": {"type": "integer", "min": 1, "max": 10, "default": 5},
+    "constraint_iterations": {"type": "integer", "min": 1, "max": 50, "default": 10},
+    "primary_strength": {"type": "number", "min": 0.01, "max": 1000.0, "default": 40.0},
+    "chipping_strength": {"type": "number", "min": 0.01, "max": 1000.0, "default": 20.0},
+    "transform_cache": {"type": "string", "default": "$JOB/cache/rbd_fracture/transforms.$F4.bgeo.sc"}
+  },
+  "references": {
+    "sidefx_material_fracture": "https://www.sidefx.com/docs/houdini/nodes/sop/rbdmaterialfracture.html",
+    "sidefx_bullet_solver": "https://www.sidefx.com/docs/houdini/nodes/sop/rbdbulletsolver.html",
+    "sidefx_transform_pieces": "https://www.sidefx.com/docs/houdini/nodes/sop/xformpieces.html"
+  },
+  "nodes": [
+    {"id": "source_box", "type": "box", "name": "{{run_code}}_SOURCE_MONOLITH", "role": "rbd_source_monolith", "position": [-10, 22], "params": {"size": [2.4, 5.6, 2.4], "ty": 6.0}, "comment": "Closed proxy-budgeted monolith starts above the explicit Bullet ground plane."},
+    {"id": "source_bevel", "type": "polybevel::3.0", "name": "{{run_code}}_SOURCE_BEVEL", "role": "rbd_source_bevel", "position": [-10, 20], "params": {"offset": 0.16, "divisions": 3}, "comment": "Native editable edge treatment; no sculpted or generated mesh payload."},
+    {"id": "source_normal", "type": "normal", "name": "{{run_code}}_SOURCE_NORMALS", "role": "rbd_source_normals", "position": [-10, 18], "params": {}, "comment": "Explicit source shading contract."},
+    {"id": "source", "type": "null", "name": "OUT_{{run_code}}_SOURCE", "role": "rbd_source_contract", "position": [-10, 16], "params": {}, "comment": "Intact before-state and fracture input contract."},
+
+    {"id": "radial_volume", "type": "sphere", "name": "{{run_code}}_RADIAL_IMPACT_VOLUME", "role": "rbd_impact_volume_radial", "position": [-6, 22], "params": {"type": 2, "rad": [0.72, 0.72, 0.72], "tx": 0.62, "ty": 6.6, "tz": 0.62, "freq": 4}, "comment": "Compact upper-corner impact field."},
+    {"id": "radial_scatter", "type": "scatter::2.0", "name": "{{run_code}}_RADIAL_IMPACT_SCATTER", "role": "rbd_impact_scatter_radial", "position": [-6, 20], "params": {"forcetotal": 1, "npts": 8, "seed": "{{seed_radial}}"}, "comment": "Eight deterministic extra Voronoi points."},
+    {"id": "radial", "type": "null", "name": "OUT_{{run_code}}_IMPACT_RADIAL", "role": "rbd_impact_contract_radial", "position": [-6, 18], "params": {}, "comment": "Art-direction profile 0; retained for human selection."},
+
+    {"id": "offset_volume", "type": "sphere", "name": "{{run_code}}_OFFSET_IMPACT_VOLUME", "role": "rbd_impact_volume_offset", "position": [-2, 22], "params": {"type": 2, "rad": [0.92, 0.92, 0.92], "tx": -0.55, "ty": 5.2, "tz": -0.48, "freq": 4}, "comment": "Broader off-axis mid-body impact field."},
+    {"id": "offset_scatter", "type": "scatter::2.0", "name": "{{run_code}}_OFFSET_IMPACT_SCATTER", "role": "rbd_impact_scatter_offset", "position": [-2, 20], "params": {"forcetotal": 1, "npts": 12, "seed": "{{seed_offset}}"}, "comment": "Twelve deterministic extra Voronoi points."},
+    {"id": "offset", "type": "null", "name": "OUT_{{run_code}}_IMPACT_OFFSET", "role": "rbd_impact_contract_offset", "position": [-2, 18], "params": {}, "comment": "Art-direction profile 1; retained for human selection."},
+
+    {"id": "layer_top_volume", "type": "sphere", "name": "{{run_code}}_LAYER_TOP_VOLUME", "role": "rbd_impact_volume_layer_top", "position": [2, 22], "params": {"type": 2, "rad": [0.54, 0.54, 0.54], "tx": 0.48, "ty": 7.2, "tz": 0.0, "freq": 4}, "comment": "Upper layered impact cluster."},
+    {"id": "layer_top_scatter", "type": "scatter::2.0", "name": "{{run_code}}_LAYER_TOP_SCATTER", "role": "rbd_impact_scatter_layer_top", "position": [2, 20], "params": {"forcetotal": 1, "npts": 6, "seed": "{{seed_layered}}"}, "comment": "Six deterministic upper impact points."},
+    {"id": "layer_base_volume", "type": "sphere", "name": "{{run_code}}_LAYER_BASE_VOLUME", "role": "rbd_impact_volume_layer_base", "position": [6, 22], "params": {"type": 2, "rad": [0.54, 0.54, 0.54], "tx": -0.48, "ty": 4.6, "tz": 0.0, "freq": 4}, "comment": "Lower layered impact cluster."},
+    {"id": "layer_base_scatter", "type": "scatter::2.0", "name": "{{run_code}}_LAYER_BASE_SCATTER", "role": "rbd_impact_scatter_layer_base", "position": [6, 20], "params": {"forcetotal": 1, "npts": 6, "seed": "{{seed_layered}}"}, "comment": "Six deterministic lower impact points."},
+    {"id": "layer_merge", "type": "merge", "name": "{{run_code}}_LAYERED_IMPACT_MERGE", "role": "rbd_impact_merge_layered", "position": [4, 18], "params": {}, "comment": "Fixed top-then-base point ordering."},
+    {"id": "layered", "type": "null", "name": "OUT_{{run_code}}_IMPACT_LAYERED", "role": "rbd_impact_contract_layered", "position": [4, 16], "params": {}, "comment": "Art-direction profile 2; retained for human selection."},
+    {"id": "profile_switch", "type": "switch", "name": "{{run_code}}_SELECT_IMPACT_PROFILE", "role": "rbd_impact_human_selector", "position": [0, 14], "params": {"input": "{{profile_index}}"}, "comment": "Human-editable profile selection; no automatic winner."},
+
+    {"id": "fracture", "type": "rbdmaterialfracture::4.0", "name": "{{run_code}}_MATERIAL_FRACTURE", "role": "rbd_material_fracture", "position": [-6, 12], "params": {"materialtype": "concrete", "randomseed": "{{seed_radial}}", "concrete_fracturelevel": 2, "concrete_fractureseed1": "{{seed_radial}}", "concrete_fractureseed2": "{{seed_offset}}", "constraintsenable": 1, "concrete_applyconstraints": 1, "concrete_primarystrength": "{{primary_strength}}", "concrete_chippingstrength": "{{chipping_strength}}", "concrete_strengthvariance": 0.35}, "comment": "Pinned H22 three-output material fracture: geometry, Glue constraints, and proxy geometry."},
+    {"id": "rest", "type": "null", "name": "OUT_{{run_code}}_REST_PIECES", "role": "rbd_rest_pieces_contract", "position": [-9, 10], "params": {}, "comment": "Editable named polygon-piece rest contract."},
+    {"id": "constraints", "type": "null", "name": "OUT_{{run_code}}_CONSTRAINTS", "role": "rbd_constraints_contract", "position": [-6, 10], "params": {}, "comment": "Material-authored Glue constraint geometry contract."},
+    {"id": "proxy", "type": "null", "name": "OUT_{{run_code}}_PROXY", "role": "rbd_proxy_contract", "position": [-3, 10], "params": {}, "comment": "Material-authored proxy geometry contract."},
+    {"id": "configure", "type": "rbdconfigure", "name": "{{run_code}}_CONFIGURE", "role": "rbd_configure", "position": [-6, 8], "params": {"createpackedfragments": 1, "addactive1": 1, "active1": 1}, "comment": "Native packed-piece configuration; all pieces active for the bounded drop."},
+    {"id": "solver", "type": "rbdbulletsolver", "name": "{{run_code}}_BULLET_SOLVER", "role": "rbd_bullet_solver", "position": [-6, 6], "params": {"startframe": "{{start_frame}}", "substep": 1, "substeps": "{{bullet_substeps}}", "numiteration": "{{constraint_iterations}}", "cacheenabled": 1, "cachemaxsize": 512, "useground": 1, "ground_posy": 0.0, "enable_constraintbreaks": 1, "constraint_keepbroken": 0}, "comment": "One bounded in-process Bullet proxy solve with explicit ground and 512 MB DOP cache ceiling."},
+    {"id": "sim_raw", "type": "null", "name": "OUT_{{run_code}}_SIM_RAW", "role": "rbd_sim_raw_contract", "position": [-10, 4], "params": {}, "comment": "Packed simulated geometry before transform reconstruction."},
+    {"id": "sim_constraints", "type": "null", "name": "OUT_{{run_code}}_SIM_CONSTRAINTS", "role": "rbd_sim_constraints_contract", "position": [-7, 4], "params": {}, "comment": "Surviving simulated constraints for break-count validation."},
+    {"id": "transform_raw", "type": "null", "name": "OUT_{{run_code}}_TRANSFORMS_RAW", "role": "rbd_transform_raw_contract", "position": [-3, 4], "params": {}, "comment": "Bullet Simulation Points: stable name/P/orient/pivot/scale/v/w transform representation."},
+    {"id": "transform_cache", "type": "filecache", "name": "{{run_code}}_TRANSFORM_FILE_CACHE", "role": "rbd_transform_cache", "position": [-3, 2], "params": {"file": "{{transform_cache}}", "trange": "normal", "initsim": 0, "f3": 1, "loadfromdisk": 0}, "expressions": {"f1": "{{start_frame}} + 0", "f2": "{{end_frame}} + 0"}, "comment": "Configured transform-only cache; explicit constant range, RBD Solver-owned initialization, and no implicit disk write."},
+    {"id": "transforms", "type": "null", "name": "OUT_{{run_code}}_TRANSFORMS", "role": "rbd_transform_cache_contract", "position": [-3, 0], "params": {}, "comment": "Non-writing transform cache boundary."},
+    {"id": "rest_transforms", "type": "timeshift", "name": "{{run_code}}_REST_TRANSFORMS", "role": "rbd_rest_transform_contract", "position": [0, 2], "params": {"integerframe": 1}, "expressions": {"frame": "{{start_frame}} + 0"}, "comment": "Frozen start-frame transform points for explicit reconstruction."},
+    {"id": "reconstruct", "type": "xformpieces", "name": "{{run_code}}_RECONSTRUCT_PIECES", "role": "rbd_transform_reconstruction", "position": [-1, -2], "params": {"attribstotransform": "*", "invertxform": 0}, "comment": "Native Transform Pieces applies cached transforms to editable rest polygons."},
+    {"id": "after_normal", "type": "normal", "name": "{{run_code}}_AFTER_NORMALS", "role": "rbd_after_normals", "position": [-1, -4], "params": {}, "comment": "Explicit normals after transform reconstruction."},
+    {"id": "after", "type": "null", "name": "OUT_{{run_code}}_AFTER", "role": "rbd_after_contract", "position": [-1, -6], "params": {}, "comment": "Reconstructed editable after-state."},
+
+    {"id": "before_layout", "type": "xform", "name": "{{run_code}}_BEFORE_LAYOUT", "role": "rbd_before_layout", "position": [-7, -8], "params": {"tx": -3.2, "ty": -3.0}, "comment": "Intact before-state comparison placement."},
+    {"id": "after_layout", "type": "xform", "name": "{{run_code}}_AFTER_LAYOUT", "role": "rbd_after_layout", "position": [3, -8], "params": {"tx": 3.2}, "comment": "Simulated after-state comparison placement."},
+    {"id": "compare_merge", "type": "merge", "name": "{{run_code}}_BEFORE_AFTER_MERGE", "role": "rbd_comparison_merge", "position": [0, -10], "params": {}, "comment": "Fixed order: intact before, reconstructed after."},
+    {"id": "compare_frame", "type": "xform", "name": "{{run_code}}_COMPARE_FRAME", "role": "rbd_comparison_frame", "position": [0, -12], "params": {"scale": 0.8, "ty": 0.3}, "comment": "Presentation-only comparison framing."},
+    {"id": "compare", "type": "null", "name": "OUT_{{run_code}}_COMPARE", "role": "rbd_comparison_contract", "position": [0, -14], "params": {}, "comment": "Before/after visual proof; labels remain separate from render geometry.", "flags": {"display": true, "render": true}},
+    {"id": "before_label", "type": "font", "name": "{{run_code}}_BEFORE_LABEL", "role": "rbd_before_label", "position": [5, -10], "params": {"text": "BEFORE", "halign": "center", "fontsize": 0.28}, "comment": "Separate identity label."},
+    {"id": "before_label_layout", "type": "xform", "name": "{{run_code}}_BEFORE_LABEL_LAYOUT", "role": "rbd_before_label_layout", "position": [5, -12], "params": {"tx": -3.2, "ty": -2.8}, "comment": "Label layout only."},
+    {"id": "after_label", "type": "font", "name": "{{run_code}}_AFTER_LABEL", "role": "rbd_after_label", "position": [8, -10], "params": {"text": "AFTER", "halign": "center", "fontsize": 0.28}, "comment": "Separate identity label."},
+    {"id": "after_label_layout", "type": "xform", "name": "{{run_code}}_AFTER_LABEL_LAYOUT", "role": "rbd_after_label_layout", "position": [8, -12], "params": {"tx": 3.2, "ty": -0.2}, "comment": "Label layout only."},
+    {"id": "labels", "type": "merge", "name": "OUT_{{run_code}}_LABELS", "role": "rbd_labels_contract", "position": [7, -14], "params": {}, "comment": "Labels are intentionally excluded from render geometry."}
+  ],
+  "connections": [
+    ["source_box", 0, "source_bevel", 0], ["source_bevel", 0, "source_normal", 0], ["source_normal", 0, "source", 0],
+    ["radial_volume", 0, "radial_scatter", 0], ["radial_scatter", 0, "radial", 0],
+    ["offset_volume", 0, "offset_scatter", 0], ["offset_scatter", 0, "offset", 0],
+    ["layer_top_volume", 0, "layer_top_scatter", 0], ["layer_base_volume", 0, "layer_base_scatter", 0], ["layer_top_scatter", 0, "layer_merge", 0], ["layer_base_scatter", 0, "layer_merge", 1], ["layer_merge", 0, "layered", 0],
+    ["radial", 0, "profile_switch", 0], ["offset", 0, "profile_switch", 1], ["layered", 0, "profile_switch", 2],
+    ["source", 0, "fracture", 0], ["profile_switch", 0, "fracture", 3],
+    ["fracture", 0, "rest", 0], ["fracture", 1, "constraints", 0], ["fracture", 2, "proxy", 0],
+    ["rest", 0, "configure", 0], ["constraints", 0, "configure", 1], ["proxy", 0, "configure", 2],
+    ["configure", 0, "solver", 0], ["configure", 1, "solver", 1], ["configure", 2, "solver", 2],
+    ["solver", 0, "sim_raw", 0], ["solver", 1, "sim_constraints", 0], ["solver", 3, "transform_raw", 0],
+    ["transform_raw", 0, "transform_cache", 0], ["transform_cache", 0, "transforms", 0], ["transform_raw", 0, "rest_transforms", 0],
+    ["rest", 0, "reconstruct", 0], ["transforms", 0, "reconstruct", 1], ["rest_transforms", 0, "reconstruct", 2], ["reconstruct", 0, "after_normal", 0], ["after_normal", 0, "after", 0],
+    ["source", 0, "before_layout", 0], ["after", 0, "after_layout", 0], ["before_layout", 0, "compare_merge", 0], ["after_layout", 0, "compare_merge", 1], ["compare_merge", 0, "compare_frame", 0], ["compare_frame", 0, "compare", 0],
+    ["before_label", 0, "before_label_layout", 0], ["after_label", 0, "after_label_layout", 0], ["before_label_layout", 0, "labels", 0], ["after_label_layout", 0, "labels", 1]
+  ],
+  "outputs": ["source", "radial", "offset", "layered", "rest", "constraints", "proxy", "sim_raw", "sim_constraints", "transforms", "after", "compare", "labels"],
+  "meta": {
+    "cook_budget": {"max_frames": 48, "max_pieces": 5000, "max_memory_bytes": 1073741824, "max_resolution": [1280, 720]},
+    "selection": {"method": "human", "winner": null, "automatic_ranking": false},
+    "cache": {"representation": "Bullet Simulation Points", "write_implicit": false}
+  }
+}

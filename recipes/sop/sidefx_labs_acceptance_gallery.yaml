@@ -1,0 +1,50 @@
+{
+  "id": "sop.sidefx_labs_acceptance_gallery",
+  "version": "1.0.0",
+  "summary": "Build three bounded, graph-visible SideFX Labs fixture branches and one editable comparison gallery.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "SPRINT20_LABS"}
+  },
+  "references": {},
+  "nodes": [
+    {"id": "artifact_source", "type": "torus", "name": "{{run_code}}_ARTIFACT_SOURCE", "role": "labs_fixture_artifact_source", "position": [-10, 12], "params": {"type": 1, "radx": 1.5, "rady": 0.45, "rows": 48, "cols": 24, "rx": 70.0}, "comment": "Native polygon torus exposes distinct inner and outer curvature"},
+    {"id": "curvature", "type": "labs::measure_curvature::3.1", "name": "{{run_code}}_LABS_CURVATURE", "role": "labs_fixture_measure_curvature", "position": [-10, 9], "params": {"method": 2, "viscolor": 1, "convexityattr": "convexity", "concavityattr": "concavity"}, "comment": "Certified Labs artifact fixture; Tensor Integral method"},
+    {"id": "artifact_place", "type": "xform", "name": "{{run_code}}_ARTIFACT_PLACE", "role": "labs_fixture_artifact_placement", "position": [-10, 6], "params": {"tx": -8.0, "ty": 2.5, "scale": 1.55}, "comment": "Gallery placement only"},
+    {"id": "artifact_out", "type": "null", "name": "OUT_{{run_code}}_ARTIFACT", "role": "labs_fixture_artifact_contract", "position": [-10, 3], "params": {}, "comment": "Curvature fixture contract"},
+
+    {"id": "terrain_source", "type": "heightfield", "name": "{{run_code}}_TERRAIN_SOURCE", "role": "labs_fixture_terrain_source", "position": [-2, 12], "params": {"divisionmode": 0, "gridsamples": 64, "size": [8.0, 8.0]}, "comment": "Native bounded 64-sample terrain source"},
+    {"id": "terrain_noise", "type": "heightfield_noise", "name": "{{run_code}}_TERRAIN_NOISE", "role": "labs_fixture_terrain_noise", "position": [-2, 10], "params": {"layer": "height", "amp": 1.5, "elementsize": 2.5, "basis": "simplex", "oct": 4.0, "offset": [3.0, 7.0, 0.0]}, "comment": "Deterministic native terrain relief"},
+    {"id": "terrain_analysis", "type": "labs::terrain_analysis::1.0", "name": "{{run_code}}_LABS_TERRAIN_ANALYSIS", "role": "labs_fixture_terrain_analysis", "position": [-2, 7], "params": {"slope": 1, "slopeattributename": "slope", "horizontalcurvature": 1, "enablevisualization": 1, "visualizemenu": 1, "visualizeattribute": "slope"}, "comment": "Certified Labs cartography fixture; slope visualization"},
+    {"id": "terrain_place", "type": "xform", "name": "{{run_code}}_TERRAIN_PLACE", "role": "labs_fixture_terrain_placement", "position": [-2, 5], "params": {"ty": 2.0}, "comment": "Raises proof above the Apprentice watermark zone"},
+    {"id": "terrain_out", "type": "null", "name": "OUT_{{run_code}}_TERRAIN", "role": "labs_fixture_terrain_contract", "position": [-2, 3], "params": {}, "comment": "Terrain analysis fixture contract"},
+
+    {"id": "instance_domain", "type": "grid", "name": "{{run_code}}_INSTANCE_DOMAIN", "role": "labs_fixture_instance_domain", "position": [6, 12], "params": {"size": [5.0, 5.0]}, "comment": "Native bounded point domain"},
+    {"id": "instance_points", "type": "scatter::2.0", "name": "{{run_code}}_INSTANCE_POINTS", "role": "labs_fixture_instance_points", "position": [6, 10], "params": {"npts": 64, "seed": 2020}, "comment": "Exact deterministic point count"},
+    {"id": "instance_attributes", "type": "labs::instance_attributes::1.0", "name": "{{run_code}}_LABS_INSTANCE_ATTRIBUTES", "role": "labs_fixture_instance_attributes", "position": [6, 7], "params": {"randpscale": 1, "pscalemin": 0.25, "pscalemax": 0.75, "spinamountmode": 1, "spin_min": 0.0, "spin_max": 360.0, "spinrandseed": 4703, "rand3drot": 1, "rotrandseed": 1729}, "comment": "Certified Labs motion/instancing fixture"},
+    {"id": "instance_form", "type": "platonic", "name": "{{run_code}}_INSTANCE_FORM", "role": "labs_fixture_instance_form", "position": [11, 10], "params": {"type": 4, "radius": 0.55}, "comment": "Editable native copied form"},
+    {"id": "instance_color", "type": "color", "name": "{{run_code}}_INSTANCE_COLOR", "role": "labs_fixture_instance_color", "position": [11, 7], "params": {"class": 2, "colortype": 0, "color": [0.18, 0.68, 1.0]}, "comment": "Stable display color"},
+    {"id": "instance_copy", "type": "copytopoints::2.0", "name": "{{run_code}}_COPY_INSTANCES", "role": "labs_fixture_instance_copy", "position": [9, 5], "params": {"pack": 0, "transform": 1}, "comment": "Native Copy to Points consumes Labs-authored orient and pscale"},
+    {"id": "instance_place", "type": "xform", "name": "{{run_code}}_INSTANCE_PLACE", "role": "labs_fixture_instance_placement", "position": [9, 3], "params": {"tx": 8.0, "ty": 2.5}, "comment": "Gallery placement and watermark-safe elevation"},
+    {"id": "instances_out", "type": "null", "name": "OUT_{{run_code}}_INSTANCES", "role": "labs_fixture_instances_contract", "position": [9, 1], "params": {}, "comment": "Instancing fixture contract"},
+
+    {"id": "merge", "type": "merge", "name": "{{run_code}}_GALLERY_MERGE", "role": "labs_fixture_gallery_merge", "position": [0, -1], "params": {}, "comment": "All certified alternatives remain independently editable"},
+    {"id": "gallery_out", "type": "null", "name": "OUT_{{run_code}}_GALLERY", "role": "labs_fixture_gallery_contract", "position": [0, -4], "params": {}, "flags": {"display": true, "render": true}, "comment": "Side-by-side Labs acceptance gallery; no aesthetic winner"}
+  ],
+  "connections": [
+    ["artifact_source", 0, "curvature", 0], ["curvature", 0, "artifact_place", 0], ["artifact_place", 0, "artifact_out", 0],
+    ["terrain_source", 0, "terrain_noise", 0], ["terrain_noise", 0, "terrain_analysis", 0], ["terrain_analysis", 0, "terrain_place", 0], ["terrain_place", 0, "terrain_out", 0],
+    ["instance_domain", 0, "instance_points", 0], ["instance_points", 0, "instance_attributes", 0], ["instance_form", 0, "instance_color", 0], ["instance_color", 0, "instance_copy", 0], ["instance_attributes", 0, "instance_copy", 1], ["instance_copy", 0, "instance_place", 0], ["instance_place", 0, "instances_out", 0],
+    ["artifact_out", 0, "merge", 0], ["terrain_out", 0, "merge", 1], ["instances_out", 0, "merge", 2], ["merge", 0, "gallery_out", 0]
+  ],
+  "outputs": ["curvature", "artifact_out", "terrain_analysis", "terrain_out", "instance_attributes", "instances_out", "gallery_out"],
+  "meta": {
+    "graph_first": true,
+    "optional_dependency": "SideFXLabs22.0@22.0.368",
+    "certified_labs_nodes": ["labs::measure_curvature::3.1", "labs::terrain_analysis::1.0", "labs::instance_attributes::1.0"],
+    "native_fallback_required": true,
+    "automatic_ranking": false,
+    "cook_budget": {"max_points_per_fixture": 100000, "max_seconds_per_fixture": 30},
+    "license": {"mode": "houdini-apprentice-noncommercial"}
+  }
+}

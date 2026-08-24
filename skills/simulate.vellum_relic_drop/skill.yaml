@@ -1,0 +1,215 @@
+{
+  "id": "simulate.vellum_relic_drop",
+  "version": "1.0.0",
+  "summary": "Build and verify a bounded native Vellum cloth-and-pressure relic drop.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "cache_extension": ".bgeo.sc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "simulation",
+    "vellum",
+    "softbody",
+    "pressure",
+    "collision",
+    "temporal",
+    "comparison"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "vellum_drop_001"
+    },
+    "start_frame": {
+      "type": "number",
+      "default": 1
+    },
+    "end_frame": {
+      "type": "number",
+      "default": 24
+    },
+    "frame_step": {
+      "type": "number",
+      "min": 0.001,
+      "default": 1
+    },
+    "drop_height": {
+      "type": "number",
+      "min": 0.5,
+      "max": 20,
+      "default": 2.5
+    },
+    "mass": {
+      "type": "number",
+      "min": 0.001,
+      "max": 100,
+      "default": 0.1
+    },
+    "thickness": {
+      "type": "number",
+      "min": 0.001,
+      "max": 1,
+      "default": 0.04
+    },
+    "stretch_stiffness": {
+      "type": "number",
+      "min": 0.001,
+      "max": 10,
+      "default": 1
+    },
+    "stretch_exponent": {
+      "type": "integer",
+      "min": -10,
+      "max": 10,
+      "default": 5
+    },
+    "bend_stiffness": {
+      "type": "number",
+      "min": 0.001,
+      "max": 10,
+      "default": 1
+    },
+    "bend_exponent": {
+      "type": "integer",
+      "min": -10,
+      "max": 10,
+      "default": -1
+    },
+    "substeps": {
+      "type": "integer",
+      "min": 1,
+      "max": 5,
+      "default": 2
+    },
+    "constraint_iterations": {
+      "type": "integer",
+      "min": 10,
+      "max": 200,
+      "default": 50
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    },
+    "camera_path": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "parent resolves to an existing SOP-capable geometry container",
+    "parent does not already contain the skill's exact run-scoped contract node names",
+    "artifact_dir is absolute and inside an approved project root",
+    "viewer, viewport, and camera are all explicit when viewport capture is requested"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe_instantiate",
+  "cook_budget": {
+    "scope": "frame_range",
+    "max_frames": 48,
+    "max_points": 50000,
+    "max_primitives": 50000,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.vellum_relic_drop@1.0.0"
+    },
+    {
+      "cook.node": "explicit inclusive frame_range with per-frame metrics"
+    },
+    {
+      "geometry.validate": "time-independent rest and collider contracts"
+    },
+    {
+      "graph.capture_svg": "deterministic graph observation"
+    },
+    {
+      "graph.capture_manifest": "controls, contracts, and cache status"
+    },
+    {
+      "viewport.capture": "optional explicit-camera final-frame comparison"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "native Sphere, Vellum Constraints, Vellum Solver, Box, File Cache, and Null SOPs",
+      "named rest, constraints, collider, raw simulation, cache, and comparison outputs",
+      "solver receives geometry, matching constraints, and collider on explicit inputs 0, 1, and 2",
+      "no generated VEX, Python SOP, selection, pane, or display-chain assumptions"
+    ],
+    "data_checks": [
+      "every requested frame reports finite geometry metrics and no node errors",
+      "point and primitive topology remains bounded across the sequence",
+      "rest and collider contracts validate without implicit cooking",
+      "original global frame is restored after the temporal cook"
+    ],
+    "visual_checks": [
+      "rest and final simulated states remain side-by-side for human comparison",
+      "the final frame visibly contacts or approaches the collider",
+      "optional capture uses an explicit camera and Apprentice-safe resolution"
+    ],
+    "cache_checks": [
+      "File Cache is configured as a versioned frame sequence under artifact_dir",
+      "simulation initialization is enabled",
+      "graph execution never presses Save to Disk implicitly"
+    ]
+  },
+  "outputs": [
+    "rest_geometry_contract",
+    "constraint_geometry_contract",
+    "collider_geometry_contract",
+    "raw_simulation_contract",
+    "configured_cache_contract",
+    "rest_sim_comparison_contract",
+    "temporal_cook_jsonl",
+    "graph_manifest_json",
+    "graph_svg",
+    "optional_final_frame_png",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_the_new_managed_branch",
+  "failure_modes": [
+    "frame count above 48 is refused before graph mutation",
+    "declared or observed resource overrun fails the cook and remains in the JSONL log",
+    "existing exact contract names cause transactional graph rollback",
+    "cache files are never overwritten because this skill does not write them"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

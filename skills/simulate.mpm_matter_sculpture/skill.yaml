@@ -1,0 +1,214 @@
+{
+  "id": "simulate.mpm_matter_sculpture",
+  "version": "1.0.0",
+  "summary": "Build and validate a proxy-first native multi-material MPM matter sculpture.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "simulation",
+    "mpm",
+    "matter",
+    "granular",
+    "elastic",
+    "viscous",
+    "material-study",
+    "temporal",
+    "verification"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "mpm_matter_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483445,
+      "default": 1414
+    },
+    "start_frame": {
+      "type": "integer",
+      "min": 1,
+      "default": 1
+    },
+    "end_frame": {
+      "type": "integer",
+      "min": 1,
+      "default": 24
+    },
+    "particle_separation": {
+      "type": "number",
+      "min": 0.06,
+      "max": 0.25,
+      "default": 0.12
+    },
+    "source_radius": {
+      "type": "number",
+      "min": 0.3,
+      "max": 1.1,
+      "default": 0.62
+    },
+    "source_height": {
+      "type": "number",
+      "min": 1.2,
+      "max": 4.0,
+      "default": 2.4
+    },
+    "noise_height": {
+      "type": "number",
+      "min": 0.0,
+      "max": 0.18,
+      "default": 0.08
+    },
+    "substep_min": {
+      "type": "integer",
+      "min": 1,
+      "max": 8,
+      "default": 1
+    },
+    "substep_max": {
+      "type": "integer",
+      "min": 2,
+      "max": 128,
+      "default": 32
+    },
+    "output_mode": {
+      "type": "string",
+      "enum": [
+        "points",
+        "surface"
+      ],
+      "default": "points"
+    },
+    "max_particles": {
+      "type": "integer",
+      "min": 1,
+      "max": 150000,
+      "default": 150000
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    },
+    "camera_path": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "parent_node_id resolves to an explicit SOP-capable geometry object under /obj",
+    "exact run-scoped node names and batch id do not already exist",
+    "artifact_dir is absolute and inside an approved project root",
+    "viewer, viewport, and camera are all explicit when visual capture is requested"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe",
+  "cook_budget": {
+    "scope": "inclusive_proxy_frame_range_one_multimaterial_solver",
+    "max_frames": 24,
+    "default_max_particles": 150000,
+    "separately_approved_particle_ceiling": 1000000,
+    "max_memory_bytes": 1073741824,
+    "max_seconds": 180,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.mpm_matter_sculpture@1.0.0"
+    },
+    {
+      "simulate.mpm.validate": "exact graph, every-frame particle, material, motion, and resource checks"
+    },
+    {
+      "graph.capture_svg": "selection-independent graph evidence"
+    },
+    {
+      "graph.capture_manifest": "profiles, coefficients, seeds, controls, cache state, empty ratings, and lineage"
+    },
+    {
+      "viewport.capture": "optional explicit-camera final-frame evidence"
+    },
+    {
+      "visual.analyze": "optional deterministic image mechanics"
+    },
+    {
+      "verification.critique.package": "optional hashed multimodal handoff without inference"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "exact native MPM Source, Collider, Container, Solver, Surface, and File Cache SOPs",
+      "explicit Container wires feed all Sources, Collider, and Solver",
+      "source merge preserves granular, elastic, viscous order",
+      "coefficient profiles are explicit because the Houdini preset menu is callback-driven",
+      "File Cache is filemode none and load-off; solver disk checkpoints are disabled",
+      "no Python SOP, generated VEX, selection, pane, or implicit full cache dependency"
+    ],
+    "data_checks": [
+      "each Source proves its explicit density and estimated mass; every Solver frame has finite bounds plus P, v, id, pscale, and three source identities",
+      "particle and memory ceilings are checked after every cook",
+      "estimated mass, source counts, centroid, speed, substep count, and cook time are recorded",
+      "measurable temporal motion and selected-output topology are proven",
+      "progress manifest is durable after every completed frame and records failure or completion"
+    ],
+    "visual_checks": [
+      "three material bodies remain compositionally legible as they collide with the tilted shelf",
+      "deterministic image checks precede optional local or external model critique",
+      "Apprentice watermark overlap is treated as a critique concern, not simulation data"
+    ],
+    "model_checks": [
+      "no model download, inference, or network transfer occurs implicitly",
+      "model critique is advisory and cannot populate winner or human ratings"
+    ]
+  },
+  "outputs": [
+    "three_editable_seeded_source_contracts",
+    "explicit_material_profile_manifest",
+    "shared_container_and_collider_contracts",
+    "simulated_particle_contract",
+    "optional_native_surface_contract",
+    "human_output_selector_without_winner",
+    "interruption_safe_cache_progress_manifest",
+    "per_frame_validation_json",
+    "graph_svg_and_manifest",
+    "optional_visual_report_and_multimodal_packet",
+    "versioned_hipnc_snapshot"
+  ],
+  "rollback": [
+    "recipe transaction restores the pre-build checkpoint on failure",
+    "no geometry cache files are written or deleted by this skill",
+    "incomplete validation retains a failed progress manifest with completed frame ids"
+  ]
+}

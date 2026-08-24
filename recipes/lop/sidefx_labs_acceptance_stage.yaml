@@ -1,0 +1,24 @@
+{
+  "id": "lop.sidefx_labs_acceptance_stage",
+  "version": "1.0.0",
+  "summary": "Import the three-branch SideFX Labs fixture gallery into one bounded Karma CPU proof stage.",
+  "contexts": ["LOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "SPRINT20_LABS"},
+    "gallery_sop_path": {"type": "string"},
+    "render_picture": {"type": "string"},
+    "width": {"type": "integer", "min": 1, "max": 1280, "default": 768},
+    "height": {"type": "integer", "min": 1, "max": 720, "default": 432}
+  },
+  "references": {},
+  "nodes": [
+    {"id": "gallery", "type": "sopimport", "name": "{{run_code}}_IMPORT_GALLERY", "role": "labs_acceptance_gallery_import", "position": [-3, 8], "params": {"soppath": "{{gallery_sop_path}}", "primpath": "/World/LabsAcceptance", "enable_pathprefix": 1, "pathprefix": "/World/LabsAcceptance", "enable_savepath": 0}, "comment": "Explicit merged SOP gallery contract"},
+    {"id": "dome", "type": "domelight", "name": "{{run_code}}_DOME", "role": "labs_acceptance_neutral_dome", "position": [-1, 6], "params": {"primpath": "/lights/{{run_code}}_Dome"}, "comment": "Shared neutral proof lighting"},
+    {"id": "camera", "type": "camera", "name": "{{run_code}}_CAMERA", "role": "labs_acceptance_camera", "position": [-1, 4], "params": {"primpath": "/cameras/{{run_code}}_Camera", "tx": 0.0, "ty": 14.0, "tz": 52.0, "rx": -12.5, "ry": 0.0, "rz": 0.0, "focalLength": 48.0}, "comment": "Explicit camera frames all three fixtures with crop-safe margins"},
+    {"id": "settings", "type": "karmarendersettings", "name": "{{run_code}}_KARMA_SETTINGS", "role": "labs_acceptance_karma_cpu_settings", "position": [-1, 2], "params": {"primpath": "/Render/{{run_code}}_Settings", "picture": "{{render_picture}}", "camera": "/cameras/{{run_code}}_Camera", "res_mode": "autoheight", "resolutionx": "{{width}}", "samplesperpixel": 8, "pathtracedsamples": 16, "varianceaa_minsamples": 1, "varianceaa_maxsamples": 8, "setlayerrendersettings": 1}, "comment": "One-frame Apprentice-safe Karma CPU proof"},
+    {"id": "out", "type": "null", "name": "OUT_{{run_code}}_STAGE", "role": "labs_acceptance_usd_stage_contract", "position": [-1, 0], "params": {}, "flags": {"display": true}, "comment": "Certified fixtures only; no catalog-wide claim"}
+  ],
+  "connections": [["gallery", 0, "dome", 0], ["dome", 0, "camera", 0], ["camera", 0, "settings", 0], ["settings", 0, "out", 0]],
+  "outputs": ["gallery", "camera", "settings", "out"],
+  "meta": {"graph_first": true, "renderer": "Karma CPU", "automatic_ranking": false, "cook_budget": {"max_prims": 100000, "max_seconds": 60}, "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}}
+}

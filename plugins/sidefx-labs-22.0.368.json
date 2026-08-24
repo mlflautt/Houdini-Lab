@@ -1,0 +1,69 @@
+{
+  "schema": "hermes.houdini.plugin",
+  "schema_version": "1.0",
+  "id": "sidefx-labs-22.0.368",
+  "display_name": "SideFX Labs 22.0 Production Build",
+  "vendor": "SideFX",
+  "plugin_version": "22.0.368",
+  "kind": "tool_package",
+  "source_url": "https://www.sidefx.com/download/download-labs/packages/",
+  "license": "SideFX Labs LICENSE.md (permissive BSD-like terms)",
+  "has_native_binaries": true,
+  "target": {
+    "houdini_build": "22.0.368",
+    "platform": "macos",
+    "architecture": "arm64",
+    "license_modes": [
+      "houdini-apprentice-noncommercial"
+    ]
+  },
+  "package": {
+    "name": "SideFXLabs22.0",
+    "checksum": "sha-256=mkoIk692DUaxIis/+6UUhGETyoSB5Hpl2lO1s8dOh9U=",
+    "file_size": 199090831,
+    "installed_size": 326876190,
+    "package_json": "$HOUDINI_USER_PREF_DIR/packages/SideFXLabs22.0.json",
+    "install_root": "$HOUDINI_USER_PREF_DIR/packages/SideFXLabs22.0"
+  },
+  "permissions": {
+    "network": true,
+    "telemetry": false,
+    "external_executables": true
+  },
+  "rollback": {
+    "disable_environment": "HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json",
+    "uninstall_command": "HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json",
+    "remove_targets_after_separate_approval": [
+      "$HOUDINI_USER_PREF_DIR/packages/SideFXLabs22.0.json",
+      "$HOUDINI_USER_PREF_DIR/packages/SideFXLabs22.0"
+    ]
+  },
+  "observed_native_binary_platforms": [
+    "windows-x86_64"
+  ],
+  "certified_node_types": [
+    "labs::measure_curvature::3.1",
+    "labs::terrain_analysis::1.0",
+    "labs::instance_attributes::1.0"
+  ],
+  "fixtures": [
+    {
+      "id": "artifact_mesh_utility",
+      "context": "SOP",
+      "max_seconds": 30,
+      "max_points": 100000
+    },
+    {
+      "id": "terrain_cartography_utility",
+      "context": "SOP",
+      "max_seconds": 30,
+      "max_points": 100000
+    },
+    {
+      "id": "motion_instancing_utility",
+      "context": "SOP",
+      "max_seconds": 30,
+      "max_points": 100000
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 Centralizes every constraint the agent must respect so tool logic stays policy-free.
 Pinned conservative defaults per docs/architecture.md §8.
 """
+
 from __future__ import annotations
 
 import os
@@ -32,7 +33,7 @@ class ApprenticePolicy:
     allowed_roots: list[str] = field(default_factory=list)
 
     def add_allowed_root(self, root: str) -> None:
-        root = os.path.abspath(os.path.expanduser(root))
+        root = os.path.realpath(os.path.abspath(os.path.expanduser(root)))
         if root not in self.allowed_roots:
             self.allowed_roots.append(root)
 
@@ -43,14 +44,15 @@ class ApprenticePolicy:
     def validate_render_resolution(self, w: int, h: int) -> tuple[bool, str]:
         cw, ch = self.render_ceiling
         ok = (w <= cw) and (h <= ch)
-        msg = "" if ok else (
-            f"Resolution {w}x{h} exceeds Apprentice ceiling {cw}x{ch}."
-        )
+        msg = "" if ok else (f"Resolution {w}x{h} exceeds Apprentice ceiling {cw}x{ch}.")
         return ok, msg
 
-    def validate_operation(self, risk: RiskClass, code_mode: CodeMode,
-                           allow_arbitrary_code: bool) -> tuple[bool, str]:
-        if risk in (RiskClass.HIGH, RiskClass.EXTERNAL) and code_mode == CodeMode.SAFE:
+    def validate_operation(
+        self, risk: RiskClass, code_mode: CodeMode, allow_arbitrary_code: bool
+    ) -> tuple[bool, str]:
+        # Registered external tools are part of safe mode's narrow allowlist. They still
+        # require exact dispatcher approval and must enforce allow_external_process.
+        if risk == RiskClass.HIGH and code_mode == CodeMode.SAFE:
             return False, f"Risk {risk.value} not permitted in safe mode."
         if allow_arbitrary_code and code_mode == CodeMode.SAFE:
             return False, "Arbitrary code disabled in safe mode."
@@ -66,7 +68,7 @@ class ApprenticePolicy:
         if not self.allowed_roots:
             # No roots configured: deny by default (fail-closed).
             return False
-        ap = os.path.abspath(os.path.expanduser(path))
+        ap = os.path.realpath(os.path.abspath(os.path.expanduser(path)))
         return any(ap == r or ap.startswith(r + os.sep) for r in self.allowed_roots)
 
     def check_path(self, path: str) -> tuple[bool, str]:

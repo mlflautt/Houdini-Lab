@@ -1,0 +1,165 @@
+{
+  "id": "lop.relic_lookdev_stage",
+  "version": "1.0.0",
+  "summary": "Import one explicit SOP contract into USD and preserve three editable MaterialX lookdev branches for human selection.",
+  "contexts": ["LOP"],
+  "inputs": {
+    "source_sop_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "RELIC_LOOKDEV"},
+    "asset_prim_path": {"type": "string", "default": "/World/Asset"},
+    "candidate_index": {"type": "integer", "min": 0, "max": 2, "default": 0},
+    "render_picture": {"type": "string"},
+    "width": {"type": "integer", "min": 1, "max": 1280, "default": 640},
+    "height": {"type": "integer", "min": 1, "max": 720, "default": 360}
+  },
+  "nodes": [
+    {
+      "id": "sop_import",
+      "type": "sopimport",
+      "name": "{{run_code}}_SOP_IMPORT",
+      "role": "usd_asset_import",
+      "position": [-6, 8],
+      "params": {
+        "soppath": "{{source_sop_path}}",
+        "primpath": "{{asset_prim_path}}",
+        "enable_pathprefix": 1,
+        "pathprefix": "{{asset_prim_path}}",
+        "enable_setdefaultprim": 1,
+        "setdefaultprim": 1,
+        "enable_savepath": 0
+      },
+      "comment": "Explicit SOP path imported into an editable USD asset branch."
+    },
+    {
+      "id": "materials",
+      "type": "materiallibrary",
+      "name": "{{run_code}}_MATERIALS",
+      "role": "materialx_library",
+      "position": [-6, 6],
+      "params": {"matpathprefix": "/materials/", "containerpath": "/materials/"},
+      "comment": "MaterialX builders are populated by the narrow solaris.materialx.populate tool."
+    },
+    {
+      "id": "assign_a",
+      "type": "assignmaterial",
+      "name": "{{run_code}}_ASSIGN_OXIDE",
+      "role": "material_assignment_candidate_a",
+      "position": [-9, 3.5],
+      "params": {
+        "primpattern1": "{{asset_prim_path}}",
+        "matspecmethod1": "path",
+        "matspecpath1": "/materials/{{run_code}}_oxide"
+      }
+    },
+    {
+      "id": "assign_b",
+      "type": "assignmaterial",
+      "name": "{{run_code}}_ASSIGN_AMBER",
+      "role": "material_assignment_candidate_b",
+      "position": [-6, 3.5],
+      "params": {
+        "primpattern1": "{{asset_prim_path}}",
+        "matspecmethod1": "path",
+        "matspecpath1": "/materials/{{run_code}}_amber"
+      }
+    },
+    {
+      "id": "assign_c",
+      "type": "assignmaterial",
+      "name": "{{run_code}}_ASSIGN_IVORY",
+      "role": "material_assignment_candidate_c",
+      "position": [-3, 3.5],
+      "params": {
+        "primpattern1": "{{asset_prim_path}}",
+        "matspecmethod1": "path",
+        "matspecpath1": "/materials/{{run_code}}_ivory"
+      }
+    },
+    {
+      "id": "select",
+      "type": "switch",
+      "name": "{{run_code}}_SELECT_MATERIAL",
+      "role": "human_material_selector",
+      "position": [-6, 1],
+      "params": {"input": "{{candidate_index}}"},
+      "comment": "Human-controlled candidate selector: 0 oxide, 1 amber, 2 ivory. No winner implied."
+    },
+    {
+      "id": "dome",
+      "type": "domelight",
+      "name": "{{run_code}}_DOME",
+      "role": "neutral_lookdev_light",
+      "position": [-6, -1],
+      "params": {
+        "primpath": "/lights/{{run_code}}_Dome"
+      },
+      "comment": "Neutral default dome; author explicit HDRI/color controls in the graph when desired."
+    },
+    {
+      "id": "camera",
+      "type": "camera",
+      "name": "{{run_code}}_CAMERA",
+      "role": "explicit_render_camera",
+      "position": [-6, -3],
+      "params": {
+        "primpath": "/cameras/{{run_code}}_Camera",
+        "tx": 6.0,
+        "ty": 4.0,
+        "tz": 8.0,
+        "rx": -22.3,
+        "ry": 36.9,
+        "rz": 0.0,
+        "focalLength": 45.0
+      }
+    },
+    {
+      "id": "render_settings",
+      "type": "karmarendersettings",
+      "name": "{{run_code}}_KARMA_SETTINGS",
+      "role": "karma_cpu_preview_settings",
+      "position": [-6, -5],
+      "params": {
+        "primpath": "/Render/{{run_code}}_Settings",
+        "picture": "{{render_picture}}",
+        "camera": "/cameras/{{run_code}}_Camera",
+        "res_mode": "autoheight",
+        "resolutionx": "{{width}}",
+        "samplesperpixel": 4,
+        "pathtracedsamples": 8,
+        "varianceaa_minsamples": 1,
+        "varianceaa_maxsamples": 4,
+        "setlayerrendersettings": 1
+      }
+    },
+    {
+      "id": "stage_out",
+      "type": "null",
+      "name": "OUT_{{run_code}}_STAGE",
+      "role": "usd_stage_contract",
+      "position": [-6, -7],
+      "flags": {"display": true},
+      "comment": "Composed USD stage contract. Rendering is a separate approved resource decision."
+    }
+  ],
+  "connections": [
+    ["sop_import", 0, "materials", 0],
+    ["materials", 0, "assign_a", 0],
+    ["materials", 0, "assign_b", 0],
+    ["materials", 0, "assign_c", 0],
+    ["assign_a", 0, "select", 0],
+    ["assign_b", 0, "select", 1],
+    ["assign_c", 0, "select", 2],
+    ["select", 0, "dome", 0],
+    ["dome", 0, "camera", 0],
+    ["camera", 0, "render_settings", 0],
+    ["render_settings", 0, "stage_out", 0]
+  ],
+  "outputs": ["sop_import", "materials", "select", "camera", "render_settings", "stage_out"],
+  "meta": {
+    "graph_first": true,
+    "automatic_ranking": false,
+    "renderer": "Karma CPU",
+    "cook_budget": {"scope": "single_lop_stage", "max_prims": 10000, "max_seconds": 30},
+    "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}
+  }
+}

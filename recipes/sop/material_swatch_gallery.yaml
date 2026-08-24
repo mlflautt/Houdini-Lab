@@ -1,0 +1,23 @@
+{
+  "id": "sop.material_swatch_gallery",
+  "version": "1.0.0",
+  "summary": "Build three equal native polygon-sphere swatches for honest side-by-side material comparison.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "MATERIAL_FOUNDRY"},
+    "radius": {"type": "number", "min": 0.5, "max": 2.0, "default": 1.15},
+    "spacing": {"type": "number", "min": 1.5, "max": 4.0, "default": 2.65}
+  },
+  "nodes": [
+    {"id": "verdigris", "type": "sphere", "name": "{{run_code}}_VERDIGRIS_SWATCH", "role": "material_swatch_verdigris", "position": [-8, 4], "params": {"type": 2, "rad": ["{{radius}}", "{{radius}}", "{{radius}}"], "freq": 8, "ty": 1.25}, "expressions": {"tx": "0-{{spacing}}"}, "comment": "Equal comparison geometry; left swatch"},
+    {"id": "verdigris_out", "type": "null", "name": "OUT_{{run_code}}_VERDIGRIS_SWATCH", "role": "material_swatch_verdigris_contract", "position": [-8, 1], "params": {}},
+    {"id": "emberglaze", "type": "sphere", "name": "{{run_code}}_EMBERGLAZE_SWATCH", "role": "material_swatch_emberglaze", "position": [-3, 4], "params": {"type": 2, "rad": ["{{radius}}", "{{radius}}", "{{radius}}"], "freq": 8, "tx": 0.0, "ty": 1.25}, "comment": "Equal comparison geometry; center swatch"},
+    {"id": "emberglaze_out", "type": "null", "name": "OUT_{{run_code}}_EMBERGLAZE_SWATCH", "role": "material_swatch_emberglaze_contract", "position": [-3, 1], "params": {}},
+    {"id": "moonlichen", "type": "sphere", "name": "{{run_code}}_MOONLICHEN_SWATCH", "role": "material_swatch_moonlichen", "position": [2, 4], "params": {"type": 2, "rad": ["{{radius}}", "{{radius}}", "{{radius}}"], "freq": 8, "ty": 1.25}, "expressions": {"tx": "0+{{spacing}}"}, "comment": "Equal comparison geometry; right swatch"},
+    {"id": "moonlichen_out", "type": "null", "name": "OUT_{{run_code}}_MOONLICHEN_SWATCH", "role": "material_swatch_moonlichen_contract", "position": [2, 1], "params": {}, "flags": {"display": true}}
+  ],
+  "connections": [["verdigris", 0, "verdigris_out", 0], ["emberglaze", 0, "emberglaze_out", 0], ["moonlichen", 0, "moonlichen_out", 0]],
+  "outputs": ["verdigris_out", "emberglaze_out", "moonlichen_out"],
+  "meta": {"graph_first": true, "automatic_ranking": false, "cook_budget": {"scope": "three_swatch_sops", "max_primitives": 10000, "max_seconds": 10}, "license": "houdini-apprentice-noncommercial"}
+}

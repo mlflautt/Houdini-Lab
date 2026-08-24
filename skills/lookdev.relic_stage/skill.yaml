@@ -1,0 +1,185 @@
+{
+  "id": "lookdev.relic_stage",
+  "version": "1.0.0",
+  "summary": "Assemble an explicit SOP asset into an editable USD lookdev stage with three MaterialX candidates and an optional bounded Karma CPU preview.",
+  "contexts": [
+    "LOP",
+    "VOP",
+    "ROP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ],
+    "renderer": "Karma CPU"
+  },
+  "intent_tags": [
+    "solaris",
+    "usd",
+    "lookdev",
+    "materialx",
+    "karma",
+    "rendering",
+    "human-selection"
+  ],
+  "inputs": {
+    "source_sop_path": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "relic_lookdev_001"
+    },
+    "stage_parent_path": {
+      "type": "string",
+      "default": "/stage"
+    },
+    "asset_prim_path": {
+      "type": "string",
+      "default": "/World/Asset"
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "width": {
+      "type": "integer",
+      "min": 1,
+      "max": 1280,
+      "default": 640
+    },
+    "height": {
+      "type": "integer",
+      "min": 1,
+      "max": 720,
+      "default": 360
+    },
+    "frame": {
+      "type": "number",
+      "default": 1
+    },
+    "time_limit": {
+      "type": "number",
+      "min": 1,
+      "max": 120,
+      "default": 30
+    },
+    "max_threads": {
+      "type": "integer",
+      "min": 1,
+      "max": 32,
+      "default": 4
+    },
+    "render_preview": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "preconditions": [
+    "source_sop_path resolves to an existing clean SOP contract",
+    "/stage exists and has no exact run-scoped contract node names",
+    "artifact_dir is absolute and inside an approved project root",
+    "preview output does not already exist"
+  ],
+  "risk": "external",
+  "checkpoint": "before_lop_graph_materialx_and_render_rop_mutations",
+  "cook_budget": {
+    "stage_scope": "single_lop_stage",
+    "max_prims": 10000,
+    "max_memory_bytes": 1073741824,
+    "max_seconds": 30,
+    "render_frames": 1,
+    "render_resolution": [
+      640,
+      360
+    ],
+    "apprentice_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "lop.relic_lookdev_stage@1.0.0"
+    },
+    {
+      "solaris.materialx.populate": "three native MaterialX builder subnets"
+    },
+    {
+      "solaris.stage.validate": "explicit bounded USD composition and material binding check"
+    },
+    {
+      "solaris.karma_rop.build": "optional editable Karma CPU USD Render configuration"
+    },
+    {
+      "render.karma.preview": "optional separately approved one-frame husk launch"
+    },
+    {
+      "graph.capture_svg": "deterministic LOP graph observation"
+    },
+    {
+      "graph.capture_manifest": "controls, USD paths, candidates, and render provenance"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "native SOP Import, Material Library, Assign Material, Switch, Dome Light, Camera, Karma Render Settings, and Null LOPs",
+      "three assignment branches remain present behind a human-controlled Switch",
+      "MaterialX shaders live inside builder subnets in the Material Library",
+      "no selection, pane, viewport, Python SOP, generated VEX, or hidden display-chain dependency"
+    ],
+    "data_checks": [
+      "composed USD stage contains asset, three materials, light, camera, and render settings prims",
+      "selected asset prim computes an inherited or direct material binding",
+      "stage prim count, composition time, warnings, and errors are reported"
+    ],
+    "visual_checks": [
+      "optional preview is rendered by BRAY_HdKarma through a managed USD Render ROP",
+      "render is one explicit frame at or below the Apprentice ceiling",
+      "image existence and output bytes are verified after husk exits"
+    ],
+    "selection_checks": [
+      "candidate IDs and material controls are preserved",
+      "rating slots remain empty and no winner is implied"
+    ]
+  },
+  "outputs": [
+    "editable_lop_stage_contract",
+    "three_materialx_candidate_contracts",
+    "usd_stage_validation",
+    "optional_karma_cpu_preview_png",
+    "lookdev_manifest_json",
+    "lop_graph_svg",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_the_new_run_scoped_nodes",
+  "failure_modes": [
+    "invalid or duplicate MaterialX candidate specs are refused before mutation",
+    "existing exact graph, builder, or ROP names are never overwritten",
+    "missing USD prims or material binding fail explicit stage validation",
+    "external render requires exact approval and allow_external_process=true",
+    "existing preview output is never overwritten"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

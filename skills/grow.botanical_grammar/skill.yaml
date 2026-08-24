@@ -1,0 +1,146 @@
+{
+  "id": "grow.botanical_grammar",
+  "version": "1.0.0",
+  "summary": "Build, validate, compare, and preserve three bounded native L-System botanical grammars.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "generative",
+    "botanical",
+    "l-system",
+    "grammar",
+    "branching",
+    "growth",
+    "procedural"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "botanical_grammar_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483436,
+      "default": 4103
+    },
+    "generations": {
+      "type": "integer",
+      "min": 1,
+      "max": 6,
+      "default": 6
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "wire_radius": {
+      "type": "number",
+      "min": 0.002,
+      "max": 0.06,
+      "default": 0.018
+    }
+  },
+  "preconditions": [
+    "parent_node_id resolves to an explicit SOP-capable geometry object under /obj",
+    "the run-scoped node names do not already exist",
+    "artifact_dir is absolute and inside an approved project root",
+    "registered embedded grammar templates only; rule-file IO and arbitrary generated rules are disabled"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe",
+  "cook_budget": {
+    "scope": "three_static_registered_grammars",
+    "max_generations": 6,
+    "max_points": 250000,
+    "max_primitives": 250000,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_frames": 1
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.lsystem_botanical@1.0.0"
+    },
+    {
+      "botanical.validate": "exact grammar, topology, attribute, ordering, and resource checks"
+    },
+    {
+      "graph.capture_svg": "selection-independent SOP graph observation"
+    },
+    {
+      "graph.capture_manifest": "parameters, geometry metrics, candidates, ratings, and provenance"
+    },
+    {
+      "viewport.capture": "optional explicit viewer, viewport, and camera only"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "exact native L-System to PolyWire branches for canopy, fern, and coral",
+      "fixed human Switch and side-by-side Merge order preserve all three candidates",
+      "named skeleton, wire, selected, and comparison contracts remain artist-editable",
+      "no Python SOP, generated VEX, rule-file IO, SideFX Labs dependency, or UI-state dependency"
+    ],
+    "data_checks": [
+      "L-System skeletons expose finite P, Cd, width, arc, gen, and up point attributes",
+      "all skeletons and wires are non-empty, message-free, and topologically distinct",
+      "combined wire and comparison geometry remain below 250000 points and primitives",
+      "six-generation estimate and observed memory/cook time remain inside policy"
+    ],
+    "visual_checks": [
+      "comparison reads left-to-right as canopy, fern, and coral",
+      "canopy is 3D branching, fern is planar leaf-like branching, and coral is radial",
+      "selected output matches the explicit human Switch without deleting alternatives"
+    ]
+  },
+  "outputs": [
+    "three_lsystem_skeletons",
+    "three_editable_polywire_contracts",
+    "selected_botanical_contract",
+    "no_winner_comparison_contract",
+    "botanical_validation_json",
+    "graph_manifest_json",
+    "graph_svg",
+    "optional_viewport_png",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_the_new_managed_nodes",
+  "failure_modes": [
+    "generations above six, invalid seed/radius, or unsafe paths are refused before mutation",
+    "exact node-name collisions cause transactional rollback",
+    "stale premise/rules, rule-file IO, reordered candidates, or modified unmanaged stages are refused",
+    "empty, non-finite, warning-bearing, oversized, slow, or attribute-incomplete geometry fails validation"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

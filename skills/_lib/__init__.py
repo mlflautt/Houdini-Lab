@@ -1,9 +1,10 @@
 """Shared skill helpers (pure Python where possible; HOM optional)."""
+
 from __future__ import annotations
 
 from typing import Any
 
-from ..hermes_houdini.schemas.command import CommandEnvelope
+from hermes_houdini.schemas.command import CommandEnvelope
 
 
 def build_envelope(tool: str, arguments: dict[str, Any], **meta: Any) -> CommandEnvelope:

@@ -4,9 +4,10 @@ All HOM (`hou`) access is lazy: this package imports without Houdini installed s
 pure-Python logic (schemas, policy, ids, registry) is unit-testable. HOM calls live
 inside functions guarded by :func:`has_hou`.
 """
+
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.22.0"
 
 import importlib.util
 
@@ -21,9 +22,7 @@ def has_hou() -> bool:
 def get_hou():
     """Return the `hou` module, raising a clear error if unavailable."""
     if not _HOU_AVAILABLE:
-        raise RuntimeError(
-            "hou module not available. This operation requires Houdini/hython."
-        )
+        raise RuntimeError("hou module not available. This operation requires Houdini/hython.")
     import hou
 
     return hou

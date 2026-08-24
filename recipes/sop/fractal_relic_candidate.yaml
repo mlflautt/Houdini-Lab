@@ -1,0 +1,142 @@
+{
+  "id": "sop.fractal_relic_candidate",
+  "version": "2.0.0",
+  "summary": "Build one seeded native-SOP fractal-relic candidate and comparison branch.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "candidate_code": {"type": "string", "default": "A"},
+    "lineage": {"type": "string", "default": "candidate_A seed=42; human rating pending"},
+    "base_radius": {"type": "number", "min": 0.25, "max": 5.0, "default": 1.0},
+    "sphere_frequency": {"type": "integer", "min": 4, "max": 10, "default": 7},
+    "noise_amplitude": {"type": "number", "min": 0.0, "max": 2.0, "default": 0.16},
+    "element_size": {"type": "number", "min": 0.05, "max": 10.0, "default": 0.65},
+    "noise_offset": {"type": "number", "min": 0.0, "max": 100000.0, "default": 0.042},
+    "point_count": {"type": "integer", "min": 1, "max": 1000000, "default": 320},
+    "seed": {"type": "integer", "min": 0, "max": 2000000, "default": 42},
+    "relax_iterations": {"type": "integer", "min": 0, "max": 10, "default": 6},
+    "detail_radius": {"type": "number", "min": 0.001, "max": 1.0, "default": 0.08},
+    "compare_x": {"type": "number", "min": -100.0, "max": 100.0, "default": 0.0}
+  },
+  "references": {},
+  "nodes": [
+    {
+      "id": "base",
+      "type": "sphere",
+      "name": "CAND_{{candidate_code}}_BASE",
+      "role": "relic_base",
+      "position": [-1.0, 8.0],
+      "params": {
+        "type": 2,
+        "rad": ["{{base_radius}}", "{{base_radius}}", "{{base_radius}}"],
+        "freq": "{{sphere_frequency}}"
+      },
+      "comment": "{{lineage}}; editable base radius/frequency"
+    },
+    {
+      "id": "noise",
+      "type": "attribnoise::2.0",
+      "name": "CAND_{{candidate_code}}_DEFORM",
+      "role": "relic_deformation",
+      "position": [-1.0, 6.0],
+      "params": {
+        "attribtype": 1,
+        "attribs": "P",
+        "operation": 1,
+        "noiserange": 1,
+        "amplitude": "{{noise_amplitude}}",
+        "elementsize": "{{element_size}}",
+        "offset": "{{noise_offset}}",
+        "updatenmls": 1
+      },
+      "comment": "{{lineage}}; native Attribute Noise displacement, no VEX"
+    },
+    {
+      "id": "scatter",
+      "type": "scatter::2.0",
+      "name": "CAND_{{candidate_code}}_SCATTER",
+      "role": "relic_seed_points",
+      "position": [1.0, 4.0],
+      "params": {
+        "forcetotal": 1,
+        "npts": "{{point_count}}",
+        "seed": "{{seed}}",
+        "relaxiterations": "{{relax_iterations}}"
+      },
+      "comment": "{{lineage}}; deterministic target points"
+    },
+    {
+      "id": "detail",
+      "type": "sphere",
+      "name": "CAND_{{candidate_code}}_DETAIL",
+      "role": "relic_detail_source",
+      "position": [-3.0, 4.0],
+      "params": {
+        "type": 2,
+        "rad": ["{{detail_radius}}", "{{detail_radius}}", "{{detail_radius}}"],
+        "freq": 2
+      },
+      "comment": "{{lineage}}; editable copied detail source"
+    },
+    {
+      "id": "copy",
+      "type": "copytopoints::2.0",
+      "name": "CAND_{{candidate_code}}_COPY",
+      "role": "relic_instances",
+      "position": [-1.0, 2.0],
+      "params": {"pack": 1},
+      "comment": "{{lineage}}; packed copies bound memory growth"
+    },
+    {
+      "id": "form",
+      "type": "merge",
+      "name": "CAND_{{candidate_code}}_FORM",
+      "role": "relic_assembly",
+      "position": [-1.0, 0.0],
+      "params": {},
+      "comment": "{{lineage}}; base plus surface details"
+    },
+    {
+      "id": "out",
+      "type": "null",
+      "name": "OUT_CAND_{{candidate_code}}",
+      "role": "candidate_output",
+      "position": [-1.0, -2.0],
+      "params": {},
+      "comment": "{{lineage}}; candidate contract, no automatic ranking"
+    },
+    {
+      "id": "compare",
+      "type": "xform",
+      "name": "CAND_{{candidate_code}}_COMPARE",
+      "role": "comparison_layout",
+      "position": [-1.0, -4.0],
+      "params": {"tx": "{{compare_x}}"},
+      "comment": "{{lineage}}; presentation offset only"
+    }
+  ],
+  "connections": [
+    ["base", 0, "noise", 0],
+    ["noise", 0, "scatter", 0],
+    ["detail", 0, "copy", 0],
+    ["scatter", 0, "copy", 1],
+    ["noise", 0, "form", 0],
+    ["copy", 0, "form", 1],
+    ["form", 0, "out", 0],
+    ["out", 0, "compare", 0]
+  ],
+  "outputs": ["out", "compare"],
+  "meta": {
+    "depends": [],
+    "cook_budget": {
+      "max_points": 1000000,
+      "max_primitives": 1000000,
+      "max_memory_bytes": 268435456,
+      "max_seconds": 30
+    },
+    "promotion": {
+      "hda_type": "hermes::fractal_relic::2.0",
+      "license": "houdini-apprentice-noncommercial"
+    }
+  }
+}

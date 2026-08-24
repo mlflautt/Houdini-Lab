@@ -1,0 +1,103 @@
+{
+  "id": "top.procedural_district",
+  "version": "1.0.0",
+  "summary": "Build a bounded native Wedge to ROP Geometry district work-item graph with one local scheduler slot and an explicit completion contract.",
+  "contexts": ["TOP"],
+  "inputs": {
+    "source_sop_path": {"type": "string", "default": "/obj/HERMES_DISTRICT_SOURCE/OUT_BUILDING"},
+    "output_pattern": {"type": "string", "default": "/tmp/district_lot_`@wedgeindex`_seed_`@seed`.bgeo.sc"},
+    "temp_dir": {"type": "string", "default": "/tmp/hermes_district_pdg"},
+    "lot_count": {"type": "integer", "min": 4, "max": 16, "default": 12},
+    "seconds_per_item": {"type": "number", "min": 1.0, "max": 120.0, "default": 30.0},
+    "memory_mb": {"type": "integer", "min": 512, "max": 8192, "default": 2048}
+  },
+  "references": {},
+  "nodes": [
+    {
+      "id": "scheduler",
+      "type": "localscheduler",
+      "name": "LOCAL_BOUNDED",
+      "role": "district_local_scheduler",
+      "position": [-3.0, 2.0],
+      "params": {
+        "maxprocsmenu": "1",
+        "maxprocs": 1,
+        "local_enabletimeout": 1,
+        "local_maxtime": "{{seconds_per_item}}",
+        "local_handletimeout": "0",
+        "local_enablemaxmemory": 1,
+        "local_maxmemory": "{{memory_mb}}",
+        "local_handlememory": "0",
+        "local_maximumretries": 0,
+        "tempdirmenu": "2",
+        "tempdircustom": "{{temp_dir}}",
+        "tempdirappendpid": 1
+      },
+      "comment": "One foreground local slot with explicit time and memory ceilings."
+    },
+    {
+      "id": "wedge",
+      "type": "wedge",
+      "name": "TOP_WEDGE_LOTS",
+      "role": "district_lot_work_items",
+      "position": [0.0, 2.0],
+      "params": {"wedgecount": "{{lot_count}}"},
+      "comment": "Declared numeric lot controls only; no Python Processor or arbitrary script."
+    },
+    {
+      "id": "cache",
+      "type": "ropgeometry",
+      "name": "CACHE_LOT_GEOMETRY",
+      "role": "district_geometry_cache",
+      "position": [0.0, 0.0],
+      "params": {
+        "usesoppath": 1,
+        "soppath": "{{source_sop_path}}",
+        "sopoutput": "{{output_pattern}}",
+        "framegeneration": 0,
+        "mkpath": 1,
+        "savebackground": 0,
+        "usefiletag": 1,
+        "filetag": "file/geo"
+      },
+      "comment": "One immutable non-commercial geometry output per lot work item."
+    },
+    {
+      "id": "wait",
+      "type": "waitforall",
+      "name": "WAIT_ALL_LOTS",
+      "role": "district_completion_barrier",
+      "position": [0.0, -2.0],
+      "comment": "The district is eligible for assembly only after every lot succeeds."
+    },
+    {
+      "id": "out",
+      "type": "null",
+      "name": "OUT_LOTS",
+      "role": "district_top_output",
+      "position": [0.0, -4.0],
+      "flags": {"display": true},
+      "comment": "Named complete work-item contract for downstream district assembly."
+    }
+  ],
+  "connections": [
+    ["wedge", 0, "cache", 0],
+    ["cache", 0, "wait", 0],
+    ["wait", 0, "out", 0]
+  ],
+  "outputs": ["scheduler", "wedge", "cache", "wait", "out"],
+  "meta": {
+    "algorithm": {
+      "context": "TOP",
+      "native_nodes": ["localscheduler", "wedge", "ropgeometry", "waitforall", "null"],
+      "python_processor": false
+    },
+    "cook_budget": {
+      "max_work_items": 16,
+      "scheduler_slots": 1,
+      "max_seconds_per_item": 120,
+      "max_memory_mb_per_item": 8192
+    },
+    "writes": {"background": false, "immutable_outputs": true}
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "schema": "hermes.houdini.mops_acceptance",
+  "schema_version": "1.0",
+  "sprint": 22,
+  "package_version": "0.22.0",
+  "houdini": {"build": "22.0.368", "license": "Apprentice", "architecture": "arm64"},
+  "plugin": {
+    "id": "mops-1.12",
+    "source_commit": "65c4cff83003a51b31edbefa1dd1a11bd3ac3c25",
+    "source_archive_checksum": "sha-256=Ow0W6Xo4sAViEop0AvwNzIelpmEd6P+v047VfvyUojM=",
+    "license": "LGPL-3.0",
+    "license_sha256": "da7eabb7bafdf7d3ae5e9f223aa5bdc1eece45ac569dc21b3b037520b4464768",
+    "package_json_sha256": "6176bae59da58ba3e55dbafa9c7d2f4ce3a50f97a8352e6bc011d8d744698769",
+    "inventory": {"files": 145, "hda_libraries": 45, "python_files": 2, "shelf_files": 2, "native_binaries": 0},
+    "loading_scope": "isolated_process_environment",
+    "global_preferences_mutated": false,
+    "certified_node_types": [
+      "MOPS::Plain_Falloff::1.0",
+      "MOPS::Noise_Falloff::1.4",
+      "MOPS::Shape_Falloff::1.5",
+      "MOPS::Transform_Modifier::1.1"
+    ]
+  },
+  "enabled_acceptance": {
+    "artifact_run": ".hermes/sprint22-acceptance-20260824-g",
+    "branch_order": ["native", "mops_plain", "mops_noise", "mops_shape"],
+    "sample_frames": [1, 12, 24],
+    "packed_points_per_branch": 24,
+    "packed_primitives_per_branch": 24,
+    "comparison_points": 1152,
+    "comparison_primitives": 1920,
+    "elapsed_seconds": 0.333159,
+    "render": {
+      "resolution": [640, 360],
+      "sha256": [
+        "c6bbc13cb39fa3aa9863e2db8b3ff2c0605198c29ba0f8dde3a750ba80ee5885",
+        "d5d214ad4ac281cf1f591ca31c97e220ad4c8f1a37e62a13042cc1d516a79fa5",
+        "48f301a0ab74eaae30aade810da6f77f8c67f1d31cd58cafba21859c0cf18d66"
+      ],
+      "panel_count": 4,
+      "visual_status": "pass",
+      "duplicate_images": false,
+      "flags": []
+    }
+  },
+  "plugin_disabled_acceptance": {
+    "artifact_run": ".hermes/sprint22-native-fallback-20260824-a",
+    "branches": ["native"],
+    "elapsed_seconds": 0.010853,
+    "fallback_contract": "OPTIONAL_MOPS_UNAVAILABLE",
+    "plugin_nodes_instantiated": false,
+    "bare_hython_without_pyyaml": true
+  },
+  "attribute_contract": ["P", "orient", "scale", "v", "seed", "variant_id"],
+  "selection": {"winner": null, "automatic_ranking": false, "human_selection_required": true}
+}

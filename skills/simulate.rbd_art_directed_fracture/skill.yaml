@@ -1,0 +1,195 @@
+{
+  "id": "simulate.rbd_art_directed_fracture",
+  "version": "1.0.0",
+  "summary": "Build and validate a bounded native art-directed concrete fracture and Bullet transform-cache workflow.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "simulation",
+    "rbd",
+    "fracture",
+    "constraints",
+    "bullet",
+    "transforms",
+    "cache",
+    "art-direction",
+    "verification"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "rbd_fracture_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483445,
+      "default": 1717
+    },
+    "start_frame": {
+      "type": "integer",
+      "min": 1,
+      "default": 1
+    },
+    "end_frame": {
+      "type": "integer",
+      "min": 1,
+      "default": 48
+    },
+    "profile_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "bullet_substeps": {
+      "type": "integer",
+      "min": 1,
+      "max": 10,
+      "default": 5
+    },
+    "constraint_iterations": {
+      "type": "integer",
+      "min": 1,
+      "max": 50,
+      "default": 10
+    },
+    "primary_strength": {
+      "type": "number",
+      "min": 0.01,
+      "max": 1000.0,
+      "default": 40.0
+    },
+    "chipping_strength": {
+      "type": "number",
+      "min": 0.01,
+      "max": 1000.0,
+      "default": 20.0
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    },
+    "camera_path": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "parent_node_id resolves to an explicit SOP-capable geometry object under /obj",
+    "exact run-scoped node names and batch id do not already exist",
+    "artifact_dir is absolute and inside an approved project root",
+    "viewer, viewport, and camera are all explicit when visual capture is requested"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe",
+  "cook_budget": {
+    "scope": "inclusive_frame_range_one_selected_proxy",
+    "max_frames": 48,
+    "max_pieces": 5000,
+    "max_points": 250000,
+    "max_primitives": 250000,
+    "max_memory_bytes": 1073741824,
+    "max_seconds": 120,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.rbd_art_directed_fracture@1.0.0"
+    },
+    {
+      "simulate.rbd.validate": "exact graph, fracture, constraint, transform, reconstruction, and every-frame resource checks"
+    },
+    {
+      "graph.capture_svg": "selection-independent graph evidence"
+    },
+    {
+      "graph.capture_manifest": "profiles, seeds, controls, cache status, empty ratings, and lineage"
+    },
+    {
+      "viewport.capture": "optional explicit-camera before/after proof"
+    },
+    {
+      "visual.analyze": "optional deterministic image mechanics"
+    },
+    {
+      "verification.critique.package": "optional hashed multimodal handoff without inference"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "pinned RBD Material Fracture 4.0 exposes geometry, constraints, and proxy outputs",
+      "three native impact-point profiles remain behind a human Switch in fixed radial, offset, layered order",
+      "RBD Configure feeds one bounded Bullet Solver and its Simulation Points output feeds a non-writing File Cache",
+      "Transform Pieces reconstructs the editable rest polygons from current and frozen-start transform points",
+      "before and after geometry share a separate comparison contract; labels do not enter render geometry",
+      "no Python SOP, generated VEX, UI selection, or external process is required"
+    ],
+    "data_checks": [
+      "named rest pieces are unique, nonempty, and at or below 5000",
+      "material constraints contain type, name, and strength attributes and at least one breaks",
+      "every frame has the stable name set and finite P, orient, pivot, scale, v, and w values",
+      "every ordered transform set receives a deterministic SHA-256 digest",
+      "Transform Pieces retains rest topology and names while producing meaningful vertical motion",
+      "configured transform cache remains load-off and unwritten; timeline is restored"
+    ],
+    "visual_checks": [
+      "intact monolith and reconstructed debris remain visible as distinct before and after subjects",
+      "deterministic image checks precede optional local or external model critique",
+      "Apprentice watermark overlap is treated as a critique concern, not geometry"
+    ],
+    "model_checks": [
+      "no model download, inference, or network transfer occurs implicitly",
+      "model critique is advisory and cannot populate winner or human ratings"
+    ]
+  },
+  "outputs": [
+    "editable_intact_source",
+    "three_retained_impact_profiles",
+    "named_rest_pieces_and_material_constraints",
+    "packed_proxy_bullet_simulation",
+    "transform_point_cache_contract",
+    "reconstructed_after_state",
+    "before_after_comparison_contract",
+    "per_frame_transform_validation_json",
+    "graph_svg_and_manifest",
+    "optional_visual_report_and_multimodal_packet",
+    "versioned_hipnc_snapshot"
+  ],
+  "rollback": [
+    "recipe transaction restores the pre-build checkpoint on failure",
+    "no cache files are written or deleted by this skill"
+  ]
+}

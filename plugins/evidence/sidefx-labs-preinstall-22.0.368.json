@@ -1,0 +1,27 @@
+{
+  "schema": "hermes.houdini.sidefx_labs_preinstall_baseline",
+  "schema_version": "1.0",
+  "captured_on": "2026-08-23",
+  "houdini_version": "22.0.368",
+  "license_mode": "Apprentice",
+  "package_name": "SideFXLabs22.0",
+  "package_installed": false,
+  "package_skiplist": "",
+  "counts": {
+    "CHOP": 0,
+    "COP": 0,
+    "DOP": 0,
+    "LOP": 1,
+    "OBJ": 0,
+    "SOP": 2,
+    "TOP": 0
+  },
+  "total_labs_namespace_node_types": 3,
+  "preexisting_node_types": [
+    "LOP/labs::zibravdb_import::1.0",
+    "SOP/labs::rop_zibravdb_compress::1.0",
+    "SOP/labs::zibravdb_decompress::1.0"
+  ],
+  "probe": "scripts/probe_sidefx_labs.py",
+  "mutation_performed": false
+}

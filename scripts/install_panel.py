@@ -3,6 +3,7 @@
 Run from Houdini's Python Shell:
     exec(open(r"/path/to/houdini-creative-dev/scripts/install_panel.py").read())
 """
+
 from __future__ import annotations
 
 

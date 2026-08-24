@@ -1,33 +1,42 @@
-id: sop.scatter_cluster_points
-version: 1.0.0
-summary: Scatter N seeded points on an input surface with light attribute noise.
-contexts: [SOP]
-inputs:
-  parent_path: {type: string}
-  count: {type: integer, min: 1, max: 2000000, default: 1200}
-  seed: {type: integer, default: 42}
-  relax: {type: number, min: 0.0, max: 1.0, default: 0.35}
-nodes:
-  - id: src
-    type: scatter
-    name: SCATTER_PTS
-    params:
-      force_total: "{{count}}"
-      seed: "{{seed}}"
-      relax: "{{relax}}"
-  - id: noise
-    type: attribnoise
-    name: SHAPE_NOISE
-    params:
-      attribs: "P"
-      seed: "{{seed}}"
-      amp: 0.15
-connections:
-  - [src, 0, noise, 0]
-outputs:
-  - noise
-meta:
-  depends: []
-  cook_budget:
-    max_points: 2000000
-    max_seconds: 30
+{
+  "id": "sop.scatter_cluster_points",
+  "version": "1.0.0",
+  "summary": "Scatter N seeded points on an input surface with light attribute noise.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "surface_path": {"type": "string", "default": "/obj/HERMES_ASSET/IN_GEO"},
+    "count": {"type": "integer", "min": 1, "max": 2000000, "default": 1200},
+    "seed": {"type": "integer", "default": 42},
+    "relax_iterations": {"type": "integer", "min": 0, "max": 100, "default": 5}
+  },
+  "references": {"surface": "{{surface_path}}"},
+  "nodes": [
+    {
+      "id": "src",
+      "type": "scatter::2.0",
+      "name": "SCATTER_PTS",
+      "params": {
+        "forcetotal": "{{count}}",
+        "seed": "{{seed}}",
+        "relaxpoints": 1,
+        "relaxiterations": "{{relax_iterations}}"
+      }
+    },
+    {
+      "id": "noise",
+      "type": "attribnoise::2.0",
+      "name": "SHAPE_NOISE",
+      "params": {"attribs": "P", "offset": "{{seed}}", "amplitude": 0.15}
+    }
+  ],
+  "connections": [
+    ["surface", 0, "src", 0],
+    ["src", 0, "noise", 0]
+  ],
+  "outputs": ["noise"],
+  "meta": {
+    "depends": [],
+    "cook_budget": {"max_points": 2000000, "max_seconds": 30}
+  }
+}

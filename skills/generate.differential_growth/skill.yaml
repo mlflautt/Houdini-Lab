@@ -1,0 +1,217 @@
+{
+  "id": "generate.differential_growth",
+  "version": "1.0.0",
+  "summary": "Build and verify a bounded native-SOP differential-growth feedback sculpture.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "generative",
+    "differential-growth",
+    "solver",
+    "curve",
+    "polywire",
+    "feedback",
+    "comparison"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "differential_growth_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483647,
+      "default": 2401
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 1
+    },
+    "start_frame": {
+      "type": "number",
+      "default": 1
+    },
+    "end_frame": {
+      "type": "number",
+      "default": 24
+    },
+    "frame_step": {
+      "type": "number",
+      "min": 0.001,
+      "default": 1
+    },
+    "point_radius": {
+      "type": "number",
+      "min": 0.005,
+      "max": 0.25,
+      "default": 0.075
+    },
+    "relax_iterations": {
+      "type": "integer",
+      "min": 1,
+      "max": 12,
+      "default": 5
+    },
+    "blur_iterations": {
+      "type": "integer",
+      "min": 1,
+      "max": 8,
+      "default": 1
+    },
+    "blur_step_size": {
+      "type": "number",
+      "min": 0,
+      "max": 1,
+      "default": 0.25
+    },
+    "segment_length": {
+      "type": "number",
+      "min": 0.01,
+      "max": 0.25,
+      "default": 0.075
+    },
+    "source_jitter": {
+      "type": "number",
+      "min": 0,
+      "max": 0.25,
+      "default": 0.025
+    },
+    "wire_radius": {
+      "type": "number",
+      "min": 0.002,
+      "max": 0.25,
+      "default": 0.025
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    },
+    "camera_path": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "parent resolves to an existing SOP-capable geometry container",
+    "parent does not contain the skill's exact run-scoped contract node names",
+    "artifact_dir is absolute and inside an approved project root",
+    "the newly instantiated native Solver feedback output remains pristine before population"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe_and_before_solver_population",
+  "cook_budget": {
+    "scope": "frame_range",
+    "max_frames": 24,
+    "max_points": 50000,
+    "max_primitives": 50000,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.differential_growth_loop@1.0.0"
+    },
+    {
+      "growth.solver.populate": "registered Relax to Attribute Blur to Resample feedback graph"
+    },
+    {
+      "cook.node": "explicit inclusive frame range with per-frame metrics"
+    },
+    {
+      "geometry.validate": "time-independent selected rest curve"
+    },
+    {
+      "graph.capture_svg": "outer recipe and inner Solver feedback networks"
+    },
+    {
+      "graph.capture_manifest": "controls, candidates, algorithm, lineage, and final metric-log path"
+    },
+    {
+      "viewport.capture": "optional explicit-camera final-frame comparison"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "native Circle, Spiral, Switch, Mountain, Resample, Solver, Relax, Attribute Blur, PolyWire, and Null SOPs",
+      "named rest curve, grown curve, renderable wire, and comparison contracts",
+      "Solver feedback order is Prev_Frame to Relax to Attribute Blur P to Resample to OUT",
+      "source candidates remain connected behind one explicit human Switch",
+      "no generated VEX, Python SOP, selection, pane, display-chain, or arbitrary-code dependency"
+    ],
+    "data_checks": [
+      "every requested frame reports finite bounded geometry metrics without node errors",
+      "the selected rest curve is finite and remains below 1000 points",
+      "final curve and PolyWire counts remain below the 50000 point and primitive ceilings",
+      "original global frame is restored after temporal cooking"
+    ],
+    "visual_checks": [
+      "rest and grown wires remain side-by-side and individually editable",
+      "frames 12 through 24 visibly progress from expansion into folds for the ellipse fixture",
+      "optional viewport or downstream Karma proof uses explicit identity and Apprentice-safe resolution"
+    ],
+    "provenance_checks": [
+      "seed, candidate IDs, frame range, exact solver parameters, Houdini build, and source URLs are recorded",
+      "every candidate retains an empty human-rating slot and no automatic rank"
+    ]
+  },
+  "outputs": [
+    "rest_curve_contract",
+    "grown_curve_contract",
+    "grown_polywire_contract",
+    "rest_growth_comparison_contract",
+    "temporal_cook_jsonl",
+    "graph_manifest_json",
+    "outer_graph_svg",
+    "solver_graph_svg",
+    "optional_final_frame_png",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_remove_only_the_new_managed_branch",
+  "failure_modes": [
+    "frame count above 24 is refused before graph mutation",
+    "non-pristine Solver feedback networks are refused rather than replaced",
+    "declared or observed resource overrun fails and remains in the cook log",
+    "exact managed-name collisions cause transactional graph rollback",
+    "no disk simulation cache or external process is started implicitly"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "winner_default": null
+  }
+}

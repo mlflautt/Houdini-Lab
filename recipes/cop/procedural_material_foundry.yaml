@@ -1,0 +1,72 @@
+{
+  "id": "cop.procedural_material_foundry",
+  "version": "1.0.0",
+  "summary": "Derive three editable native PBR channel sets and USD Material COP contracts from reusable mono patterns.",
+  "contexts": ["COP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "MATERIAL_FOUNDRY"},
+    "lineage": {"type": "string", "default": "native Copernicus material foundry; Houdini 22.0.368"},
+    "verdigris_pattern_path": {"type": "string"},
+    "emberglaze_pattern_path": {"type": "string"},
+    "moonlichen_pattern_path": {"type": "string"}
+  },
+  "references": {
+    "verdigris_pattern": "{{verdigris_pattern_path}}",
+    "emberglaze_pattern": "{{emberglaze_pattern_path}}",
+    "moonlichen_pattern": "{{moonlichen_pattern_path}}"
+  },
+  "nodes": [
+    {"id": "verdigris_base_make", "type": "monotorgb", "name": "{{run_code}}_VERDIGRIS_BASE_COLOR_MAKE", "role": "material_foundry_verdigris_base_color_make", "position": [-12, 12], "params": {"inputmin": 0.0, "inputmax": 1.0, "ramp1cr": 0.025, "ramp1cg": 0.045, "ramp1cb": 0.025, "ramp2cr": 0.12, "ramp2cg": 0.72, "ramp2cb": 0.52}, "comment": "{{lineage}}; scene-linear Rec.709 base-color intent"},
+    {"id": "verdigris_base", "type": "null", "name": "OUT_{{run_code}}_VERDIGRIS_BASE_COLOR", "role": "material_foundry_verdigris_base_color", "position": [-12, 10], "params": {}, "comment": "Named base_color contract; scene_linear_rec709"},
+    {"id": "verdigris_rough_make", "type": "remap", "name": "{{run_code}}_VERDIGRIS_ROUGHNESS_MAKE", "role": "material_foundry_verdigris_roughness_make", "position": [-9, 12], "params": {"signature": "auto", "op": "remap", "inputmin": 0.0, "inputmax": 1.0, "outputmin": 0.22, "outputmax": 0.72}, "comment": "{{lineage}}; raw scalar roughness"},
+    {"id": "verdigris_rough", "type": "null", "name": "OUT_{{run_code}}_VERDIGRIS_ROUGHNESS", "role": "material_foundry_verdigris_roughness", "position": [-9, 10], "params": {}, "comment": "Named roughness contract; raw_data"},
+    {"id": "verdigris_height_make", "type": "remap", "name": "{{run_code}}_VERDIGRIS_HEIGHT_MAKE", "role": "material_foundry_verdigris_height_make", "position": [-6, 12], "params": {"signature": "auto", "op": "remap", "inputmin": 0.0, "inputmax": 1.0, "outputmin": 0.04, "outputmax": 0.92}, "comment": "{{lineage}}; raw scalar height"},
+    {"id": "verdigris_height", "type": "null", "name": "OUT_{{run_code}}_VERDIGRIS_HEIGHT", "role": "material_foundry_verdigris_height", "position": [-6, 10], "params": {}, "comment": "Named height contract; raw_data"},
+    {"id": "verdigris_normal_make", "type": "heighttonormal", "name": "{{run_code}}_VERDIGRIS_NORMAL_MAKE", "role": "material_foundry_verdigris_normal_make", "position": [-3, 12], "params": {"normaltype": "offset", "scale": 4.0, "kernel": 2}, "comment": "{{lineage}}; native offset normal from height"},
+    {"id": "verdigris_normal", "type": "null", "name": "OUT_{{run_code}}_VERDIGRIS_NORMAL", "role": "material_foundry_verdigris_normal", "position": [-3, 10], "params": {}, "comment": "Named normal contract; raw_data_offset_0_1"},
+    {"id": "verdigris_material", "type": "usdmaterial", "name": "OUT_{{run_code}}_VERDIGRIS_USD_MATERIAL", "role": "material_foundry_verdigris_usd_material", "position": [0, 10], "params": {"base": 1.0, "metalness": 0.72, "specular_roughness": 0.42}, "comment": "Native USD Material COP with explicit base, roughness, height, and normal bindings"},
+
+    {"id": "emberglaze_base_make", "type": "monotorgb", "name": "{{run_code}}_EMBERGLAZE_BASE_COLOR_MAKE", "role": "material_foundry_emberglaze_base_color_make", "position": [-12, 6], "params": {"inputmin": 0.0, "inputmax": 1.0, "ramp1cr": 0.018, "ramp1cg": 0.003, "ramp1cb": 0.001, "ramp2cr": 0.95, "ramp2cg": 0.17, "ramp2cb": 0.018}, "comment": "{{lineage}}; scene-linear Rec.709 base-color intent"},
+    {"id": "emberglaze_base", "type": "null", "name": "OUT_{{run_code}}_EMBERGLAZE_BASE_COLOR", "role": "material_foundry_emberglaze_base_color", "position": [-12, 4], "params": {}, "comment": "Named base_color contract; scene_linear_rec709"},
+    {"id": "emberglaze_rough_make", "type": "remap", "name": "{{run_code}}_EMBERGLAZE_ROUGHNESS_MAKE", "role": "material_foundry_emberglaze_roughness_make", "position": [-9, 6], "params": {"signature": "auto", "op": "remap", "inputmin": 0.0, "inputmax": 1.0, "outputmin": 0.16, "outputmax": 0.58}, "comment": "{{lineage}}; raw scalar roughness"},
+    {"id": "emberglaze_rough", "type": "null", "name": "OUT_{{run_code}}_EMBERGLAZE_ROUGHNESS", "role": "material_foundry_emberglaze_roughness", "position": [-9, 4], "params": {}, "comment": "Named roughness contract; raw_data"},
+    {"id": "emberglaze_height_make", "type": "remap", "name": "{{run_code}}_EMBERGLAZE_HEIGHT_MAKE", "role": "material_foundry_emberglaze_height_make", "position": [-6, 6], "params": {"signature": "auto", "op": "remap", "inputmin": 0.0, "inputmax": 1.0, "outputmin": 0.02, "outputmax": 0.86}, "comment": "{{lineage}}; raw scalar height"},
+    {"id": "emberglaze_height", "type": "null", "name": "OUT_{{run_code}}_EMBERGLAZE_HEIGHT", "role": "material_foundry_emberglaze_height", "position": [-6, 4], "params": {}, "comment": "Named height contract; raw_data"},
+    {"id": "emberglaze_normal_make", "type": "heighttonormal", "name": "{{run_code}}_EMBERGLAZE_NORMAL_MAKE", "role": "material_foundry_emberglaze_normal_make", "position": [-3, 6], "params": {"normaltype": "offset", "scale": 5.5, "kernel": 2}, "comment": "{{lineage}}; native offset normal from height"},
+    {"id": "emberglaze_normal", "type": "null", "name": "OUT_{{run_code}}_EMBERGLAZE_NORMAL", "role": "material_foundry_emberglaze_normal", "position": [-3, 4], "params": {}, "comment": "Named normal contract; raw_data_offset_0_1"},
+    {"id": "emberglaze_material", "type": "usdmaterial", "name": "OUT_{{run_code}}_EMBERGLAZE_USD_MATERIAL", "role": "material_foundry_emberglaze_usd_material", "position": [0, 4], "params": {"base": 1.0, "metalness": 0.04, "specular_roughness": 0.3}, "comment": "Native USD Material COP with explicit base, roughness, height, and normal bindings"},
+
+    {"id": "moonlichen_base_make", "type": "monotorgb", "name": "{{run_code}}_MOONLICHEN_BASE_COLOR_MAKE", "role": "material_foundry_moonlichen_base_color_make", "position": [-12, 0], "params": {"inputmin": 0.0, "inputmax": 1.0, "ramp1cr": 0.018, "ramp1cg": 0.022, "ramp1cb": 0.04, "ramp2cr": 0.58, "ramp2cg": 0.78, "ramp2cb": 0.42}, "comment": "{{lineage}}; scene-linear Rec.709 base-color intent"},
+    {"id": "moonlichen_base", "type": "null", "name": "OUT_{{run_code}}_MOONLICHEN_BASE_COLOR", "role": "material_foundry_moonlichen_base_color", "position": [-12, -2], "params": {}, "comment": "Named base_color contract; scene_linear_rec709"},
+    {"id": "moonlichen_rough_make", "type": "remap", "name": "{{run_code}}_MOONLICHEN_ROUGHNESS_MAKE", "role": "material_foundry_moonlichen_roughness_make", "position": [-9, 0], "params": {"signature": "auto", "op": "remap", "inputmin": 0.0, "inputmax": 1.0, "outputmin": 0.48, "outputmax": 0.9}, "comment": "{{lineage}}; raw scalar roughness"},
+    {"id": "moonlichen_rough", "type": "null", "name": "OUT_{{run_code}}_MOONLICHEN_ROUGHNESS", "role": "material_foundry_moonlichen_roughness", "position": [-9, -2], "params": {}, "comment": "Named roughness contract; raw_data"},
+    {"id": "moonlichen_height_make", "type": "remap", "name": "{{run_code}}_MOONLICHEN_HEIGHT_MAKE", "role": "material_foundry_moonlichen_height_make", "position": [-6, 0], "params": {"signature": "auto", "op": "remap", "inputmin": 0.0, "inputmax": 1.0, "outputmin": 0.08, "outputmax": 0.96}, "comment": "{{lineage}}; raw scalar height"},
+    {"id": "moonlichen_height", "type": "null", "name": "OUT_{{run_code}}_MOONLICHEN_HEIGHT", "role": "material_foundry_moonlichen_height", "position": [-6, -2], "params": {}, "comment": "Named height contract; raw_data"},
+    {"id": "moonlichen_normal_make", "type": "heighttonormal", "name": "{{run_code}}_MOONLICHEN_NORMAL_MAKE", "role": "material_foundry_moonlichen_normal_make", "position": [-3, 0], "params": {"normaltype": "offset", "scale": 3.2, "kernel": 2}, "comment": "{{lineage}}; native offset normal from height"},
+    {"id": "moonlichen_normal", "type": "null", "name": "OUT_{{run_code}}_MOONLICHEN_NORMAL", "role": "material_foundry_moonlichen_normal", "position": [-3, -2], "params": {}, "comment": "Named normal contract; raw_data_offset_0_1"},
+    {"id": "moonlichen_material", "type": "usdmaterial", "name": "OUT_{{run_code}}_MOONLICHEN_USD_MATERIAL", "role": "material_foundry_moonlichen_usd_material", "position": [0, -2], "params": {"base": 1.0, "metalness": 0.0, "specular_roughness": 0.62}, "comment": "Native USD Material COP with explicit base, roughness, height, and normal bindings"}
+  ],
+  "connections": [
+    ["verdigris_pattern", 0, "verdigris_base_make", 0], ["verdigris_base_make", 0, "verdigris_base", 0],
+    ["verdigris_pattern", 0, "verdigris_rough_make", 0], ["verdigris_rough_make", 0, "verdigris_rough", 0],
+    ["verdigris_pattern", 0, "verdigris_height_make", 0], ["verdigris_height_make", 0, "verdigris_height", 0], ["verdigris_height", 0, "verdigris_normal_make", 0], ["verdigris_normal_make", 0, "verdigris_normal", 0],
+    ["verdigris_base", 0, "verdigris_material", 0], ["verdigris_rough", 0, "verdigris_material", 3], ["verdigris_height", 0, "verdigris_material", 12], ["verdigris_normal", 0, "verdigris_material", 13],
+    ["emberglaze_pattern", 0, "emberglaze_base_make", 0], ["emberglaze_base_make", 0, "emberglaze_base", 0],
+    ["emberglaze_pattern", 0, "emberglaze_rough_make", 0], ["emberglaze_rough_make", 0, "emberglaze_rough", 0],
+    ["emberglaze_pattern", 0, "emberglaze_height_make", 0], ["emberglaze_height_make", 0, "emberglaze_height", 0], ["emberglaze_height", 0, "emberglaze_normal_make", 0], ["emberglaze_normal_make", 0, "emberglaze_normal", 0],
+    ["emberglaze_base", 0, "emberglaze_material", 0], ["emberglaze_rough", 0, "emberglaze_material", 3], ["emberglaze_height", 0, "emberglaze_material", 12], ["emberglaze_normal", 0, "emberglaze_material", 13],
+    ["moonlichen_pattern", 0, "moonlichen_base_make", 0], ["moonlichen_base_make", 0, "moonlichen_base", 0],
+    ["moonlichen_pattern", 0, "moonlichen_rough_make", 0], ["moonlichen_rough_make", 0, "moonlichen_rough", 0],
+    ["moonlichen_pattern", 0, "moonlichen_height_make", 0], ["moonlichen_height_make", 0, "moonlichen_height", 0], ["moonlichen_height", 0, "moonlichen_normal_make", 0], ["moonlichen_normal_make", 0, "moonlichen_normal", 0],
+    ["moonlichen_base", 0, "moonlichen_material", 0], ["moonlichen_rough", 0, "moonlichen_material", 3], ["moonlichen_height", 0, "moonlichen_material", 12], ["moonlichen_normal", 0, "moonlichen_material", 13]
+  ],
+  "outputs": ["verdigris_base", "verdigris_rough", "verdigris_height", "verdigris_normal", "verdigris_material", "emberglaze_base", "emberglaze_rough", "emberglaze_height", "emberglaze_normal", "emberglaze_material", "moonlichen_base", "moonlichen_rough", "moonlichen_height", "moonlichen_normal", "moonlichen_material"],
+  "meta": {
+    "graph_first": true,
+    "automatic_ranking": false,
+    "color_space_intent": {"base_color": "scene_linear_rec709", "roughness": "raw_data", "height": "raw_data", "normal": "raw_data_offset_0_1"},
+    "cook_budget": {"scope": "twelve_static_pbr_channels", "max_resolution": [1024, 1024], "default_resolution": [512, 512], "max_memory_bytes": 1073741824, "max_seconds": 90},
+    "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}
+  }
+}

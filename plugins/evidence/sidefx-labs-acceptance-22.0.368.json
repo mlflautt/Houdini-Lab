@@ -1,0 +1,96 @@
+{
+  "schema": "hermes.houdini.sidefx_labs_acceptance_summary",
+  "schema_version": "1.0",
+  "captured_on": "2026-08-24",
+  "houdini_version": "22.0.368",
+  "license_mode": "Apprentice",
+  "package": {
+    "name": "SideFXLabs22.0",
+    "version": "22.0.368",
+    "archive_sha256": "9a4a0893af760d46b1222b3ffba514846113ca8481e47a65da53b5b3c74e87d5",
+    "package_json_sha256": "d7dc43cc05874fac05114030e7628b63fe523282334addc2f76e9d772eba095d",
+    "archive_bytes": 199090831,
+    "installed_bytes": 326876190,
+    "archive_members": 2087,
+    "installation_scope": "houdini_user_preferences"
+  },
+  "installed_tree": {
+    "files": 2087,
+    "hda_libraries": 1,
+    "python_files": 74,
+    "viewer_state_files": 3,
+    "shelf_files": 10,
+    "native_binaries": 3,
+    "native_binary_platforms": [
+      "windows-x86_64"
+    ],
+    "symlink_escapes": 0
+  },
+  "startup": {
+    "enabled_node_types": 450,
+    "enabled_counts": {
+      "COP": 1,
+      "DOP": 2,
+      "LOP": 9,
+      "OBJ": 4,
+      "SOP": 416,
+      "TOP": 18
+    },
+    "disabled_launch": "HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json",
+    "disabled_node_types": 3,
+    "disabled_counts": {
+      "LOP": 1,
+      "SOP": 2
+    }
+  },
+  "certified_fixtures": [
+    {
+      "id": "artifact_mesh_utility",
+      "node_type": "labs::measure_curvature::3.1",
+      "points": 1152,
+      "primitives": 1,
+      "attributes": ["Cd", "concavity", "convexity"],
+      "seconds": 0.249637,
+      "human_rating": null,
+      "automatic_rank": null
+    },
+    {
+      "id": "terrain_cartography_utility",
+      "node_type": "labs::terrain_analysis::1.0",
+      "points": 4225,
+      "primitives": 4096,
+      "attributes": ["Cd", "slope"],
+      "seconds": 0.159993,
+      "human_rating": null,
+      "automatic_rank": null
+    },
+    {
+      "id": "motion_instancing_utility",
+      "node_type": "labs::instance_attributes::1.0",
+      "points": 64,
+      "primitives": 0,
+      "attributes": ["orient", "pscale", "scale"],
+      "seconds": 0.153944,
+      "human_rating": null,
+      "automatic_rank": null
+    }
+  ],
+  "gallery": {
+    "points": 6657,
+    "primitives": 4865,
+    "render_resolution": [768, 432],
+    "render_sha256": "5f5be1da1c8be93224a6f8cdbdfdcfbfa77ac6395c87ba1eec0a56bfbd23ee9a",
+    "visual_status": "pass",
+    "visual_flags": [],
+    "panels_present": 3,
+    "winner": null
+  },
+  "verification": {
+    "unit_tests_passed": 133,
+    "unit_tests_skipped": 4,
+    "hython_integration_tests_passed": 30,
+    "ruff": "pass",
+    "wheel": "houdini_creative_dev-0.20.0-py3-none-any.whl"
+  },
+  "certification_scope": "three_exact_node_types_only"
+}

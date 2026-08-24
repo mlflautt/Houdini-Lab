@@ -1,0 +1,18 @@
+{
+  "id": "lop.kinetic_reliquary_stage",
+  "version": "1.0.0",
+  "summary": "Import the kinetic reliquary comparison into one Apprentice-safe Karma stage.",
+  "contexts": ["LOP"],
+  "inputs": {"run_code": {"type": "string", "default": "KINETIC_RELIQUARY"}, "gallery_sop_path": {"type": "string"}, "render_picture": {"type": "string"}, "width": {"type": "integer", "min": 1, "max": 1280, "default": 640}, "height": {"type": "integer", "min": 1, "max": 720, "default": 360}},
+  "references": {},
+  "nodes": [
+    {"id": "gallery", "type": "sopimport", "name": "{{run_code}}_IMPORT_KINETIC", "role": "kinetic_reliquary_import", "position": [-4, 8], "params": {"soppath": "{{gallery_sop_path}}", "primpath": "/World/KineticReliquary", "enable_pathprefix": 1, "pathprefix": "/World/KineticReliquary", "enable_savepath": 0}, "comment": "Explicit comparison SOP contract"},
+    {"id": "dome", "type": "domelight", "name": "{{run_code}}_DOME", "role": "kinetic_reliquary_dome", "position": [-2, 6], "params": {"primpath": "/lights/{{run_code}}_Dome"}, "comment": "Shared neutral lighting"},
+    {"id": "camera", "type": "camera", "name": "{{run_code}}_CAMERA", "role": "kinetic_reliquary_camera", "position": [0, 4], "params": {"primpath": "/cameras/{{run_code}}_Camera", "tx": 0.0, "ty": 8.5, "tz": 62.0, "rx": -10.0, "ry": 0.0, "rz": 0.0, "focalLength": 48.0}, "comment": "Explicit camera frames all four candidates with crop-safe margins"},
+    {"id": "settings", "type": "karmarendersettings", "name": "{{run_code}}_KARMA_SETTINGS", "role": "kinetic_reliquary_karma_settings", "position": [0, 2], "params": {"primpath": "/Render/{{run_code}}_Settings", "picture": "{{render_picture}}", "camera": "/cameras/{{run_code}}_Camera", "res_mode": "autoheight", "resolutionx": "{{width}}", "samplesperpixel": 8, "pathtracedsamples": 16, "varianceaa_minsamples": 1, "varianceaa_maxsamples": 8, "setlayerrendersettings": 1}, "comment": "Bounded Karma CPU proof settings"},
+    {"id": "out", "type": "null", "name": "OUT_{{run_code}}_STAGE", "role": "kinetic_reliquary_stage_contract", "position": [0, 0], "params": {}, "flags": {"display": true}, "comment": "Editable kinetic stage; no aesthetic winner"}
+  ],
+  "connections": [["gallery", 0, "dome", 0], ["dome", 0, "camera", 0], ["camera", 0, "settings", 0], ["settings", 0, "out", 0]],
+  "outputs": ["gallery", "camera", "settings", "out"],
+  "meta": {"graph_first": true, "renderer": "Karma CPU", "automatic_ranking": false, "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}}
+}

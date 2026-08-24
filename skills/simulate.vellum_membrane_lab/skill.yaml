@@ -1,0 +1,217 @@
+{
+  "id": "simulate.vellum_membrane_lab",
+  "version": "1.0.0",
+  "summary": "Build and compare three bounded pinned Vellum membrane material profiles.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "simulation",
+    "vellum",
+    "membrane",
+    "cloth",
+    "surface-struts",
+    "material-study",
+    "temporal",
+    "verification"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "vellum_membrane_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483445,
+      "default": 1313
+    },
+    "start_frame": {
+      "type": "integer",
+      "min": 1,
+      "default": 1
+    },
+    "end_frame": {
+      "type": "integer",
+      "min": 1,
+      "default": 24
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "resolution": {
+      "type": "integer",
+      "min": 9,
+      "max": 41,
+      "default": 25
+    },
+    "sheet_size": {
+      "type": "number",
+      "min": 1.0,
+      "max": 5.0,
+      "default": 2.4
+    },
+    "sheet_height": {
+      "type": "number",
+      "min": 1.5,
+      "max": 6.0,
+      "default": 2.5
+    },
+    "noise_height": {
+      "type": "number",
+      "min": 0.0,
+      "max": 0.12,
+      "default": 0.035
+    },
+    "mass": {
+      "type": "number",
+      "min": 0.001,
+      "max": 2.0,
+      "default": 0.08
+    },
+    "thickness": {
+      "type": "number",
+      "min": 0.002,
+      "max": 0.1,
+      "default": 0.025
+    },
+    "substeps": {
+      "type": "integer",
+      "min": 1,
+      "max": 5,
+      "default": 2
+    },
+    "constraint_iterations": {
+      "type": "integer",
+      "min": 10,
+      "max": 150,
+      "default": 60
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    },
+    "camera_path": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "parent_node_id resolves to an explicit SOP-capable geometry object under /obj",
+    "exact run-scoped node names and batch id do not already exist",
+    "artifact_dir is absolute and inside an approved project root",
+    "viewer, viewport, and camera are all explicit when visual capture is requested"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_recipe",
+  "cook_budget": {
+    "scope": "inclusive_frame_range_three_candidates",
+    "max_frames": 48,
+    "max_points": 75000,
+    "max_primitives": 75000,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    {
+      "recipe.instantiate": "sop.vellum_membrane_lab@1.0.0"
+    },
+    {
+      "simulate.membrane.validate": "exact graph and every-frame structural, constraint, anchor, motion, and resource checks"
+    },
+    {
+      "graph.capture_svg": "selection-independent graph evidence"
+    },
+    {
+      "graph.capture_manifest": "material profiles, seeds, controls, caches, empty ratings, and lineage"
+    },
+    {
+      "viewport.capture": "optional explicit-camera final-frame comparison"
+    },
+    {
+      "visual.analyze": "optional deterministic image mechanics"
+    },
+    {
+      "verification.critique.package": "optional hashed multimodal handoff without inference"
+    },
+    {
+      "hip.save_snapshot": "incremented non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "shared native Grid and explicit Group Create anchor edge",
+      "three Mountain to Cloth to Pin branches with independent native Vellum Solvers",
+      "reinforced branch adds Surface Struts; ordinary closed-object Struts are rejected for the open membrane",
+      "each solver receives geometry, named constraint contract, and the shared Sphere plus Box collider",
+      "three configured non-writing File Cache boundaries and fixed human Switch order",
+      "comparison geometry and candidate labels remain separate; no Python SOP, generated VEX, or UI dependency"
+    ],
+    "data_checks": [
+      "exactly one resolution-sized edge has zero mass while all remaining points retain the declared mass",
+      "reinforced constraint primitive count materially exceeds silk and rubber",
+      "every frame records finite topology, bounds, centroid, memory, messages, and cook time",
+      "final dynamic points deform while anchors remain within tolerance",
+      "final material profiles are spatially distinct and selection matches the human Switch",
+      "caches remain load-off and unwritten; timeline is restored"
+    ],
+    "visual_checks": [
+      "three membrane silhouettes remain visible left-to-right as silk, rubber, reinforced",
+      "deterministic image checks precede optional local or external model critique",
+      "Apprentice watermark overlap is treated as a critique concern, not candidate geometry"
+    ],
+    "model_checks": [
+      "no model download, inference, or network transfer occurs implicitly",
+      "model critique is advisory and cannot populate winner or human ratings"
+    ]
+  },
+  "outputs": [
+    "three_editable_rest_contracts",
+    "three_editable_constraint_contracts",
+    "three_simulated_membrane_candidates",
+    "shared_collider_contract",
+    "human_selected_contract",
+    "no_winner_comparison_contract",
+    "separate_candidate_id_and_seed_labels",
+    "per_frame_validation_json",
+    "graph_svg_and_manifest",
+    "optional_visual_report_and_multimodal_packet",
+    "versioned_hipnc_snapshot"
+  ],
+  "rollback": [
+    "recipe transaction restores the pre-build checkpoint on failure",
+    "no cache files are written or deleted by this skill"
+  ]
+}

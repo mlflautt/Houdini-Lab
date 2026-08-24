@@ -1,0 +1,29 @@
+{
+  "id": "lop.world_seed_atlas_stage",
+  "version": "1.0.0",
+  "summary": "Import three equal native World Seed SOP contracts into one Apprentice-safe Karma comparison stage.",
+  "contexts": ["LOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "WORLD_SEED_ATLAS"},
+    "amber_sop_path": {"type": "string"},
+    "verdant_sop_path": {"type": "string"},
+    "lunar_sop_path": {"type": "string"},
+    "render_picture": {"type": "string"},
+    "width": {"type": "integer", "min": 1, "max": 1280, "default": 768},
+    "height": {"type": "integer", "min": 1, "max": 720, "default": 432},
+    "camera_tz": {"type": "number", "min": 50.0, "max": 100.0, "default": 66.0}
+  },
+  "references": {},
+  "nodes": [
+    {"id": "amber", "type": "sopimport", "name": "{{run_code}}_IMPORT_AMBER_MESA", "role": "world_seed_import_amber_mesa", "position": [-7, 10], "params": {"soppath": "{{amber_sop_path}}", "primpath": "/World/WorldSeeds/AmberMesa", "enable_pathprefix": 1, "pathprefix": "/World/WorldSeeds/AmberMesa", "enable_savepath": 0}, "comment": "Explicit amber_mesa SOP contract"},
+    {"id": "verdant", "type": "sopimport", "name": "{{run_code}}_IMPORT_VERDANT_RIFT", "role": "world_seed_import_verdant_rift", "position": [-4, 8], "params": {"soppath": "{{verdant_sop_path}}", "primpath": "/World/WorldSeeds/VerdantRift", "enable_pathprefix": 1, "pathprefix": "/World/WorldSeeds/VerdantRift", "enable_savepath": 0}, "comment": "Explicit verdant_rift SOP contract"},
+    {"id": "lunar", "type": "sopimport", "name": "{{run_code}}_IMPORT_LUNAR_BASIN", "role": "world_seed_import_lunar_basin", "position": [-1, 6], "params": {"soppath": "{{lunar_sop_path}}", "primpath": "/World/WorldSeeds/LunarBasin", "enable_pathprefix": 1, "pathprefix": "/World/WorldSeeds/LunarBasin", "enable_savepath": 0}, "comment": "Explicit lunar_basin SOP contract"},
+    {"id": "dome", "type": "domelight", "name": "{{run_code}}_DOME", "role": "world_seed_neutral_dome", "position": [-1, 4], "params": {"primpath": "/lights/{{run_code}}_Dome"}, "comment": "Shared neutral atlas lighting"},
+    {"id": "camera", "type": "camera", "name": "{{run_code}}_CAMERA", "role": "world_seed_atlas_camera", "position": [-1, 2], "params": {"primpath": "/cameras/{{run_code}}_Camera", "tx": 0.0, "ty": 14.5, "tz": "{{camera_tz}}", "rx": -12.5, "ry": 0.0, "rz": 0.0, "focalLength": 45.0}, "comment": "Explicit camera frames all worlds with equal margins"},
+    {"id": "settings", "type": "karmarendersettings", "name": "{{run_code}}_KARMA_SETTINGS", "role": "world_seed_karma_cpu_settings", "position": [-1, 0], "params": {"primpath": "/Render/{{run_code}}_Settings", "picture": "{{render_picture}}", "camera": "/cameras/{{run_code}}_Camera", "res_mode": "autoheight", "resolutionx": "{{width}}", "samplesperpixel": 8, "pathtracedsamples": 16, "varianceaa_minsamples": 1, "varianceaa_maxsamples": 8, "setlayerrendersettings": 1}, "comment": "One-frame Apprentice-safe Karma CPU proof"},
+    {"id": "out", "type": "null", "name": "OUT_{{run_code}}_STAGE", "role": "world_seed_usd_stage_contract", "position": [-1, -2], "params": {}, "flags": {"display": true}, "comment": "Three simultaneous worlds; human judgment remains external"}
+  ],
+  "connections": [["amber", 0, "verdant", 0], ["verdant", 0, "lunar", 0], ["lunar", 0, "dome", 0], ["dome", 0, "camera", 0], ["camera", 0, "settings", 0], ["settings", 0, "out", 0]],
+  "outputs": ["amber", "verdant", "lunar", "camera", "settings", "out"],
+  "meta": {"graph_first": true, "automatic_ranking": false, "renderer": "Karma CPU", "cook_budget": {"max_prims": 25000, "max_seconds": 60}, "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}}
+}

@@ -1,0 +1,43 @@
+{
+  "schema": "hermes.houdini.plugin",
+  "schema_version": "1.0",
+  "id": "mops-1.12",
+  "display_name": "MOPs Open Source 1.12",
+  "vendor": "Henry Foster / toadstorm",
+  "plugin_version": "1.12",
+  "kind": "hda_library",
+  "source_url": "https://github.com/toadstorm/MOPS/tree/v1.12",
+  "license": "LGPL-3.0",
+  "has_native_binaries": false,
+  "target": {
+    "houdini_build": "22.0.368",
+    "platform": "macos",
+    "architecture": "arm64",
+    "license_modes": ["houdini-apprentice-noncommercial"]
+  },
+  "package": {
+    "name": "MOPS",
+    "checksum": "sha-256=Ow0W6Xo4sAViEop0AvwNzIelpmEd6P+v047VfvyUojM=",
+    "file_size": 42373120,
+    "source_commit": "65c4cff83003a51b31edbefa1dd1a11bd3ac3c25",
+    "install_root": "$PROJECT/plugins/vendor/MOPS-1.12",
+    "loading": "isolated MOPS and HOUDINI_PATH environment only"
+  },
+  "permissions": {"network": false, "telemetry": false, "external_executables": false},
+  "rollback": {
+    "disable_environment": "unset MOPS and remove the project MOPs root from HOUDINI_PATH",
+    "uninstall_command": "disable the isolated MOPS and HOUDINI_PATH environment",
+    "remove_targets_after_separate_approval": ["$PROJECT/plugins/vendor/MOPS-1.12"]
+  },
+  "certified_node_types": [
+    "MOPS::Plain_Falloff::1.0",
+    "MOPS::Noise_Falloff::1.4",
+    "MOPS::Shape_Falloff::1.5",
+    "MOPS::Transform_Modifier::1.1"
+  ],
+  "fixtures": [
+    {"id": "plain_falloff", "context": "SOP", "max_seconds": 30, "max_points": 10000},
+    {"id": "noise_falloff", "context": "SOP", "max_seconds": 30, "max_points": 10000},
+    {"id": "shape_falloff", "context": "SOP", "max_seconds": 30, "max_points": 10000}
+  ]
+}

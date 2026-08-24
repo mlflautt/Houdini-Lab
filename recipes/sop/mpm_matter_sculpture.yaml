@@ -1,0 +1,69 @@
+{
+  "id": "sop.mpm_matter_sculpture",
+  "version": "1.0.0",
+  "summary": "Build a bounded native multi-material MPM sculpture with explicit granular-like, elastic-like, and viscous-like profiles.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "MPM_MATTER"},
+    "lineage": {"type": "string", "default": "native MPM matter sculpture; Houdini 22.0.368"},
+    "seed_granular": {"type": "integer", "min": 0, "max": 2147483647, "default": 1414},
+    "seed_elastic": {"type": "integer", "min": 0, "max": 2147483647, "default": 1515},
+    "seed_viscous": {"type": "integer", "min": 0, "max": 2147483647, "default": 1616},
+    "start_frame": {"type": "integer", "min": 1, "max": 100000, "default": 1},
+    "end_frame": {"type": "integer", "min": 1, "max": 100000, "default": 24},
+    "particle_separation": {"type": "number", "min": 0.06, "max": 0.25, "default": 0.12},
+    "source_radius": {"type": "number", "min": 0.3, "max": 1.1, "default": 0.62},
+    "source_height": {"type": "number", "min": 1.2, "max": 4.0, "default": 2.4},
+    "noise_height": {"type": "number", "min": 0.0, "max": 0.18, "default": 0.08},
+    "noise_element_size": {"type": "number", "min": 0.1, "max": 2.0, "default": 0.38},
+    "substep_min": {"type": "integer", "min": 1, "max": 8, "default": 1},
+    "substep_max": {"type": "integer", "min": 2, "max": 128, "default": 32},
+    "gravity_y": {"type": "number", "min": -20.0, "max": 0.0, "default": -9.81},
+    "cache_path": {"type": "string", "default": "$JOB/cache/mpm_matter/mpm_matter.$F4.bgeo.sc"},
+    "output_index": {"type": "integer", "min": 0, "max": 1, "default": 0}
+  },
+  "references": {
+    "sidefx_workflow": "https://www.sidefx.com/docs/houdini/mpm/workflow.html",
+    "sidefx_source": "https://www.sidefx.com/docs/houdini/nodes/sop/mpmsource.html",
+    "sidefx_solver": "https://www.sidefx.com/docs/houdini/nodes/sop/mpmsolver.html"
+  },
+  "nodes": [
+    {"id": "container", "type": "mpmcontainer", "name": "{{run_code}}_MPM_CONTAINER", "role": "mpm_container", "position": [0, 24], "params": {"startframe": "{{start_frame}}", "particlesep": "{{particle_separation}}", "gridscale": 2.0, "size": [7.0, 5.0, 5.0], "center": [0.0, 2.0, 0.0], "allboundsoverride": 1, "allbounds": "closed", "friction": 0.65}, "comment": "{{lineage}}; explicit global resolution and closed proxy domain"},
+
+    {"id": "granular_shape", "type": "sphere", "name": "{{run_code}}_GRANULAR_SHAPE", "role": "mpm_shape_granular", "position": [-10, 22], "params": {"type": 2, "rad": ["{{source_radius}}", "{{source_radius}}", "{{source_radius}}"], "freq": 5, "tx": -1.45, "ty": "{{source_height}}", "tz": 0.0}, "comment": "Editable granular-like source volume"},
+    {"id": "granular_mountain", "type": "mountain::2.0", "name": "{{run_code}}_GRANULAR_SEEDED_SHAPE", "role": "mpm_seeded_shape_granular", "position": [-10, 20], "params": {"height": "{{noise_height}}", "elementsize": "{{noise_element_size}}", "offsetx": "{{seed_granular}}", "updatenmls": 0}, "comment": "Deterministic granular silhouette variation"},
+    {"id": "granular_source", "type": "mpmsource", "name": "{{run_code}}_GRANULAR_SOURCE", "role": "mpm_source_granular", "position": [-10, 18], "params": {"emissiontype": "once", "particlesepoverride": 0, "jitterscale": 0.35, "materialtype": "sandy", "density": 1500.0, "e": 1.2, "eexp": "3", "nu": 0.2, "sandfrictionangle": 34.0, "sandcohesion": 0.02, "initialvelocity": [0.8, 0.0, 0.0], "displayassphere": 1, "pscalemult": 1.25}, "comment": "Explicit sand-like starting coefficients; not a physical identity claim"},
+
+    {"id": "elastic_shape", "type": "sphere", "name": "{{run_code}}_ELASTIC_SHAPE", "role": "mpm_shape_elastic", "position": [0, 22], "params": {"type": 2, "rad": ["{{source_radius}}", "{{source_radius}}", "{{source_radius}}"], "freq": 5, "tx": 0.0, "ty": "{{source_height}}", "tz": 0.0}, "comment": "Editable elastic-like source volume"},
+    {"id": "elastic_mountain", "type": "mountain::2.0", "name": "{{run_code}}_ELASTIC_SEEDED_SHAPE", "role": "mpm_seeded_shape_elastic", "position": [0, 20], "params": {"height": "{{noise_height}}", "elementsize": "{{noise_element_size}}", "offsetx": "{{seed_elastic}}", "updatenmls": 0}, "comment": "Deterministic elastic silhouette variation"},
+    {"id": "elastic_source", "type": "mpmsource", "name": "{{run_code}}_ELASTIC_SOURCE", "role": "mpm_source_elastic", "position": [0, 18], "params": {"emissiontype": "once", "particlesepoverride": 0, "jitterscale": 0.35, "materialtype": "elastic", "density": 1050.0, "e": 2.5, "eexp": "3", "nu": 0.35, "initialvelocity": [0.0, 0.0, 0.0], "displayassphere": 1, "pscalemult": 1.25}, "comment": "Explicit jello-like starting coefficients; not a physical identity claim"},
+
+    {"id": "viscous_shape", "type": "sphere", "name": "{{run_code}}_VISCOUS_SHAPE", "role": "mpm_shape_viscous", "position": [10, 22], "params": {"type": 2, "rad": ["{{source_radius}}", "{{source_radius}}", "{{source_radius}}"], "freq": 5, "tx": 1.45, "ty": "{{source_height}}", "tz": 0.0}, "comment": "Editable viscous-like source volume"},
+    {"id": "viscous_mountain", "type": "mountain::2.0", "name": "{{run_code}}_VISCOUS_SEEDED_SHAPE", "role": "mpm_seeded_shape_viscous", "position": [10, 20], "params": {"height": "{{noise_height}}", "elementsize": "{{noise_element_size}}", "offsetx": "{{seed_viscous}}", "updatenmls": 0}, "comment": "Deterministic viscous silhouette variation"},
+    {"id": "viscous_source", "type": "mpmsource", "name": "{{run_code}}_VISCOUS_SOURCE", "role": "mpm_source_viscous", "position": [10, 18], "params": {"emissiontype": "once", "particlesepoverride": 0, "jitterscale": 0.35, "materialtype": "viscous", "density": 1250.0, "k": 1.0, "kexp": "3", "gamma": 1.0, "viscosity": 0.85, "viscokappa": 0.08, "initialvelocity": [-0.8, 0.0, 0.0], "displayassphere": 1, "pscalemult": 1.25}, "comment": "Explicit honey-like starting coefficients in the live H22 slider range; not a physical identity claim"},
+
+    {"id": "source_merge", "type": "merge", "name": "{{run_code}}_MERGE_SOURCES", "role": "mpm_source_merge", "position": [0, 15], "params": {}, "comment": "Fixed granular, elastic, viscous material order"},
+    {"id": "collider_shape", "type": "box", "name": "{{run_code}}_COLLIDER_SHAPE", "role": "mpm_collider_shape", "position": [-7, 14], "params": {"size": [3.4, 0.3, 2.2], "ty": 0.55, "rz": -10.0}, "comment": "Editable tilted collision shelf above the solver ground plane"},
+    {"id": "collider", "type": "mpmcollider", "name": "OUT_{{run_code}}_COLLIDER", "role": "mpm_collider_contract", "position": [-7, 12], "params": {"type": "0", "response": "bounce", "friction": 0.55, "sticky": 0.0}, "comment": "Static VDB MPM collider contract"},
+    {"id": "solver", "type": "mpmsolver", "name": "{{run_code}}_MPM_SOLVER", "role": "mpm_solver", "position": [0, 12], "params": {"doglobalsubsteps": 0, "substeprange": ["{{substep_min}}", "{{substep_max}}"], "gravity": [0.0, "{{gravity_y}}", 0.0], "groundactive": 1, "groundfriction": 0.7, "cacheenabled": 1, "cachemaxsize": 1024, "autoresim": 1, "deterministic": 1, "savecheckpoints": 0, "enabledisplayassphere": 1, "displayassphere": 1, "enablepscalemult": 1, "pscalemult": 1.25}, "comment": "Adaptive deterministic OpenCL MPM proxy solve; disk checkpoints disabled"},
+    {"id": "raw", "type": "null", "name": "OUT_{{run_code}}_POINTS_RAW", "role": "mpm_points_raw", "position": [0, 10], "params": {}, "comment": "Uncached solver particle output"},
+    {"id": "cache", "type": "filecache", "name": "{{run_code}}_FILE_CACHE", "role": "mpm_cache", "position": [0, 8], "params": {"file": "{{cache_path}}", "filemode": "none", "trange": "normal", "f1": "{{start_frame}}", "f2": "{{end_frame}}", "f3": 1, "initsim": 1, "loadfromdisk": 0}, "comment": "Configured non-writing cache boundary; explicit cache operation required"},
+    {"id": "points", "type": "null", "name": "OUT_{{run_code}}_POINTS", "role": "mpm_points_contract", "position": [-3, 6], "params": {}, "comment": "Editable cached-particle contract"},
+    {"id": "surface", "type": "mpmsurface", "name": "OUT_{{run_code}}_SURFACE", "role": "mpm_surface_contract", "position": [3, 6], "params": {"outputtype": "polygonmesh", "surfacingmethod": "vdbfromparticles", "voxelscale": 1.5, "surfacepscalemult": 1.15, "adaptivity": 0.01, "computevel": 1}, "comment": "Optional native VDB-from-particles polygon surface"},
+    {"id": "selector", "type": "switch", "name": "{{run_code}}_SELECT_OUTPUT", "role": "mpm_output_selector", "position": [0, 4], "params": {"input": "{{output_index}}"}, "comment": "Human-editable points or surface output selector; no aesthetic ranking"},
+    {"id": "selected", "type": "null", "name": "OUT_{{run_code}}_SELECTED", "role": "mpm_selected_contract", "position": [0, 2], "params": {}, "flags": {"display": true, "render": true}, "comment": "Public MPM matter-sculpture contract"}
+  ],
+  "connections": [
+    ["granular_shape", 0, "granular_mountain", 0], ["granular_mountain", 0, "granular_source", 0], ["container", 0, "granular_source", 1],
+    ["elastic_shape", 0, "elastic_mountain", 0], ["elastic_mountain", 0, "elastic_source", 0], ["container", 0, "elastic_source", 1],
+    ["viscous_shape", 0, "viscous_mountain", 0], ["viscous_mountain", 0, "viscous_source", 0], ["container", 0, "viscous_source", 1],
+    ["granular_source", 0, "source_merge", 0], ["elastic_source", 0, "source_merge", 1], ["viscous_source", 0, "source_merge", 2],
+    ["collider_shape", 0, "collider", 0], ["container", 0, "collider", 1],
+    ["source_merge", 0, "solver", 0], ["collider", 0, "solver", 1], ["container", 0, "solver", 2],
+    ["solver", 0, "raw", 0], ["raw", 0, "cache", 0], ["cache", 0, "points", 0], ["points", 0, "surface", 0],
+    ["points", 0, "selector", 0], ["surface", 0, "selector", 1], ["selector", 0, "selected", 0]
+  ],
+  "outputs": ["container", "granular_source", "elastic_source", "viscous_source", "collider", "points", "surface", "selected"],
+  "cook_budget": {"scope": "proxy_frame_range", "max_frames": 24, "max_particles": 1000000, "default_max_particles": 150000, "cache_write_implicit": false}
+}

@@ -1,0 +1,35 @@
+{
+  "id": "lop.procedural_material_foundry_stage",
+  "version": "1.0.0",
+  "summary": "Import three equal swatches, publish three COP-authored USD materials, bind them explicitly, and expose one bounded Karma gallery.",
+  "contexts": ["LOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "MATERIAL_FOUNDRY"},
+    "verdigris_sop_path": {"type": "string"},
+    "emberglaze_sop_path": {"type": "string"},
+    "moonlichen_sop_path": {"type": "string"},
+    "verdigris_material_cop": {"type": "string"},
+    "emberglaze_material_cop": {"type": "string"},
+    "moonlichen_material_cop": {"type": "string"},
+    "render_picture": {"type": "string"},
+    "width": {"type": "integer", "min": 1, "max": 1280, "default": 960},
+    "height": {"type": "integer", "min": 1, "max": 720, "default": 540}
+  },
+  "nodes": [
+    {"id": "import_verdigris", "type": "sopimport", "name": "{{run_code}}_IMPORT_VERDIGRIS", "role": "material_swatch_import_verdigris", "position": [-8, 12], "params": {"soppath": "{{verdigris_sop_path}}", "primpath": "/World/Swatches/Verdigris", "enable_pathprefix": 1, "pathprefix": "/World/Swatches/Verdigris", "enable_savepath": 0}, "comment": "Explicit left swatch SOP contract"},
+    {"id": "import_emberglaze", "type": "sopimport", "name": "{{run_code}}_IMPORT_EMBERGLAZE", "role": "material_swatch_import_emberglaze", "position": [-5, 10], "params": {"soppath": "{{emberglaze_sop_path}}", "primpath": "/World/Swatches/Emberglaze", "enable_pathprefix": 1, "pathprefix": "/World/Swatches/Emberglaze", "enable_savepath": 0}, "comment": "Explicit center swatch SOP contract"},
+    {"id": "import_moonlichen", "type": "sopimport", "name": "{{run_code}}_IMPORT_MOONLICHEN", "role": "material_swatch_import_moonlichen", "position": [-2, 8], "params": {"soppath": "{{moonlichen_sop_path}}", "primpath": "/World/Swatches/Moonlichen", "enable_pathprefix": 1, "pathprefix": "/World/Swatches/Moonlichen", "enable_savepath": 0}, "comment": "Explicit right swatch SOP contract"},
+    {"id": "materials", "type": "texturemateriallibrary", "name": "{{run_code}}_TEXTURE_MATERIALS", "role": "copernicus_texture_material_library", "position": [-2, 6], "params": {"setres": 1, "res1": 512, "res2": 512, "setprecision": 1, "precision": "b32", "matpathprefix": "/materials/", "materials": 3, "matnode1": "{{verdigris_material_cop}}", "matpath1": "/materials/{{run_code}}_verdigris", "instanceable1": 0, "matnode2": "{{emberglaze_material_cop}}", "matpath2": "/materials/{{run_code}}_emberglaze", "instanceable2": 0, "matnode3": "{{moonlichen_material_cop}}", "matpath3": "/materials/{{run_code}}_moonlichen", "instanceable3": 0}, "comment": "Houdini 22 native Copernicus-to-Solaris material boundary"},
+    {"id": "assign", "type": "assignmaterial", "name": "{{run_code}}_ASSIGN_SWATCH_MATERIALS", "role": "material_foundry_explicit_bindings", "position": [-2, 4], "params": {"nummaterials": 3, "primpattern1": "/World/Swatches/Verdigris", "matspecmethod1": "path", "matspecpath1": "/materials/{{run_code}}_verdigris", "primpattern2": "/World/Swatches/Emberglaze", "matspecmethod2": "path", "matspecpath2": "/materials/{{run_code}}_emberglaze", "primpattern3": "/World/Swatches/Moonlichen", "matspecmethod3": "path", "matspecpath3": "/materials/{{run_code}}_moonlichen"}, "comment": "Three simultaneous bindings; no selector and no implied winner"},
+    {"id": "dome", "type": "domelight", "name": "{{run_code}}_DOME", "role": "material_foundry_neutral_dome", "position": [-2, 2], "params": {"primpath": "/lights/{{run_code}}_Dome"}, "comment": "Neutral bounded gallery lighting"},
+    {"id": "camera", "type": "camera", "name": "{{run_code}}_CAMERA", "role": "material_foundry_gallery_camera", "position": [-2, 0], "params": {"primpath": "/cameras/{{run_code}}_Camera", "tx": 0.0, "ty": 2.6, "tz": 22.5, "rx": -3.5, "ry": 0.0, "rz": 0.0, "focalLength": 50.0}, "comment": "Explicit camera frames all three candidates equally with safe crop margins"},
+    {"id": "render_settings", "type": "karmarendersettings", "name": "{{run_code}}_KARMA_SETTINGS", "role": "material_foundry_karma_cpu_settings", "position": [-2, -2], "params": {"primpath": "/Render/{{run_code}}_Settings", "picture": "{{render_picture}}", "camera": "/cameras/{{run_code}}_Camera", "res_mode": "autoheight", "resolutionx": "{{width}}", "samplesperpixel": 8, "pathtracedsamples": 16, "varianceaa_minsamples": 1, "varianceaa_maxsamples": 8, "setlayerrendersettings": 1}, "comment": "One-frame Apprentice-safe Karma preview settings"},
+    {"id": "stage_out", "type": "null", "name": "OUT_{{run_code}}_STAGE", "role": "material_foundry_usd_stage_contract", "position": [-2, -4], "params": {}, "flags": {"display": true}, "comment": "Three-candidate USD stage; human judgment remains external"}
+  ],
+  "connections": [
+    ["import_verdigris", 0, "import_emberglaze", 0], ["import_emberglaze", 0, "import_moonlichen", 0], ["import_moonlichen", 0, "materials", 0], ["materials", 0, "assign", 0], ["assign", 0, "dome", 0], ["dome", 0, "camera", 0], ["camera", 0, "render_settings", 0], ["render_settings", 0, "stage_out", 0]
+  ],
+  "outputs": ["import_verdigris", "import_emberglaze", "import_moonlichen", "materials", "assign", "camera", "render_settings", "stage_out"],
+  "meta": {"graph_first": true, "automatic_ranking": false, "renderer": "Karma CPU", "cook_budget": {"scope": "single_three_swatch_lop_stage", "max_prims": 10000, "max_seconds": 30}, "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}}
+}

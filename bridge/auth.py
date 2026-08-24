@@ -1,4 +1,5 @@
 """Session auth helpers: secrets + HMAC signing for the bridge transport."""
+
 from __future__ import annotations
 
 import hashlib

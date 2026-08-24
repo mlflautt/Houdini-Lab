@@ -1,0 +1,69 @@
+{
+  "id": "sop.world_seed_biome",
+  "version": "1.0.0",
+  "summary": "Build one bounded native HeightField biome with editable terrain, scatter, hero, and world contracts.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "WORLD_SEED"},
+    "lineage": {"type": "string", "default": "World Seed Atlas; Houdini 22.0.368 Apprentice"},
+    "terrain_samples": {"type": "integer", "min": 64, "max": 128, "default": 128},
+    "world_size": {"type": "number", "min": 8.0, "max": 10.0, "default": 9.0},
+    "seed": {"type": "integer", "min": 0, "max": 2147483647},
+    "offset_x": {"type": "number"},
+    "offset_y": {"type": "number"},
+    "noise_amplitude": {"type": "number", "min": 0.5, "max": 4.0},
+    "noise_element_size": {"type": "number", "min": 1.0, "max": 5.0},
+    "terrace_step_size": {"type": "number", "min": 0.2, "max": 1.2},
+    "scatter_count": {"type": "integer", "min": 1, "max": 100},
+    "scatter_radius": {"type": "number", "min": 0.05, "max": 0.25},
+    "hero_radius": {"type": "number", "min": 0.5, "max": 1.5},
+    "platonic_type": {"type": "integer", "min": 0, "max": 6},
+    "translation_x": {"type": "number", "min": -15.0, "max": 15.0},
+    "terrain_r": {"type": "number", "min": 0.0, "max": 1.0},
+    "terrain_g": {"type": "number", "min": 0.0, "max": 1.0},
+    "terrain_b": {"type": "number", "min": 0.0, "max": 1.0},
+    "accent_r": {"type": "number", "min": 0.0, "max": 1.0},
+    "accent_g": {"type": "number", "min": 0.0, "max": 1.0},
+    "accent_b": {"type": "number", "min": 0.0, "max": 1.0}
+  },
+  "references": {},
+  "nodes": [
+    {"id": "base", "type": "heightfield", "name": "{{run_code}}_HEIGHTFIELD_BASE", "role": "world_seed_heightfield_base", "position": [-8, 12], "params": {"divisionmode": 1, "gridsamples": "{{terrain_samples}}", "size": ["{{world_size}}", "{{world_size}}"], "initialheight": 0.0, "initialmask": 0.0}, "comment": "{{lineage}}; bounded square native HeightField"},
+    {"id": "noise", "type": "heightfield_noise", "name": "{{run_code}}_SEEDED_NOISE", "role": "world_seed_heightfield_noise", "position": [-8, 10], "params": {"layer": "height", "combine": 1, "centernoise": 0, "amp": "{{noise_amplitude}}", "elementsize": "{{noise_element_size}}", "offset": ["{{offset_x}}", "{{offset_y}}", 0.0], "basis": "simplex", "oct": 5.0, "lac": 1.9, "rough": 0.52}, "comment": "{{lineage}}; seed encoded as explicit noise offset"},
+    {"id": "terrace", "type": "heightfield_terrace::2.0", "name": "{{run_code}}_TERRACES", "role": "world_seed_heightfield_terrace", "position": [-8, 8], "params": {"computerange": "1", "terrace_max_step_size": "{{terrace_step_size}}", "smoothedges": 0.18, "undulation_type": 1, "amp": 0.08, "elementsize": "{{noise_element_size}}"}, "comment": "{{lineage}}; editable geological rhythm"},
+    {"id": "convert", "type": "convertheightfield", "name": "{{run_code}}_TERRAIN_MESH", "role": "world_seed_heightfield_convert", "position": [-8, 6], "params": {"layer": "height", "conversion": 0, "surftype": 4, "lod": 1.0, "bakecd": 0, "doextrude": 1, "depth": -0.2}, "comment": "{{lineage}}; explicit mesh boundary"},
+    {"id": "terrain_color", "type": "color", "name": "{{run_code}}_TERRAIN_COLOR", "role": "world_seed_terrain_color", "position": [-8, 4], "params": {"class": 2, "colortype": 0, "color": ["{{terrain_r}}", "{{terrain_g}}", "{{terrain_b}}"]}, "comment": "{{lineage}}; stable displayColor contract"},
+    {"id": "terrain_xform", "type": "xform", "name": "{{run_code}}_TERRAIN_PLACE", "role": "world_seed_terrain_placement", "position": [-8, 2], "params": {"tx": "{{translation_x}}"}, "comment": "Comparison placement only"},
+    {"id": "terrain", "type": "null", "name": "OUT_{{run_code}}_TERRAIN", "role": "world_seed_terrain_contract", "position": [-8, 0], "params": {}, "comment": "Named terrain contract"},
+
+    {"id": "scatter", "type": "scatter", "name": "{{run_code}}_BIOME_SCATTER", "role": "world_seed_biome_scatter", "position": [-3, 6], "params": {"npts": "{{scatter_count}}", "seed": "{{seed}}"}, "comment": "{{lineage}}; exact bounded biome point count"},
+    {"id": "points", "type": "null", "name": "OUT_{{run_code}}_BIOME_POINTS", "role": "world_seed_biome_points_contract", "position": [-3, 4], "params": {}, "comment": "Named biome scatter point contract"},
+    {"id": "form_source", "type": "platonic", "name": "{{run_code}}_BIOME_FORM", "role": "world_seed_biome_form_source", "position": [1, 8], "params": {"type": "{{platonic_type}}", "radius": "{{scatter_radius}}"}, "comment": "Editable low-complexity crystalline biome source"},
+    {"id": "form_color", "type": "color", "name": "{{run_code}}_BIOME_COLOR", "role": "world_seed_biome_color", "position": [1, 6], "params": {"class": 2, "colortype": 0, "color": ["{{accent_r}}", "{{accent_g}}", "{{accent_b}}"]}, "comment": "Shared accent identity"},
+    {"id": "copy", "type": "copytopoints::2.0", "name": "{{run_code}}_COPY_BIOME", "role": "world_seed_biome_copy", "position": [1, 4], "params": {"pack": 0, "transform": 1}, "comment": "Native Copy to Points performs all replication"},
+    {"id": "forms_xform", "type": "xform", "name": "{{run_code}}_BIOME_PLACE", "role": "world_seed_biome_placement", "position": [1, 2], "params": {"tx": "{{translation_x}}"}, "comment": "Comparison placement only"},
+    {"id": "forms", "type": "null", "name": "OUT_{{run_code}}_BIOME_FORMS", "role": "world_seed_biome_forms_contract", "position": [1, 0], "params": {}, "comment": "Named copied biome contract"},
+
+    {"id": "hero_source", "type": "platonic", "name": "{{run_code}}_HERO_SOURCE", "role": "world_seed_hero_source", "position": [6, 8], "params": {"type": "{{platonic_type}}", "radius": "{{hero_radius}}"}, "comment": "One central landmark form per world"},
+    {"id": "hero_color", "type": "color", "name": "{{run_code}}_HERO_COLOR", "role": "world_seed_hero_color", "position": [6, 6], "params": {"class": 2, "colortype": 0, "color": ["{{accent_r}}", "{{accent_g}}", "{{accent_b}}"]}, "comment": "Hero shares biome accent identity"},
+    {"id": "hero_xform", "type": "xform", "name": "{{run_code}}_HERO_PLACE", "role": "world_seed_hero_placement", "position": [6, 2], "params": {"tx": "{{translation_x}}", "ty": 2.25}, "comment": "Comparison placement only"},
+    {"id": "hero", "type": "null", "name": "OUT_{{run_code}}_HERO", "role": "world_seed_hero_contract", "position": [6, 0], "params": {}, "comment": "Named hero contract"},
+
+    {"id": "merge", "type": "merge", "name": "{{run_code}}_WORLD_MERGE", "role": "world_seed_world_merge", "position": [0, -2], "params": {}, "comment": "Terrain, biome forms, and hero remain independently editable"},
+    {"id": "world", "type": "null", "name": "OUT_{{run_code}}_WORLD", "role": "world_seed_world_contract", "position": [0, -4], "params": {}, "flags": {"display": true, "render": true}, "comment": "{{lineage}}; complete world output; no ranking"}
+  ],
+  "connections": [
+    ["base", 0, "noise", 0], ["noise", 0, "terrace", 0], ["terrace", 0, "convert", 0], ["convert", 0, "terrain_color", 0], ["terrain_color", 0, "terrain_xform", 0], ["terrain_xform", 0, "terrain", 0],
+    ["convert", 0, "scatter", 0], ["scatter", 0, "points", 0], ["form_source", 0, "form_color", 0], ["form_color", 0, "copy", 0], ["points", 0, "copy", 1], ["copy", 0, "forms_xform", 0], ["forms_xform", 0, "forms", 0],
+    ["hero_source", 0, "hero_color", 0], ["hero_color", 0, "hero_xform", 0], ["hero_xform", 0, "hero", 0],
+    ["terrain", 0, "merge", 0], ["forms", 0, "merge", 1], ["hero", 0, "merge", 2], ["merge", 0, "world", 0]
+  ],
+  "outputs": ["terrain", "points", "forms", "hero", "world"],
+  "meta": {
+    "graph_first": true,
+    "native_nodes": ["heightfield", "heightfield_noise", "heightfield_terrace::2.0", "convertheightfield", "scatter", "platonic", "copytopoints::2.0", "color", "xform", "merge", "null"],
+    "python_geometry_compute": false,
+    "cook_budget": {"max_terrain_samples": [128, 128], "max_points": 150000, "max_primitives": 150000, "max_seconds": 120},
+    "license": {"mode": "houdini-apprentice-noncommercial"}
+  }
+}

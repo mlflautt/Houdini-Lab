@@ -1,0 +1,32 @@
+{
+  "id": "world.world_seed_atlas_labs",
+  "version": "1.0.0",
+  "summary": "Compose native World Seed biomes with capability-gated SideFX Labs terrain, instancing, and curvature branches without aesthetic ranking.",
+  "contexts": ["SOP", "LOP", "ROP"],
+  "houdini": {"minimum_version": "22.0", "tested_builds": ["22.0.368"]},
+  "license": {"mode": "houdini-apprentice-noncommercial", "commercial_use": false, "scene_extension": ".hipnc", "render_ceiling": [1280, 720], "renderer": "Karma CPU"},
+  "inputs": {
+    "artifact_dir": {"type": "string"},
+    "run_id": {"type": "string", "default": "labs_atlas_001"},
+    "base_seed": {"type": "integer", "min": 0, "max": 2147483376, "default": 19019},
+    "terrain_samples": {"type": "integer", "enum": [64, 96, 128], "default": 96},
+    "world_size": {"type": "number", "min": 8.0, "max": 10.0, "default": 9.0},
+    "labs_available": {"type": "boolean", "default": false},
+    "width": {"type": "integer", "min": 1, "max": 1280, "default": 768},
+    "height": {"type": "integer", "min": 1, "max": 720, "default": 432},
+    "frame": {"type": "number", "default": 1.0},
+    "time_limit": {"type": "number", "min": 1, "max": 180, "default": 120},
+    "max_threads": {"type": "integer", "min": 1, "max": 32, "default": 4},
+    "render_preview": {"type": "boolean", "default": true}
+  },
+  "preconditions": ["Labs capability is an explicit replayable input", "native World Seed recipe remains available", "artifact paths are new and project-approved"],
+  "risk": "external",
+  "checkpoint": "before_each_native_overlay_stage_and_render_mutation",
+  "cook_budget": {"max_points": 300000, "max_primitives": 300000, "max_memory_bytes": 2147483648, "max_seconds": 180, "render_frames": 1, "default_resolution": [768, 432]},
+  "steps": ["compose native World Seed sub-skill", "instantiate exact Labs or unavailable overlay recipe", "validate native and optional branches", "compose simultaneous USD stage", "optionally render one Karma CPU frame", "capture graph and manifest evidence", "save incremented hipnc"],
+  "verification": {"graph_checks": ["only three certified Labs node types may appear", "native branch is input zero and remains the default", "plugin-disabled plan instantiates no plugin nodes"], "data_checks": ["native, selected, and comparison contracts are finite and bounded", "Labs attributes satisfy slope curvature orient pscale scale contracts"], "visual_checks": ["native and Labs pairs remain visible without winner labels", "deterministic image analysis is mechanical only"], "selection_checks": ["human ratings remain empty", "automatic ranking remains disabled"]},
+  "outputs": ["three_native_worlds", "three_optional_labs_worlds_or_unavailable_markers", "three_pair_comparisons", "usd_stage", "optional_karma_png", "validation_json", "graph_evidence", "final_hipnc_snapshot"],
+  "rollback": "restore_checkpoint_or_remove_only_new_run_scoped_nodes",
+  "failure_modes": ["requested Labs nodes missing", "unknown operator or parameter contract", "geometry or render budget exceeded", "existing artifact refused"],
+  "human_selection": {"automatic_ranking": false, "winner_default": null}
+}

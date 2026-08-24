@@ -1,0 +1,112 @@
+{
+  "id": "sop.particle_calligraphy",
+  "version": "1.0.0",
+  "summary": "Build three bounded native Particle Trail calligraphy candidates with editable curve, tube, selection, and comparison contracts.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "parent_path": {"type": "string"},
+    "run_code": {"type": "string", "default": "PARTICLE_CALLIGRAPHY"},
+    "lineage": {"type": "string", "default": "native Particle Trail calligraphy; Houdini 22.0.368"},
+    "seed_arc": {"type": "integer", "min": 0, "max": 2147483436, "default": 5201},
+    "seed_fan": {"type": "integer", "min": 0, "max": 2147483436, "default": 5302},
+    "seed_orbit": {"type": "integer", "min": 0, "max": 2147483436, "default": 5412},
+    "birth_rate": {"type": "number", "min": 1, "max": 64, "default": 48},
+    "particle_life": {"type": "number", "min": 0.25, "max": 8, "default": 3},
+    "trail_frames": {"type": "number", "min": 1, "max": 24, "default": 12},
+    "trail_substeps": {"type": "integer", "min": 2, "max": 8, "default": 8},
+    "wire_radius": {"type": "number", "min": 0.002, "max": 0.06, "default": 0.035},
+    "candidate_index": {"type": "integer", "min": 0, "max": 2, "default": 0}
+  },
+  "references": {},
+  "nodes": [
+    {
+      "id": "emitter", "type": "circle", "name": "{{run_code}}_EMITTER", "role": "calligraphy_emitter",
+      "position": [0, 18],
+      "params": {"type": "poly", "orient": "zx", "divs": 12, "rad": [0.18, 0.18]},
+      "comment": "{{lineage}}; shared editable twelve-point ring emitter"
+    },
+
+    {
+      "id": "arc_particles", "type": "particle", "name": "{{run_code}}_ARC_PARTICLES", "role": "calligraphy_particles_arc",
+      "position": [-8, 16],
+      "params": {"jitter": 0, "accurate": 1, "doid": 1, "seed": "{{seed_arc}}", "birth": "{{birth_rate}}", "life": "{{particle_life}}", "lifevar": 0, "rmunused": 1, "external": [0.2, 0.8, 0.0], "wind": [0.8, 1.8, 0.2], "turb": [0.7, 0.2, 0.7], "period": 0.5},
+      "comment": "{{lineage}}; arc candidate; legacy Particle SOP computes motion"
+    },
+    {"id": "arc_points", "type": "add", "name": "{{run_code}}_ARC_PARTICLES_ONLY", "role": "calligraphy_points_arc", "position": [-8, 14], "params": {"keep": 1}, "comment": "Delete source primitive but keep simulated points so Particle Trail uses the particle contract"},
+    {"id": "arc_extract", "type": "attribcreate::2.0", "name": "{{run_code}}_ARC_EXTRACT_AGE", "role": "calligraphy_age_extract_arc", "position": [-8, 12], "params": {"name1": "age", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"life\", 0)"}, "comment": "Extract scalar age from legacy vector2 life"},
+    {"id": "arc_lifespan", "type": "attribcreate::2.0", "name": "{{run_code}}_ARC_EXTRACT_LIFESPAN", "role": "calligraphy_lifespan_extract_arc", "position": [-8, 11], "params": {"name1": "lifespan", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"life\", 1)"}, "comment": "Extract scalar lifespan before removing legacy life"},
+    {"id": "arc_drop_life", "type": "attribdelete", "name": "{{run_code}}_ARC_DROP_LEGACY_LIFE", "role": "calligraphy_life_cleanup_arc", "position": [-8, 10], "params": {"ptdel": "life"}, "comment": "Remove legacy vector2 life before authoring Particle Trail scalar life"},
+    {"id": "arc_scalar_life", "type": "attribcreate::2.0", "name": "{{run_code}}_ARC_SCALAR_LIFE", "role": "calligraphy_life_scalar_arc", "position": [-8, 8], "params": {"name1": "life", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"lifespan\", 0)"}, "comment": "Explicit Particle Trail f@life contract"},
+    {"id": "arc_blend", "type": "timeblend::2.0", "name": "{{run_code}}_ARC_TIME_BLEND", "role": "calligraphy_time_blend_arc", "position": [-8, 6], "params": {"holdfirst": 1, "firstframe": 1, "attribs": "*", "ptidattr": "id"}, "comment": "Fractional-frame interpolation by stable particle id"},
+    {"id": "arc_trail", "type": "particletrail", "name": "{{run_code}}_ARC_PARTICLE_TRAIL", "role": "calligraphy_particle_trail_arc", "position": [-8, 4], "params": {"substep": "{{trail_substeps}}", "randattrib": "id", "trailtype": 0, "framedur": "{{trail_frames}}", "width": 1.0, "tailwidth": 0.25, "headwidth": 1.0, "color": [0.15, 0.65, 1.0], "createsplittrails": 0, "createparticletrails": 1, "createrelpos": 1, "createparticletrailgroup": 1, "particletrailgroupname": "calligraphy_arc"}, "comment": "Native Particle Trail curve generation; exact integer legacy cooks are normalized downstream"},
+    {"id": "arc_compat", "type": "timeshift", "name": "OUT_{{run_code}}_ARC_TRAIL", "role": "calligraphy_trail_contract_arc", "position": [-8, 2], "params": {"method": 0, "integerframe": 0}, "expressions": {"frame": "$FF - 0.5"}, "comment": "Houdini 22 legacy Particle compatibility: evaluate Particle Trail at the valid intervening half-frame"},
+    {"id": "arc_wire", "type": "polywire", "name": "OUT_{{run_code}}_ARC", "role": "calligraphy_tube_contract_arc", "position": [-8, 0], "params": {"radius": "{{wire_radius}}", "usescaleattrib": 1, "scaleattrib": "width", "div": 5}, "comment": "Editable native tube output with Particle Trail width taper"},
+
+    {
+      "id": "fan_particles", "type": "particle", "name": "{{run_code}}_FAN_PARTICLES", "role": "calligraphy_particles_fan",
+      "position": [0, 16],
+      "params": {"jitter": 0, "accurate": 1, "doid": 1, "seed": "{{seed_fan}}", "birth": "{{birth_rate}}", "life": "{{particle_life}}", "lifevar": 0, "rmunused": 1, "external": [-0.1, 0.6, 0.2], "wind": [-0.9, 1.5, 0.5], "turb": [0.35, 0.8, 0.35], "period": 0.35},
+      "comment": "{{lineage}}; fan candidate; legacy Particle SOP computes motion"
+    },
+    {"id": "fan_points", "type": "add", "name": "{{run_code}}_FAN_PARTICLES_ONLY", "role": "calligraphy_points_fan", "position": [0, 14], "params": {"keep": 1}, "comment": "Delete source primitive but keep simulated points"},
+    {"id": "fan_extract", "type": "attribcreate::2.0", "name": "{{run_code}}_FAN_EXTRACT_AGE", "role": "calligraphy_age_extract_fan", "position": [0, 12], "params": {"name1": "age", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"life\", 0)"}, "comment": "Extract scalar age from legacy life"},
+    {"id": "fan_lifespan", "type": "attribcreate::2.0", "name": "{{run_code}}_FAN_EXTRACT_LIFESPAN", "role": "calligraphy_lifespan_extract_fan", "position": [0, 11], "params": {"name1": "lifespan", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"life\", 1)"}, "comment": "Extract scalar lifespan before removing legacy life"},
+    {"id": "fan_drop_life", "type": "attribdelete", "name": "{{run_code}}_FAN_DROP_LEGACY_LIFE", "role": "calligraphy_life_cleanup_fan", "position": [0, 10], "params": {"ptdel": "life"}, "comment": "Remove legacy vector2 life"},
+    {"id": "fan_scalar_life", "type": "attribcreate::2.0", "name": "{{run_code}}_FAN_SCALAR_LIFE", "role": "calligraphy_life_scalar_fan", "position": [0, 8], "params": {"name1": "life", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"lifespan\", 0)"}, "comment": "Explicit Particle Trail f@life contract"},
+    {"id": "fan_blend", "type": "timeblend::2.0", "name": "{{run_code}}_FAN_TIME_BLEND", "role": "calligraphy_time_blend_fan", "position": [0, 6], "params": {"holdfirst": 1, "firstframe": 1, "attribs": "*", "ptidattr": "id"}, "comment": "Fractional-frame interpolation by id"},
+    {"id": "fan_trail", "type": "particletrail", "name": "{{run_code}}_FAN_PARTICLE_TRAIL", "role": "calligraphy_particle_trail_fan", "position": [0, 4], "params": {"substep": "{{trail_substeps}}", "randattrib": "id", "trailtype": 0, "framedur": "{{trail_frames}}", "width": 1.0, "tailwidth": 0.25, "headwidth": 1.0, "color": [1.0, 0.35, 0.12], "createsplittrails": 0, "createparticletrails": 1, "createrelpos": 1, "createparticletrailgroup": 1, "particletrailgroupname": "calligraphy_fan"}, "comment": "Native Particle Trail fan curves"},
+    {"id": "fan_compat", "type": "timeshift", "name": "OUT_{{run_code}}_FAN_TRAIL", "role": "calligraphy_trail_contract_fan", "position": [0, 2], "params": {"method": 0, "integerframe": 0}, "expressions": {"frame": "$FF - 0.5"}, "comment": "Named half-frame compatibility boundary"},
+    {"id": "fan_wire", "type": "polywire", "name": "OUT_{{run_code}}_FAN", "role": "calligraphy_tube_contract_fan", "position": [0, 0], "params": {"radius": "{{wire_radius}}", "usescaleattrib": 1, "scaleattrib": "width", "div": 5}, "comment": "Editable native tube output"},
+
+    {
+      "id": "orbit_particles", "type": "particle", "name": "{{run_code}}_ORBIT_PARTICLES", "role": "calligraphy_particles_orbit",
+      "position": [8, 16],
+      "params": {"jitter": 0, "accurate": 1, "doid": 1, "seed": "{{seed_orbit}}", "birth": "{{birth_rate}}", "life": "{{particle_life}}", "lifevar": 0, "rmunused": 1, "external": [0.0, 0.4, 0.0], "wind": [0.0, 1.2, -0.7], "turb": [1.0, 0.6, 1.0], "period": 0.8},
+      "comment": "{{lineage}}; orbit candidate; legacy Particle SOP computes motion"
+    },
+    {"id": "orbit_points", "type": "add", "name": "{{run_code}}_ORBIT_PARTICLES_ONLY", "role": "calligraphy_points_orbit", "position": [8, 14], "params": {"keep": 1}, "comment": "Delete source primitive but keep simulated points"},
+    {"id": "orbit_extract", "type": "attribcreate::2.0", "name": "{{run_code}}_ORBIT_EXTRACT_AGE", "role": "calligraphy_age_extract_orbit", "position": [8, 12], "params": {"name1": "age", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"life\", 0)"}, "comment": "Extract scalar age from legacy life"},
+    {"id": "orbit_lifespan", "type": "attribcreate::2.0", "name": "{{run_code}}_ORBIT_EXTRACT_LIFESPAN", "role": "calligraphy_lifespan_extract_orbit", "position": [8, 11], "params": {"name1": "lifespan", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"life\", 1)"}, "comment": "Extract scalar lifespan before removing legacy life"},
+    {"id": "orbit_drop_life", "type": "attribdelete", "name": "{{run_code}}_ORBIT_DROP_LEGACY_LIFE", "role": "calligraphy_life_cleanup_orbit", "position": [8, 10], "params": {"ptdel": "life"}, "comment": "Remove legacy vector2 life"},
+    {"id": "orbit_scalar_life", "type": "attribcreate::2.0", "name": "{{run_code}}_ORBIT_SCALAR_LIFE", "role": "calligraphy_life_scalar_orbit", "position": [8, 8], "params": {"name1": "life", "class1": 2, "type1": 0, "size1": 1}, "expressions": {"value1v1": "point(0, $PT, \"lifespan\", 0)"}, "comment": "Explicit Particle Trail f@life contract"},
+    {"id": "orbit_blend", "type": "timeblend::2.0", "name": "{{run_code}}_ORBIT_TIME_BLEND", "role": "calligraphy_time_blend_orbit", "position": [8, 6], "params": {"holdfirst": 1, "firstframe": 1, "attribs": "*", "ptidattr": "id"}, "comment": "Fractional-frame interpolation by id"},
+    {"id": "orbit_trail", "type": "particletrail", "name": "{{run_code}}_ORBIT_PARTICLE_TRAIL", "role": "calligraphy_particle_trail_orbit", "position": [8, 4], "params": {"substep": "{{trail_substeps}}", "randattrib": "id", "trailtype": 0, "framedur": "{{trail_frames}}", "width": 1.0, "tailwidth": 0.25, "headwidth": 1.0, "color": [0.72, 0.2, 1.0], "createsplittrails": 0, "createparticletrails": 1, "createrelpos": 1, "createparticletrailgroup": 1, "particletrailgroupname": "calligraphy_orbit"}, "comment": "Native Particle Trail orbit curves"},
+    {"id": "orbit_compat", "type": "timeshift", "name": "OUT_{{run_code}}_ORBIT_TRAIL", "role": "calligraphy_trail_contract_orbit", "position": [8, 2], "params": {"method": 0, "integerframe": 0}, "expressions": {"frame": "$FF - 0.5"}, "comment": "Named half-frame compatibility boundary"},
+    {"id": "orbit_wire", "type": "polywire", "name": "OUT_{{run_code}}_ORBIT", "role": "calligraphy_tube_contract_orbit", "position": [8, 0], "params": {"radius": "{{wire_radius}}", "usescaleattrib": 1, "scaleattrib": "width", "div": 5}, "comment": "Editable native tube output"},
+
+    {"id": "selector", "type": "switch", "name": "{{run_code}}_SELECT_CALLIGRAPHY", "role": "calligraphy_human_selector", "position": [0, -3], "params": {"input": "{{candidate_index}}"}, "comment": "Human-controlled preview switch; no winner implied"},
+    {"id": "selected", "type": "null", "name": "OUT_{{run_code}}_SELECTED", "role": "calligraphy_selected_contract", "position": [0, -5], "params": {}, "comment": "Selected editable tube contract; alternatives remain intact"},
+    {"id": "arc_compare", "type": "xform", "name": "{{run_code}}_ARC_COMPARE", "role": "calligraphy_compare_arc", "position": [-5, -3], "params": {"tx": -3.0}, "comment": "Presentation-only comparison offset"},
+    {"id": "fan_compare", "type": "xform", "name": "{{run_code}}_FAN_COMPARE", "role": "calligraphy_compare_fan", "position": [0, -7], "params": {"tx": 0.0}, "comment": "Presentation-only comparison offset"},
+    {"id": "orbit_compare", "type": "xform", "name": "{{run_code}}_ORBIT_COMPARE", "role": "calligraphy_compare_orbit", "position": [5, -3], "params": {"tx": 3.0, "ty": 0.6}, "comment": "Presentation-only comparison offset and Apprentice-watermark clearance"},
+    {"id": "arc_label", "type": "font", "name": "{{run_code}}_ARC_LABEL", "role": "calligraphy_label_source_arc", "position": [-6, -7], "params": {"text": "ARC  seed {{seed_arc}}", "halign": "center", "valign": "middle", "fontsize": 0.22}, "comment": "Self-describing candidate label; no score or winner"},
+    {"id": "arc_label_xform", "type": "xform", "name": "{{run_code}}_ARC_LABEL_LAYOUT", "role": "calligraphy_label_arc", "position": [-5, -8], "params": {"tx": -3.0, "ty": -0.45}, "comment": "Label placement follows arc comparison order"},
+    {"id": "fan_label", "type": "font", "name": "{{run_code}}_FAN_LABEL", "role": "calligraphy_label_source_fan", "position": [-1, -7], "params": {"text": "FAN  seed {{seed_fan}}", "halign": "center", "valign": "middle", "fontsize": 0.22}, "comment": "Self-describing candidate label; no score or winner"},
+    {"id": "fan_label_xform", "type": "xform", "name": "{{run_code}}_FAN_LABEL_LAYOUT", "role": "calligraphy_label_fan", "position": [0, -8], "params": {"tx": 0.0, "ty": -0.45}, "comment": "Label placement follows fan comparison order"},
+    {"id": "orbit_label", "type": "font", "name": "{{run_code}}_ORBIT_LABEL", "role": "calligraphy_label_source_orbit", "position": [4, -7], "params": {"text": "ORBIT  seed {{seed_orbit}}", "halign": "center", "valign": "middle", "fontsize": 0.22}, "comment": "Self-describing candidate label; no score or winner"},
+    {"id": "orbit_label_xform", "type": "xform", "name": "{{run_code}}_ORBIT_LABEL_LAYOUT", "role": "calligraphy_label_orbit", "position": [5, -8], "params": {"tx": 3.0, "ty": -0.45}, "comment": "Label placement follows orbit comparison order"},
+    {"id": "labels_merge", "type": "merge", "name": "OUT_{{run_code}}_LABELS", "role": "calligraphy_labels_contract", "position": [5, -10], "params": {}, "comment": "Separate ID and seed labels; intentionally excluded from render geometry"},
+    {"id": "compare_merge", "type": "merge", "name": "{{run_code}}_COMPARE_MERGE", "role": "calligraphy_comparison_merge", "position": [0, -9], "params": {}, "comment": "Fixed order: arc, fan, orbit"},
+    {"id": "compare_frame", "type": "xform", "name": "{{run_code}}_COMPARE_FRAME", "role": "calligraphy_comparison_frame", "position": [0, -10], "params": {"ty": -0.8, "scale": 0.55}, "comment": "Presentation-only framing keeps all three final trails inside the review camera"},
+    {"id": "compare", "type": "null", "name": "OUT_{{run_code}}_COMPARE", "role": "calligraphy_comparison_contract", "position": [0, -11], "params": {}, "comment": "All three candidates; human ratings empty; automatic ranking disabled", "flags": {"display": true, "render": true}}
+  ],
+  "connections": [
+    ["emitter", 0, "arc_particles", 0], ["arc_particles", 0, "arc_points", 0], ["arc_points", 0, "arc_extract", 0], ["arc_extract", 0, "arc_lifespan", 0], ["arc_lifespan", 0, "arc_drop_life", 0], ["arc_drop_life", 0, "arc_scalar_life", 0], ["arc_scalar_life", 0, "arc_blend", 0], ["arc_blend", 0, "arc_trail", 0], ["arc_trail", 0, "arc_compat", 0], ["arc_compat", 0, "arc_wire", 0],
+    ["emitter", 0, "fan_particles", 0], ["fan_particles", 0, "fan_points", 0], ["fan_points", 0, "fan_extract", 0], ["fan_extract", 0, "fan_lifespan", 0], ["fan_lifespan", 0, "fan_drop_life", 0], ["fan_drop_life", 0, "fan_scalar_life", 0], ["fan_scalar_life", 0, "fan_blend", 0], ["fan_blend", 0, "fan_trail", 0], ["fan_trail", 0, "fan_compat", 0], ["fan_compat", 0, "fan_wire", 0],
+    ["emitter", 0, "orbit_particles", 0], ["orbit_particles", 0, "orbit_points", 0], ["orbit_points", 0, "orbit_extract", 0], ["orbit_extract", 0, "orbit_lifespan", 0], ["orbit_lifespan", 0, "orbit_drop_life", 0], ["orbit_drop_life", 0, "orbit_scalar_life", 0], ["orbit_scalar_life", 0, "orbit_blend", 0], ["orbit_blend", 0, "orbit_trail", 0], ["orbit_trail", 0, "orbit_compat", 0], ["orbit_compat", 0, "orbit_wire", 0],
+    ["arc_wire", 0, "selector", 0], ["fan_wire", 0, "selector", 1], ["orbit_wire", 0, "selector", 2], ["selector", 0, "selected", 0],
+    ["arc_wire", 0, "arc_compare", 0], ["fan_wire", 0, "fan_compare", 0], ["orbit_wire", 0, "orbit_compare", 0],
+    ["arc_label", 0, "arc_label_xform", 0], ["fan_label", 0, "fan_label_xform", 0], ["orbit_label", 0, "orbit_label_xform", 0],
+    ["arc_compare", 0, "compare_merge", 0], ["fan_compare", 0, "compare_merge", 1], ["orbit_compare", 0, "compare_merge", 2],
+    ["arc_label_xform", 0, "labels_merge", 0], ["fan_label_xform", 0, "labels_merge", 1], ["orbit_label_xform", 0, "labels_merge", 2],
+    ["compare_merge", 0, "compare_frame", 0], ["compare_frame", 0, "compare", 0]
+  ],
+  "outputs": ["arc_compat", "arc_wire", "fan_compat", "fan_wire", "orbit_compat", "orbit_wire", "selected", "labels_merge", "compare"],
+  "meta": {
+    "depends": [],
+    "cook_budget": {"scope": "frame_range", "max_frames": 48, "max_points": 100000, "max_primitives": 100000, "max_memory_bytes": 536870912, "max_seconds": 90},
+    "license": "houdini-apprentice-noncommercial",
+    "source_contract": "legacy Particle vector2 life is normalized to scalar age/life before Particle Trail",
+    "integer_frame_compatibility": "$FF - 0.5 with Time Shift integerframe disabled"
+  }
+}

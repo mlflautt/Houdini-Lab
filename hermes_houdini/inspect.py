@@ -3,6 +3,7 @@
 Returns compact structured info rather than dumping the whole HIP. Safe to import
 without Houdini; all HOM access is inside functions guarded by has_hou().
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -51,13 +52,15 @@ def describe_network(path: str = "/obj") -> dict[str, Any]:
         raise ValueError(f"network not found: {path}")
     children = []
     for c in parent.children():
-        children.append({
-            "path": c.path(),
-            "name": c.name(),
-            "type": c.type().name(),
-            "category": c.type().category().name(),
-            "hermes_id": c.userData("hermes_id") or "",
-        })
+        children.append(
+            {
+                "path": c.path(),
+                "name": c.name(),
+                "type": c.type().name(),
+                "category": c.type().category().name(),
+                "hermes_id": c.userData("hermes_id") or "",
+            }
+        )
     return {"path": path, "child_count": len(children), "children": children}
 
 
@@ -70,6 +73,9 @@ def find_by_hermes_id(hermes_id: str) -> str | None:
 
 
 __all__ = [
-    "describe_hip", "list_contexts", "describe_node", "describe_network",
+    "describe_hip",
+    "list_contexts",
+    "describe_node",
+    "describe_network",
     "find_by_hermes_id",
 ]

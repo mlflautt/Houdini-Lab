@@ -1,0 +1,167 @@
+{
+  "id": "world.procedural_district",
+  "version": "1.0.0",
+  "summary": "Generate a bounded local PDG district from readable native-SOP massing profiles, immutable lot caches, and an editable no-winner gallery.",
+  "contexts": [
+    "TOP",
+    "SOP",
+    "OBJ"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "outputs": [
+      ".hipnc",
+      ".bgeo.sc",
+      ".json",
+      ".svg",
+      ".png"
+    ],
+    "engine_export": false
+  },
+  "intent_tags": [
+    "world-building",
+    "city",
+    "district",
+    "pdg",
+    "wedge",
+    "procedural-massing",
+    "gallery"
+  ],
+  "inputs": {
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "district_001"
+    },
+    "base_seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483647,
+      "default": 1601
+    },
+    "lot_count": {
+      "type": "integer",
+      "min": 4,
+      "max": 16,
+      "default": 12
+    },
+    "seed_step": {
+      "type": "integer",
+      "min": 1,
+      "default": 53
+    },
+    "columns": {
+      "type": "integer",
+      "min": 2,
+      "max": 4,
+      "default": 4
+    },
+    "lot_spacing": {
+      "type": "number",
+      "min": 5.5,
+      "max": 20.0,
+      "default": 6.0
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "pinned Houdini build exposes native Box, PolyBevel, Wedge, ROP Geometry, Wait for All, and Local Scheduler nodes",
+    "artifact paths resolve inside an approved project or explicit artifact root",
+    "local hython work-item execution is explicitly approved before district.cook"
+  ],
+  "risk": "external",
+  "checkpoint": "before_source_top_build_and_before_assembly",
+  "cook_budget": {
+    "max_work_items": 16,
+    "default_work_items": 12,
+    "max_seconds_per_item": 30,
+    "max_worker_memory_bytes": 1073741824,
+    "max_points_per_item": 5000,
+    "max_primitives_per_item": 5000,
+    "max_assembly_points": 100000,
+    "max_gallery_points": 150000,
+    "max_assembly_primitives": 100000,
+    "scheduler_slots": 1,
+    "background_execution": false,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    "district.build",
+    "district.generate",
+    "district.cook_after_explicit_external_process_approval",
+    "district.assemble",
+    "district.validate",
+    "graph.capture_svg",
+    "graph.capture_manifest",
+    "optional_viewport_capture_and_deterministic_visual_analysis",
+    "optional_hashed_multimodal_critique_packet",
+    "hip.save_snapshot"
+  ],
+  "verification": {
+    "graph_checks": [
+      "registered SOP source has three native profile branches and one editable Switch",
+      "registered TOP recipe is Wedge to ROP Geometry to Wait for All with one Local Scheduler slot",
+      "no Python Processor or Python Script TOP exists"
+    ],
+    "data_checks": [
+      "exact work-item count and declared attributes match the immutable plan",
+      "every cache is finite, non-empty, inside geometry budgets, and SHA-256 stable",
+      "source channel values are unchanged after Wedge execution",
+      "district and gallery merge input counts preserve all candidates"
+    ],
+    "visual_checks": [
+      "district assembly shows the deterministic 4 by 3 lot composition at default count",
+      "gallery shows all cached candidates at equal scale with labels"
+    ],
+    "provenance_checks": [
+      "source and TOP recipe versions are recorded",
+      "candidate IDs, seeds, profiles, placements, cache hashes, and empty human ratings persist",
+      "winner remains null and automatic ranking remains false"
+    ]
+  },
+  "outputs": [
+    "immutable_district_plan_manifest",
+    "immutable_district_result_manifest",
+    "validated_bgeo_cache_set",
+    "editable_district_output",
+    "editable_no_winner_gallery_output",
+    "source_top_and_assembly_graph_svgs",
+    "graph_and_validation_manifests",
+    "optional_viewport_preview_and_critique_packet",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_delete_only_the_new_managed_source_top_and_assembly_branches",
+  "failure_modes": [
+    "existing nodes or artifact paths are refused rather than overwritten",
+    "missing explicit external-process consent blocks the PDG cook",
+    "timeout memory geometry or output-byte overages are recorded as failures",
+    "changed cache hashes block validation and downstream acceptance",
+    "partial outputs and result failures remain inspectable and are not silently deleted"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "score_slots": [
+      null
+    ],
+    "winner_default": null
+  }
+}

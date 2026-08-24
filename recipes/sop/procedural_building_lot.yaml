@@ -1,0 +1,166 @@
+{
+  "id": "sop.procedural_building_lot",
+  "version": "1.0.0",
+  "summary": "Build three readable native-SOP building massing profiles behind a human-editable Switch for bounded PDG lot generation.",
+  "contexts": ["SOP"],
+  "inputs": {
+    "run_code": {"type": "string", "default": "DISTRICT"},
+    "candidate_index": {"type": "integer", "min": 0, "max": 2, "default": 0},
+    "bevel_offset": {"type": "number", "min": 0.0, "max": 0.2, "default": 0.08}
+  },
+  "references": {},
+  "nodes": [
+    {
+      "id": "lot_plate",
+      "type": "box",
+      "name": "{{run_code}}_LOT_PLATE",
+      "role": "district_lot_plate",
+      "position": [-8.0, 10.0],
+      "params": {"size": [5.0, 0.12, 5.0], "ty": 0.06},
+      "comment": "Shared five-unit lot plate; placement happens only in district assembly."
+    },
+    {
+      "id": "podium",
+      "type": "box",
+      "name": "{{run_code}}_PODIUM",
+      "role": "district_shared_podium",
+      "position": [-5.0, 10.0],
+      "params": {"size": [4.6, 0.68, 4.6], "ty": 0.46},
+      "comment": "Shared low podium establishes a stable street edge."
+    },
+    {
+      "id": "block_tower",
+      "type": "box",
+      "name": "{{run_code}}_BLOCK_TOWER",
+      "role": "district_block_profile",
+      "position": [-8.0, 7.0],
+      "params": {"size": [4.0, 6.0, 3.8], "ty": 3.8},
+      "comment": "Broad block profile; PDG targets only declared size and center channels."
+    },
+    {
+      "id": "block_merge",
+      "type": "merge",
+      "name": "{{run_code}}_BLOCK_ASSEMBLY",
+      "role": "district_block_assembly",
+      "position": [-7.0, 5.0],
+      "comment": "Lot plate, podium, and broad tower remain independently editable."
+    },
+    {
+      "id": "terrace_wing_a",
+      "type": "box",
+      "name": "{{run_code}}_TERRACE_WING_A",
+      "role": "district_terrace_wing",
+      "position": [-3.0, 8.0],
+      "params": {"size": [4.2, 1.6, 1.25], "ty": 1.6, "tz": -1.55},
+      "comment": "Low terrace wing A gives the middle profile a stepped silhouette."
+    },
+    {
+      "id": "terrace_wing_b",
+      "type": "box",
+      "name": "{{run_code}}_TERRACE_WING_B",
+      "role": "district_terrace_wing",
+      "position": [0.0, 8.0],
+      "params": {"size": [4.2, 1.6, 1.25], "ty": 1.6, "tz": 1.55},
+      "comment": "Low terrace wing B preserves an open central setback."
+    },
+    {
+      "id": "terrace_tower",
+      "type": "box",
+      "name": "{{run_code}}_TERRACE_TOWER",
+      "role": "district_terrace_profile",
+      "position": [-1.5, 6.0],
+      "params": {"size": [3.0, 10.0, 2.6], "ty": 5.8},
+      "comment": "Terraced central tower; PDG targets only declared size and center channels."
+    },
+    {
+      "id": "terrace_merge",
+      "type": "merge",
+      "name": "{{run_code}}_TERRACE_ASSEMBLY",
+      "role": "district_terrace_assembly",
+      "position": [-1.5, 4.0],
+      "comment": "Shared base, paired wings, and central tower stay as readable native branches."
+    },
+    {
+      "id": "needle_tower",
+      "type": "box",
+      "name": "{{run_code}}_NEEDLE_TOWER",
+      "role": "district_needle_profile",
+      "position": [5.0, 7.0],
+      "params": {"size": [2.0, 16.0, 2.0], "ty": 8.8},
+      "comment": "Slender needle profile; PDG targets only declared size and center channels."
+    },
+    {
+      "id": "needle_merge",
+      "type": "merge",
+      "name": "{{run_code}}_NEEDLE_ASSEMBLY",
+      "role": "district_needle_assembly",
+      "position": [5.0, 5.0],
+      "comment": "Shared lot and podium support the slender tower."
+    },
+    {
+      "id": "profile_switch",
+      "type": "switch",
+      "name": "{{run_code}}_PROFILE_SWITCH",
+      "role": "district_profile_selector",
+      "position": [0.0, 2.0],
+      "params": {"input": "{{candidate_index}}"},
+      "comment": "PDG may select block, terrace, or needle; the three source branches remain editable."
+    },
+    {
+      "id": "bevel",
+      "type": "polybevel::3.0",
+      "name": "{{run_code}}_EDGE_SOFTEN",
+      "role": "district_edge_softening",
+      "position": [0.0, 0.0],
+      "params": {"offset": "{{bevel_offset}}", "divisions": 2},
+      "comment": "Small native PolyBevel keeps the massing readable in preview lighting."
+    },
+    {
+      "id": "normal",
+      "type": "normal",
+      "name": "{{run_code}}_NORMALS",
+      "role": "district_normal_contract",
+      "position": [0.0, -2.0],
+      "comment": "Explicit post-bevel normals for stable viewport and Karma shading."
+    },
+    {
+      "id": "out",
+      "type": "null",
+      "name": "OUT_BUILDING",
+      "role": "district_building_output",
+      "position": [0.0, -4.0],
+      "flags": {"display": true, "render": true},
+      "comment": "One origin-centered building cache contract; no lot placement or ranking."
+    }
+  ],
+  "connections": [
+    ["lot_plate", 0, "block_merge", 0],
+    ["podium", 0, "block_merge", 1],
+    ["block_tower", 0, "block_merge", 2],
+    ["lot_plate", 0, "terrace_merge", 0],
+    ["podium", 0, "terrace_merge", 1],
+    ["terrace_wing_a", 0, "terrace_merge", 2],
+    ["terrace_wing_b", 0, "terrace_merge", 3],
+    ["terrace_tower", 0, "terrace_merge", 4],
+    ["lot_plate", 0, "needle_merge", 0],
+    ["podium", 0, "needle_merge", 1],
+    ["needle_tower", 0, "needle_merge", 2],
+    ["block_merge", 0, "profile_switch", 0],
+    ["terrace_merge", 0, "profile_switch", 1],
+    ["needle_merge", 0, "profile_switch", 2],
+    ["profile_switch", 0, "bevel", 0],
+    ["bevel", 0, "normal", 0],
+    ["normal", 0, "out", 0]
+  ],
+  "outputs": ["out"],
+  "meta": {
+    "algorithm": {
+      "context": "SOP",
+      "native_nodes": ["box", "merge", "switch", "polybevel::3.0", "normal", "null"],
+      "python_geometry_compute": false
+    },
+    "cook_budget": {"max_points": 5000, "max_primitives": 5000, "max_seconds": 30},
+    "profiles": ["block", "terrace", "needle"],
+    "selection": {"method": "pdg_declared_attribute", "automatic_ranking": false}
+  }
+}

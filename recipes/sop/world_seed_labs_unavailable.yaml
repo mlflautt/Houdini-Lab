@@ -1,0 +1,17 @@
+{
+  "id": "sop.world_seed_labs_unavailable",
+  "version": "1.0.0",
+  "summary": "Keep one native World Seed functional and visibly mark an unavailable optional Labs branch.",
+  "contexts": ["SOP"],
+  "inputs": {"run_code": {"type": "string", "default": "WORLD_SEED"}},
+  "references": {"native_world": "{{parent_path}}/OUT_{{run_code}}_WORLD"},
+  "nodes": [
+    {"id": "unavailable", "type": "null", "name": "OPTIONAL_LABS_UNAVAILABLE", "role": "labs_atlas_unavailable", "position": [4, -14], "params": {}, "comment": "SideFX Labs capability absent; no plugin node was instantiated"},
+    {"id": "selector", "type": "switch", "name": "{{run_code}}_SELECT_NATIVE_ONLY", "role": "labs_atlas_human_selector", "position": [0, -16], "params": {"input": 0}, "comment": "Single connected native input; optional branch intentionally absent"},
+    {"id": "selected", "type": "null", "name": "OUT_{{run_code}}_SELECTED_WORLD", "role": "labs_atlas_selected_contract", "position": [0, -18], "params": {}, "comment": "Native world remains fully functional without Labs"},
+    {"id": "comparison", "type": "null", "name": "OUT_{{run_code}}_NATIVE_LABS_COMPARE", "role": "labs_atlas_comparison_contract", "position": [4, -18], "params": {}, "flags": {"display": true, "render": true}, "comment": "Native-only fallback comparison; Labs unavailable is explicit"}
+  ],
+  "connections": [["native_world", 0, "selector", 0], ["selector", 0, "selected", 0], ["native_world", 0, "comparison", 0]],
+  "outputs": ["unavailable", "selector", "selected", "comparison"],
+  "meta": {"graph_first": true, "optional_dependency": "SideFXLabs22.0@22.0.368", "plugin_nodes_instantiated": false, "automatic_ranking": false, "license": {"mode": "houdini-apprentice-noncommercial"}}
+}

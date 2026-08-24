@@ -3,13 +3,20 @@
 Node names/paths change; attach a persistent ID via userData so the agent references
 nodes programmatically. Format: HOU-<CTX>-<short_hash>, e.g. HOU-SOP-7f03b91a.
 """
+
 from __future__ import annotations
 
 import hashlib
 
 CTX_CODES = {
-    "Sop": "SOP", "Obj": "OBJ", "Lop": "LOP", "Dop": "DOP",
-    "Top": "TOP", "Cop": "COP", "Chop": "CHOP", "Apex": "APEX",
+    "Sop": "SOP",
+    "Obj": "OBJ",
+    "Lop": "LOP",
+    "Dop": "DOP",
+    "Top": "TOP",
+    "Cop": "COP",
+    "Chop": "CHOP",
+    "Apex": "APEX",
 }
 
 

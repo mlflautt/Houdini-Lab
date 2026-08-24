@@ -1,39 +1,185 @@
-id: model.fractal_relic
-version: 0.1.0
-summary: Generate a radial fractal relic form from native SOP nodes.
-contexts: [SOP]
-intent_tags: [organic, growth, alien, procedural, world-building]
-inputs:
-  parent_node_id: {type: string}
-  seed: {type: integer, default: 42}
-  iterations: {type: integer, min: 1, max: 8, default: 4}
-  detail_level: {enum: [draft, preview, final], default: preview}
-preconditions:
-  - parent resolves to a SOP-capable geometry container
-risk: medium
-checkpoint: before_execute
-cook_budget:
-  max_points: 3000000
-  max_seconds: 90
-  max_frames: 1
-steps:
-  - graph.instantiate_recipe: scatter.cluster_points@1
-  - geometry.validate
-  - viewport.capture
-verification:
-  graph_checks:
-    - all major branches end in named null nodes
-    - no node errors
-  data_checks:
-    - finite bounds
-    - no NaN point positions
-    - point count below budget
-  visual_checks:
-    - readable primary silhouette
-    - visible hierarchical branching
-    - seed produces deterministic output
-outputs:
-  - output_node_id
-  - graph_manifest_path
-  - preview_path
-rollback: restore_checkpoint
+{
+  "id": "model.fractal_relic",
+  "version": "1.1.0",
+  "summary": "Build three comparable, seeded alien-relic forms from native SOP nodes.",
+  "contexts": [
+    "SOP"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "scene_extension": ".hipnc",
+    "render_ceiling": [
+      1280,
+      720
+    ]
+  },
+  "intent_tags": [
+    "organic",
+    "growth",
+    "alien",
+    "procedural",
+    "comparison",
+    "world-building"
+  ],
+  "inputs": {
+    "parent_node_id": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "fractal_relic_001"
+    },
+    "seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 1000000,
+      "default": 42
+    },
+    "iterations": {
+      "type": "integer",
+      "min": 1,
+      "max": 8,
+      "default": 4
+    },
+    "detail_level": {
+      "enum": [
+        "draft",
+        "preview",
+        "final"
+      ],
+      "default": "preview"
+    },
+    "base_radius": {
+      "type": "number",
+      "min": 0.25,
+      "max": 5.0,
+      "default": 1.0
+    },
+    "detail_radius": {
+      "type": "number",
+      "min": 0.01,
+      "max": 0.5,
+      "default": 0.08
+    },
+    "noise_amplitude": {
+      "type": "number",
+      "min": 0.0,
+      "max": 1.5,
+      "default": 0.16
+    },
+    "preview_candidate": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    },
+    "camera_path": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "parent resolves to an existing SOP-capable geometry container",
+    "the parent does not already contain the skill's exact contract node names",
+    "artifact_dir is absolute and inside an approved project root",
+    "viewer, viewport, and camera are all explicit when viewport capture is requested"
+  ],
+  "risk": "medium",
+  "checkpoint": "before_execute",
+  "cook_budget": {
+    "scope": "display_chain",
+    "max_points": 3000000,
+    "max_primitives": 3000000,
+    "max_memory_bytes": 536870912,
+    "max_seconds": 90,
+    "max_frames": 1
+  },
+  "steps": [
+    {
+      "recipe.compose": "sop.fractal_relic_candidate@2.0.0 x3"
+    },
+    {
+      "graph.apply_batch": "checkpointed native-SOP three-candidate graph"
+    },
+    {
+      "cook.node": "explicit OUT_COMPARISON display-chain cook"
+    },
+    {
+      "geometry.validate": "clean-cache counts, warnings, and finite bounds"
+    },
+    {
+      "graph.capture_svg": "deterministic selection-free graph observation"
+    },
+    {
+      "graph.capture_manifest": "controls, metrics, lineage, and empty rating slots"
+    },
+    {
+      "viewport.capture": "optional named camera/viewer comparison frame"
+    },
+    {
+      "hip.save_snapshot": "incremented final non-commercial scene artifact"
+    }
+  ],
+  "verification": {
+    "graph_checks": [
+      "all three alternatives end in named candidate nulls",
+      "OUT_COMPARISON and OUT_GEO are explicit contracts",
+      "SELECT_CANDIDATE preserves alternatives and is human controlled",
+      "exact node names, positions, stable IDs, comments, and connections replay",
+      "no generated VEX or Python SOP nodes"
+    ],
+    "data_checks": [
+      "finite bounds",
+      "no node errors or warnings",
+      "point, primitive, time, and memory observations remain within policy"
+    ],
+    "visual_checks": [
+      "three candidates are spatially comparable in one output",
+      "primary silhouettes remain readable",
+      "viewport capture uses an explicit camera and Apprentice-safe resolution"
+    ],
+    "determinism": [
+      "one seed deterministically derives all three recorded candidate seeds",
+      "replay log recreates equivalent stable IDs, graph, and geometry metrics"
+    ]
+  },
+  "selection": {
+    "method": "human",
+    "automatic_ranking": false,
+    "rating_slots": [
+      "score",
+      "notes",
+      "selected"
+    ]
+  },
+  "outputs": [
+    "comparison_node_id",
+    "selected_output_node_id",
+    "graph_manifest_path",
+    "graph_svg_path",
+    "optional_viewport_preview_path",
+    "graph_replay_log_path",
+    "cook_log_path",
+    "checkpoint_path",
+    "final_hipnc_snapshot_path"
+  ],
+  "rollback": "restore_checkpoint"
+}

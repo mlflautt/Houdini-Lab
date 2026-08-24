@@ -1,0 +1,185 @@
+{
+  "id": "generate.fractal_relic_variations",
+  "version": "1.0.0",
+  "summary": "Generate bounded local PDG relic wedges and an editable human-rated comparison gallery.",
+  "contexts": [
+    "TOP",
+    "SOP",
+    "OBJ"
+  ],
+  "houdini": {
+    "minimum_version": "22.0",
+    "tested_builds": [
+      "22.0.368"
+    ]
+  },
+  "license": {
+    "mode": "houdini-apprentice-noncommercial",
+    "commercial_use": false,
+    "outputs": [
+      ".hipnc",
+      ".hdanc",
+      ".bgeo.sc"
+    ],
+    "engine_export": false
+  },
+  "intent_tags": [
+    "variation",
+    "pdg",
+    "wedge",
+    "contact-sheet",
+    "human-selection"
+  ],
+  "inputs": {
+    "source_node_path": {
+      "type": "string"
+    },
+    "artifact_dir": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string",
+      "default": "relic_variations_001"
+    },
+    "base_seed": {
+      "type": "integer",
+      "min": 0,
+      "max": 2147483647,
+      "default": 1001
+    },
+    "count": {
+      "type": "integer",
+      "min": 2,
+      "max": 16,
+      "default": 9
+    },
+    "seed_step": {
+      "type": "integer",
+      "min": 1,
+      "default": 97
+    },
+    "radius_min": {
+      "type": "number",
+      "min": 0.0,
+      "default": 0.8
+    },
+    "radius_max": {
+      "type": "number",
+      "min": 0.0,
+      "default": 1.2
+    },
+    "noise_min": {
+      "type": "number",
+      "min": 0.0,
+      "default": 0.1
+    },
+    "noise_max": {
+      "type": "number",
+      "min": 0.0,
+      "default": 0.28
+    },
+    "iterations": {
+      "type": "integer",
+      "min": 1,
+      "max": 8,
+      "default": 4
+    },
+    "detail_level": {
+      "enum": [
+        "draft",
+        "preview",
+        "final"
+      ],
+      "default": "preview"
+    },
+    "candidate_index": {
+      "type": "integer",
+      "min": 0,
+      "max": 2,
+      "default": 0
+    },
+    "viewer_name": {
+      "type": "string",
+      "default": ""
+    },
+    "viewport_name": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "preconditions": [
+    "source resolves to a published hermes::fractal_relic::2.0 SOP HDA instance",
+    "source HDA library and all artifact paths are inside approved local roots",
+    "local hython execution is explicitly approved"
+  ],
+  "risk": "external",
+  "checkpoint": "before_top_build_and_before_gallery_build",
+  "cook_budget": {
+    "max_work_items": 16,
+    "max_seconds_per_item": 30,
+    "max_worker_memory_bytes": 2147483648,
+    "max_points_per_item": 50000,
+    "max_primitives_per_item": 50000,
+    "scheduler_slots": 1,
+    "max_resolution": [
+      1280,
+      720
+    ]
+  },
+  "steps": [
+    "pdg.variation.build",
+    "pdg.variation.generate",
+    "pdg.variation.cook",
+    "pdg.variation.build_gallery",
+    "cook.node",
+    "geometry.validate",
+    "graph.capture_svg",
+    "graph.capture_manifest",
+    "viewport.capture_if_explicit_gui_handles",
+    "hip.save_snapshot"
+  ],
+  "verification": {
+    "graph_checks": [
+      "native Wedge and ROP Geometry nodes",
+      "named OUT_VARIATIONS",
+      "no Python TOP"
+    ],
+    "data_checks": [
+      "one successful geometry per wedge",
+      "finite bounds",
+      "source parameters unchanged"
+    ],
+    "visual_checks": [
+      "editable grid shows every variation at equal scale",
+      "explicit camera contact sheet"
+    ],
+    "provenance_checks": [
+      "immutable plan and result manifests",
+      "stable ids",
+      "no automatic ranking"
+    ]
+  },
+  "outputs": [
+    "variation_plan_manifest",
+    "variation_result_manifest",
+    "bgeo_geometry_set",
+    "editable_gallery_output",
+    "top_and_gallery_graph_svgs",
+    "optional_contact_sheet_png",
+    "final_hipnc_snapshot"
+  ],
+  "rollback": "restore_checkpoint_or_delete_new_managed_branch",
+  "failure_modes": [
+    "existing network or output paths are refused",
+    "worker time or memory overrun marks the work item failed",
+    "absent explicit external-process policy blocks local PDG cook",
+    "partial outputs are preserved and reported rather than silently deleted"
+  ],
+  "human_selection": {
+    "automatic_ranking": false,
+    "score_slots": [
+      null
+    ],
+    "winner_default": null
+  }
+}
