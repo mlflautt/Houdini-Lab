@@ -86,6 +86,56 @@ def test_registry_has_tools():
     assert "district.validate" in names
 
 
+def test_v030_session_bootstrap_is_read_only_and_reports_dispatcher_state(tmp_path):
+    obj = hou.node("/obj")
+    geo = obj.createNode("geo", node_name="HERMES_V030_SESSION", run_init_scripts=False)
+    box = geo.createNode("box", node_name="UNCooked_BOX")
+    box.setUserData("hermes_id", "HOU-SOP-V030-SESSION")
+    box.setUserData("hermes_role", "session_probe")
+    box.setUserData("hermes_created_by", "test:v030")
+    original_frame = float(hou.frame())
+    dispatcher = Dispatcher(policy=default_policy([str(tmp_path)]))
+    blocked = dispatcher.process_one(
+        CommandEnvelope(
+            tool="graph.apply_batch",
+            request_id="v030-pending-approval",
+            arguments={
+                "batch_id": "pending-only",
+                "operations": [],
+                "checkpoint_dir": str(tmp_path / "checkpoints"),
+                "log_path": str(tmp_path / "pending.jsonl"),
+            },
+        )
+    )
+    assert blocked.result.status.value == "blocked"
+    needed_cook_before = box.needsToCook()
+    try:
+        result = dispatcher.process_one(
+            CommandEnvelope(
+                tool="session.describe",
+                request_id="v030-session-describe",
+                session_id="fresh-session",
+                project_id="v030-acceptance",
+                arguments={"max_nodes_scanned": 5000, "max_managed_nodes": 256},
+            )
+        ).result
+        assert result.status.value == "success", result.errors
+        snapshot = result.data
+        assert snapshot["compatibility"]["houdini_build"] == hou.applicationVersionString()
+        assert snapshot["session_id"] == "fresh-session"
+        assert snapshot["project_id"] == "v030-acceptance"
+        assert snapshot["cook_scope"] == "none"
+        assert snapshot["pending_approvals"][0]["request_id"] == "v030-pending-approval"
+        assert any(
+            node["hermes_id"] == "HOU-SOP-V030-SESSION"
+            for node in snapshot["managed_nodes"]["nodes"]
+        )
+        assert float(hou.frame()) == original_frame
+        assert box.needsToCook() == needed_cook_before
+    finally:
+        geo.destroy()
+
+
 def test_create_node_and_describe():
     obj = hou.node("/obj")
     geo = obj.createNode("geo", node_name="HERMES_TEST_GEO")

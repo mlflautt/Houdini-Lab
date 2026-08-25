@@ -135,7 +135,7 @@ Remaining maintenance:
 
 Exit evidence: `v0.25.0`, final-main CI, three merged PRs, clean main, and published release notes.
 
-### Horizon 1 — Hermes control plane (`v0.30` candidate)
+### Horizon 1 — Hermes control plane (`v0.30`, complete)
 
 Outcome: an agent can discover and operate the existing system without reading the repository or
 inventing raw node graphs.
@@ -168,7 +168,10 @@ an aesthetic winner; it is the cheapest capability that exercises discovery, pla
 checkpoint, graph construction, bounded cook, visual proof, alternatives, and handoff.
 
 Exit evidence: a clean agent session completes the loop and a second fresh session resumes it
-without hidden state or repository archaeology.
+without hidden state, repository archaeology, or automatic execution. Release `v0.30.0` passed this
+gate on Houdini Apprentice 22.0.368 with
+an authenticated loopback bootstrap, one bounded Karma proof, a hashed handoff, and 46/46 stable IDs
+resolved in the second process; human aesthetic review remains explicitly pending.
 
 ### Horizon 2 — Live verification as routine infrastructure (`v0.35` candidate)
 

@@ -138,6 +138,7 @@ class InteractiveRuntime:
         self.host = host
         self.port = port
         self.dispatcher = dispatcher or Dispatcher()
+        self.dispatcher.bridge_mode = "authenticated-loopback"
         self.request_timeout = request_timeout
         self.broker = RequestBroker()
         self._server: _RuntimeServer | None = None
@@ -170,6 +171,7 @@ class InteractiveRuntime:
             server.server_close()
         if thread is not None:
             thread.join(timeout=2.0)
+        self.dispatcher.bridge_mode = "local-dispatcher"
 
     def handle_request(self, request: bytes) -> dict[str, Any]:
         request_id = ""
