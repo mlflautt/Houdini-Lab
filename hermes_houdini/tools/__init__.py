@@ -15,6 +15,7 @@ from recipes.catalog import register_bundled_recipes
 from .. import get_hou
 from ..botanical import cook_validate_botanical
 from ..calligraphy import apply_baked_audio_envelope, cook_validate_calligraphy
+from ..capabilities import build_catalog
 from ..cook import (
     COOK_JOBS,
     append_cook_record,
@@ -29,10 +30,11 @@ from ..district import (
     generate_district_manifest,
     validate_district,
 )
-from ..execution import current_envelope
+from ..execution import current_envelope, current_runtime_state
 from ..expressions import validate_hscript_expression
 from ..graph_batch import apply_batch
 from ..growth import populate_growth_solver
+from ..handoff import create_handoff, inspect_handoff, plan_resume
 from ..ids import make_id
 from ..inspect import describe_hip, describe_network, describe_node
 from ..kinetic import (
@@ -60,6 +62,8 @@ from ..pdg_variations import (
 from ..rbd import cook_validate_rbd
 from ..registry import REGISTRY, tool
 from ..schemas.command import Policy, Status, ToolResult
+from ..schemas.control_plane import IntentPlan
+from ..session import compatibility_identity, describe_session
 from ..solaris import (
     build_karma_render_rop,
     populate_materialx_library,
@@ -89,6 +93,109 @@ def system_capabilities() -> dict[str, Any]:
         "python_version": sys.version.split()[0],
         "license": hou.licenseCategory().name() if hasattr(hou, "licenseCategory") else "unknown",
     }
+
+
+@tool(
+    "system.catalog",
+    risk="read_only",
+    doc="Filter the deterministic tool, recipe, HDA, and skill capability catalog.",
+)
+def system_catalog(
+    context: str = "",
+    risk: str = "",
+    kind: str = "",
+    license_mode: str = "",
+    houdini_build: str = "",
+    dependency: str = "",
+) -> dict[str, Any]:
+    return build_catalog(
+        context=context,
+        risk=risk,
+        kind=kind,
+        license_mode=license_mode,
+        houdini_build=houdini_build,
+        dependency=dependency,
+    )
+
+
+@tool(
+    "session.describe",
+    risk="read_only",
+    doc="Bootstrap the current session, compatibility, managed nodes, approvals, and cooks.",
+)
+def session_describe(max_nodes_scanned: int = 5000, max_managed_nodes: int = 256) -> dict[str, Any]:
+    return describe_session(
+        max_nodes_scanned=max_nodes_scanned,
+        max_managed_nodes=max_managed_nodes,
+    )
+
+
+@tool(
+    "intent.plan.create",
+    risk="read_only",
+    doc="Validate and normalize an intent plan while preserving alternatives and human gates.",
+)
+def intent_plan_create(
+    objective: str,
+    selected_capabilities: list[dict[str, str]],
+    alternatives: list[dict[str, Any]],
+    constraints: dict[str, Any],
+    resource_estimate: dict[str, Any],
+    approvals: list[dict[str, Any]],
+    verification: dict[str, Any],
+    human_decisions: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    return IntentPlan.from_dict(
+        {
+            "objective": objective,
+            "selected_capabilities": selected_capabilities,
+            "alternatives": alternatives,
+            "constraints": constraints,
+            "resource_estimate": resource_estimate,
+            "approvals": approvals,
+            "verification": verification,
+            "human_decisions": human_decisions or [],
+            "automatic_ranking": False,
+            "winner": None,
+        }
+    ).as_dict()
+
+
+@tool(
+    "handoff.create",
+    risk="low",
+    doc="Write one exclusive hashed handoff bundle inside an approved project root.",
+)
+def handoff_create(**arguments: Any) -> dict[str, Any]:
+    return create_handoff(**arguments)
+
+
+@tool(
+    "handoff.inspect",
+    risk="read_only",
+    doc="Validate a handoff hash, path confinement, and artifact integrity.",
+)
+def handoff_inspect(file_path: str) -> dict[str, Any]:
+    roots = current_runtime_state().get("policy", {}).get("allowed_roots", [])
+    return inspect_handoff(file_path, allowed_roots=list(roots))
+
+
+@tool(
+    "handoff.resume_plan",
+    risk="read_only",
+    doc="Produce a compatibility-gated dry resume plan; never execute it automatically.",
+)
+def handoff_resume_plan(
+    file_path: str, current_compatibility: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    if current_compatibility is None:
+        current_compatibility = compatibility_identity(get_hou()).as_dict()
+    roots = current_runtime_state().get("policy", {}).get("allowed_roots", [])
+    return plan_resume(
+        file_path=file_path,
+        current_compatibility=current_compatibility,
+        allowed_roots=list(roots),
+    )
 
 
 @tool("registry.describe", risk="read_only", doc="List registered tools, recipes, and HDAs.")

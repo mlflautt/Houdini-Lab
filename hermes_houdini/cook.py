@@ -212,6 +212,13 @@ class CookJobManager:
         job.finished_at = time.time()
         return job
 
+    def describe(self, *, active_only: bool = False) -> list[dict[str, Any]]:
+        """Return a deterministic snapshot without exposing mutable job objects."""
+        jobs = sorted(self._jobs.values(), key=lambda item: (item.created_at, item.job_id))
+        if active_only:
+            jobs = [job for job in jobs if job.state not in TERMINAL_STATES]
+        return [job.as_dict() for job in jobs]
+
     def begin(self, job_id: str) -> CookJob:
         job = self.get(job_id)
         if job.state != "pending":

@@ -18,7 +18,13 @@ import uuid
 from dataclasses import dataclass
 from typing import Any
 
-from .execution import reset_current_envelope, set_current_envelope
+from .cook import COOK_JOBS
+from .execution import (
+    reset_current_envelope,
+    reset_current_runtime_state,
+    set_current_envelope,
+    set_current_runtime_state,
+)
 from .policy import ApprenticePolicy
 from .registry import REGISTRY
 from .schemas.command import (
@@ -119,6 +125,7 @@ class Dispatcher:
         policy: ApprenticePolicy | None = None,
         queue: queue.Queue[CommandEnvelope] | None = None,
         approvals: ApprovalStore | None = None,
+        bridge_mode: str = "local-dispatcher",
     ) -> None:
         # Importing the bounded built-ins runs their @tool decorators. Do this here
         # rather than relying on callers to know an undocumented import order.
@@ -128,6 +135,7 @@ class Dispatcher:
         self.queue: queue.Queue[CommandEnvelope] = queue or DEFAULT_QUEUE
         self.pending: list[CommandEnvelope] = []
         self.approvals = approvals or ApprovalStore()
+        self.bridge_mode = bridge_mode
 
     # --- intake ---------------------------------------------------------
     def enqueue(self, env: CommandEnvelope) -> None:
@@ -159,6 +167,7 @@ class Dispatcher:
             "manifest_path",
             "result_path",
             "scene_path",
+            "project_root",
         ):
             if key in env.arguments:
                 p_ok, p_msg = self.policy.check_path(str(env.arguments[key]))
@@ -196,6 +205,14 @@ class Dispatcher:
             return DispatchOutcome(result, env)
         entry = REGISTRY.resolve(env.tool)
         token = set_current_envelope(env)
+        state_token = set_current_runtime_state(
+            {
+                "pending_approvals": self.approvals.describe(),
+                "pending_cooks": COOK_JOBS.describe(active_only=True),
+                "policy": self.policy.capability_report(),
+                "bridge_mode": self.bridge_mode,
+            }
+        )
         try:
             out = entry.handler(**env.arguments)
             if isinstance(out, ToolResult):
@@ -211,6 +228,7 @@ class Dispatcher:
             result.errors.append(f"{type(exc).__name__}: {exc}")
             return DispatchOutcome(result, env)
         finally:
+            reset_current_runtime_state(state_token)
             reset_current_envelope(token)
 
     def _process_approval_command(self, env: CommandEnvelope) -> DispatchOutcome:

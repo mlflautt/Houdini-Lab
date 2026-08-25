@@ -19,6 +19,9 @@ This repo hosts:
 > the post-`v0.25.0` program from Hermes control plane through compositional projects and cross-tool
 > creative handoffs.
 
+> **Agent entry path:** [`docs/HERMES_V030_OPERATOR_RUNBOOK.md`](docs/HERMES_V030_OPERATOR_RUNBOOK.md)
+> — capability discovery, intent planning, approvals, verification, hashed handoff, and dry resume.
+
 ---
 
 ## Architecture
@@ -92,6 +95,12 @@ Cooking is an explicit two-step job contract: submit a scope, resource estimate,
 JSONL log, then run or cancel it. Geometry metrics never trigger hidden cooks. Structural
 validation, headless graph SVGs, and named camera/viewer captures complete the verification
 loop. See [`docs/resource-control.md`](docs/resource-control.md).
+
+Release `v0.30.0` adds the Hermes control plane: `system.catalog`, no-cook `session.describe`,
+reviewable intent plans, hashed continuation handoffs, compatibility-gated dry resume, and the
+two-process relic acceptance harness. Start with the
+[`v0.30 operator runbook`](docs/HERMES_V030_OPERATOR_RUNBOOK.md); release evidence is recorded in
+[`docs/releases/v0.30.0.md`](docs/releases/v0.30.0.md).
 
 The first executable creative skill is `model.fractal_relic` (Sprint 4). It creates three
 deterministic native-SOP alternatives, keeps them together in `OUT_COMPARISON`, and exposes a
