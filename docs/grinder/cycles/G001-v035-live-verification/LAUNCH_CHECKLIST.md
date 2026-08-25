@@ -31,7 +31,10 @@ worktree. Do not commit that copied package on the lane branch except for the la
 
 ## 3. Dispatch four tasks
 
-Give each task exactly one lane brief. Begin the prompt with:
+The shortest path is to copy the five ready-made prompts from
+[`COPY_PASTE_PROMPTS.md`](COPY_PASTE_PROMPTS.md). Give each parallel task exactly one worker prompt.
+
+The shared form of those prompts is:
 
 > Execute this accepted Grinder lane exactly as written. Treat the attached lane brief and G001
 > manifest as the complete execution contract. Start from the frozen commit, respect file
