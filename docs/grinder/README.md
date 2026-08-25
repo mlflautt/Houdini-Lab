@@ -12,12 +12,14 @@ Houdini work; the Grinder controls how this repository is changed.
 1. Read [the Grinder architecture](GRINDER_ARCHITECTURE.md).
 2. Inspect the proposed [G001 cycle manifest](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md).
 3. Run [the launch checklist](cycles/G001-v035-live-verification/LAUNCH_CHECKLIST.md).
-4. Give each Codex instance exactly one lane brief:
+4. Copy the one-line worker prompts from
+   [G001 copy-paste prompts](cycles/G001-v035-live-verification/COPY_PASTE_PROMPTS.md).
+5. Each prompt directs its Codex instance to exactly one lane brief:
    - [Lane A — acceptance core](cycles/G001-v035-live-verification/LANE_A_ACCEPTANCE_CORE.md)
    - [Lane B — Hython tiers and fixtures](cycles/G001-v035-live-verification/LANE_B_HYTHON_TIERS.md)
    - [Lane C — compatibility and baselines](cycles/G001-v035-live-verification/LANE_C_COMPATIBILITY_BASELINES.md)
    - [Lane D — runner governance](cycles/G001-v035-live-verification/LANE_D_RUNNER_GOVERNANCE.md)
-5. After the four lanes have reviewable commits, give a fresh instance the
+6. After the four lanes have reviewable commits, give a fresh instance the
    [integration-captain brief](cycles/G001-v035-live-verification/INTEGRATION_CAPTAIN.md).
 
 ## Dispatch rule
@@ -35,4 +37,3 @@ instruction delivered to only one lane.
 
 - [Lane instruction template](templates/LANE_INSTRUCTIONS_TEMPLATE.md)
 - [Lane receipt template](templates/LANE_RECEIPT_TEMPLATE.md)
-
