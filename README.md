@@ -53,8 +53,8 @@ Panel, or direct import.
 
 ### 1. Clone + install dev tooling
 ```bash
-git clone https://github.com/mlflautt/houdini-creative-dev.git
-cd houdini-creative-dev
+git clone https://github.com/mlflautt/Houdini-Lab.git
+cd Houdini-Lab
 uv venv && source .venv/bin/activate
 uv pip install -e ".[dev]"      # ruff, pytest
 ```
