@@ -15,6 +15,10 @@ This repo hosts:
 > **Source of truth for design:** [`docs/architecture.md`](docs/architecture.md) — the
 > *Hermes Houdini Apprentice: Agentic Architecture and Development Guide*, integrated here.
 
+> **Forward roadmap:** [`docs/HERMES_HOUDINI_GRAND_PLAN.md`](docs/HERMES_HOUDINI_GRAND_PLAN.md) —
+> the post-`v0.25.0` program from Hermes control plane through compositional projects and cross-tool
+> creative handoffs.
+
 ---
 
 ## Architecture
