@@ -1,0 +1,12 @@
+{
+  "allowlisted_model_records": [],
+  "endpoint": "http://127.0.0.1:11434",
+  "installed_allowlisted_models": [],
+  "installed_model_count": 9,
+  "model_downloaded": false,
+  "mutations_performed": false,
+  "schema": "hermes.local_critic_probe",
+  "schema_version": "1.0",
+  "service_started": false,
+  "status": "available_no_allowlisted_model"
+}

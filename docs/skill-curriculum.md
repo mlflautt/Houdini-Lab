@@ -356,6 +356,12 @@ margin balance, consecutive-frame pixel change, and motion coverage. The final p
 40% vertical motion coverage; no metric ranks candidates. See
 [`sprint23-aesthetic-verification.md`](sprint23-aesthetic-verification.md).
 
+**Sprint 24 — bounded local visual critic.** Implemented in package `0.24.0` as three registered
+verification tools: loopback probe, explicitly enabled advisory inference, and deterministic
+calibration scoring. Exact packet hashes and structured response provenance are retained; model
+installation/startup is never implicit, and aesthetic selection remains human-owned. Live Qwen3-VL
+calibration is pending. See [`local-vision-critic.md`](local-vision-critic.md).
+
 The license analysis, live H22.0.368 Apprentice inventory, World Seed Atlas brief, plugin risk
-matrix, Labs/MOPs acceptance gates, and Sprints 19–22 are maintained in
+matrix, Labs/MOPs acceptance gates, and Sprints 19–24 are maintained in
 [`apprentice-creative-expansion-plan.md`](apprentice-creative-expansion-plan.md).

@@ -65,9 +65,12 @@ clipped, duplicate, or absent-panel cases cannot reduce human review. Local VLM 
 `available_unverified` until that evaluation passes. Scores may be stored as advisory fields but
 must never fill `winner` or `human_rating`.
 
-Host audit on 2026-08-22 found Ollama 0.32.9 installed but no running daemon or installed vision
-model. Sprint 12 therefore stops at the hashed handoff packet: model inference remains
-`available_unverified`, and no model download is implied by building or validating the skill.
+Sprint 24 implements the bounded adapter described above. It accepts only explicit IPv4-loopback
+Ollama endpoints, exact allowlisted Qwen3-VL model IDs, hashed packets, JSON-schema responses, and
+bounded input/output/time budgets. It never starts Ollama or pulls a model. A 2026-08-24 host audit
+found the 0.32.15 client/service and nine text models but no allowlisted Qwen3-VL model, so live
+inference and calibration remain pending. The non-mutating no-model path is verified. See
+[`local-vision-critic.md`](local-vision-critic.md).
 
 ## 4. External omnimodal critique
 
@@ -89,8 +92,8 @@ IDs, lineage, empty ratings, and all alternatives.
 
 1. Sprint 12: structural validator, deterministic PNG analyzer, hashed critique packet, calibration
    fixtures, and optional capture integration.
-2. Next verification increment: approved local Ollama adapter with an allowlisted vision model,
-   schema validation, time/memory limits, and calibration scoring. Default remains off.
+2. Sprint 24: bounded local Ollama adapter, exact model allowlist, schema validation, time/byte
+   limits, and deterministic calibration scoring. Default remains off; live calibration is pending.
 3. Later: consensus/escalation policy across deterministic checks, one local critic, and optionally
    one external critic; human review only on defined triggers.
 4. Long term: project-specific aesthetic rubrics learned from explicit human ratings without

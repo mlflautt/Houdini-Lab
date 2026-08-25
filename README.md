@@ -229,6 +229,13 @@ old narrow-band proof while the final four-mechanism render passes. All aestheti
 selection remain human-owned. See
 [`docs/sprint23-aesthetic-verification.md`](docs/sprint23-aesthetic-verification.md).
 
+Sprint 24 adds a disabled-by-default local visual critic after deterministic validation. It accepts
+only an explicitly enabled IPv4-loopback Ollama endpoint and already-installed allowlisted Qwen3-VL
+model, revalidates every critique-packet hash, enforces structured advisory output, and scores the
+model against known mechanical failures. It never starts Ollama, downloads a model, ranks candidates,
+or fills human-owned selection fields. See
+[`docs/local-vision-critic.md`](docs/local-vision-critic.md).
+
 ### 4. Tests
 ```bash
 python -m pytest tests/unit -q         # pure Python, no Houdini needed

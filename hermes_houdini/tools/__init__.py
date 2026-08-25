@@ -41,6 +41,12 @@ from ..kinetic import (
     validate_kinetic_stage,
 )
 from ..labs_atlas import cook_validate_labs_atlas
+from ..local_critic import (
+    materialize_calibration_corpus,
+    probe_ollama,
+    run_local_critique,
+    score_calibration,
+)
 from ..material_foundry import cook_validate_material_foundry, validate_material_foundry_stage
 from ..membrane import cook_validate_membranes
 from ..mpm import cook_validate_mpm
@@ -824,6 +830,42 @@ def visual_analyze(**arguments: Any) -> dict[str, Any]:
 )
 def verification_critique_package(**arguments: Any) -> dict[str, Any]:
     return build_critique_packet(**arguments)
+
+
+@tool(
+    "verification.local_critic.probe",
+    risk="external",
+    doc="Probe an already-running IPv4-loopback Ollama service without starting or mutating it.",
+)
+def verification_local_critic_probe(**arguments: Any) -> dict[str, Any]:
+    return probe_ollama(**arguments)
+
+
+@tool(
+    "verification.local_critic.run",
+    risk="external",
+    doc="Run one explicitly enabled, bounded, advisory critique with an installed local model.",
+)
+def verification_local_critic_run(**arguments: Any) -> dict[str, Any]:
+    return run_local_critique(**arguments)
+
+
+@tool(
+    "verification.local_critic.calibrate",
+    risk="low",
+    doc="Score saved local-critic responses against the deterministic mechanical corpus.",
+)
+def verification_local_critic_calibrate(**arguments: Any) -> dict[str, Any]:
+    return score_calibration(**arguments)
+
+
+@tool(
+    "verification.local_critic.corpus.build",
+    risk="low",
+    doc="Materialize deterministic bad-image fixtures and hashed packets for model calibration.",
+)
+def verification_local_critic_corpus_build(**arguments: Any) -> dict[str, Any]:
+    return materialize_calibration_corpus(**arguments)
 
 
 # ---------------- VEX template ----------------

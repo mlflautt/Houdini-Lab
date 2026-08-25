@@ -182,7 +182,9 @@ must not make the asset unreadable when absent.
 5. **Sprint 23 — staged reliquary and perceptual verification (complete):** grid-aware
    composition and motion diagnostics plus a layered camera-facing presentation branch; human taste
    remains authoritative.
-6. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
+6. **Sprint 24 — bounded local visual critic (code complete, live calibration pending):**
+   loopback-only Ollama adapter, exact Qwen3-VL allowlist, response schema, and mechanical corpus.
+7. **Later:** APEX creature/performer studies, Pyro calligraphy, biome animation, and selective
    asset/plugin trials chosen by a concrete creative need.
 
 Sprint 20 completed on 2026-08-24 in package `0.20.0`: the production archive exactly matches host
@@ -207,6 +209,12 @@ verified motion contracts toward the camera and add counter-rotating inner orbit
 The enhanced verifier measures panel-grid composition and consecutive-frame motion. Final evidence
 passes with motion across 89% of image width and 40% of height; the native-only fallback remains
 plugin-free. See [`sprint23-aesthetic-verification.md`](sprint23-aesthetic-verification.md).
+
+Sprint 24 is implemented in package `0.24.0`: the adapter is off by default, rejects non-loopback
+endpoints and unlisted models, revalidates packet hashes, and cannot choose a winner. The 0.32.15
+Ollama client/service has nine text models, but live inference/calibration remains pending because
+no allowlisted vision model was installed or downloaded. See
+[`local-vision-critic.md`](local-vision-critic.md).
 
 ## Decision
 
