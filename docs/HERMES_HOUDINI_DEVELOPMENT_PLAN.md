@@ -1,8 +1,12 @@
 # Hermes Houdini Development Plan
 
-Status: proposed after repository and GitHub audit on 2026-08-24  
-Current integration tip: `codex/sprint-25-verification-routing` (`0.25.0`)  
-Target runtime: Houdini Apprentice 22.0.368, Apple silicon, macOS
+- Status: integration plan completed in release `v0.25.0`
+- Current integration tip: `main` at the `v0.25.0` release lineage
+- Target runtime: Houdini Apprentice 22.0.368, Apple silicon, macOS
+
+> The forward governing roadmap is
+> [`HERMES_HOUDINI_GRAND_PLAN.md`](HERMES_HOUDINI_GRAND_PLAN.md). This document preserves the
+> repository audit and the reasoning that led to it.
 
 ## Telos
 
@@ -45,9 +49,10 @@ another isolated effect.
 - Native graphs remain the fallback; plugin branches are optional and pinned.
 - Human ratings and winner selection remain deliberately empty until the user decides.
 
-## GitHub and version audit
+## GitHub and version audit — resolved in `v0.25.0`
 
-The code is healthy, but repository integration is behind it:
+The audit found the following issues; each was resolved before or immediately after the `v0.25.0`
+release:
 
 | Finding | Impact | Resolution |
 |---|---|---|
@@ -76,8 +81,9 @@ acceptance lineage already recorded in each sprint.
 8. Confirm GitHub identifies the MIT license and that the README clone/install path works in a
    disposable directory.
 
-Branch deletion, PR merging, tagging, releases, and protection-rule changes are intentionally not
-part of an unauthenticated local cleanup.
+Completion evidence: all three PRs merged in order, final `main` CI passed, `v0.25.0` was tagged and
+released, merged branches were removed, GitHub recognizes MIT, and the single-owner protection rule
+now requires PRs plus strict CI without an impossible outside approval.
 
 ## Development priorities
 
