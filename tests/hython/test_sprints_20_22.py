@@ -16,6 +16,7 @@ def test_bare_hython_loads_json_compatible_optional_plugin_skills():
     kinetic = load_skill(ROOT / "skills" / "motion.kinetic_reliquary")
     assert labs.id == "world.world_seed_atlas_labs"
     assert kinetic.id == "motion.kinetic_reliquary"
+    assert kinetic.version == "1.1.0"
     assert hou.applicationVersionString() == "22.0.368"
 
 
@@ -31,3 +32,18 @@ def test_plugin_disabled_recipes_contain_no_optional_operator_types():
     types = [operation.get("operator_type", "") for operation in operations]
     assert not any(node_type.startswith("labs::") for node_type in types)
     assert not any(node_type.startswith("MOPS::") for node_type in types)
+
+
+def test_sprint23_native_presentation_uses_exact_builtin_sops():
+    staged = load_recipe(
+        ROOT / "recipes" / "sop" / "kinetic_reliquary_staged_native.yaml"
+    )
+    operations = staged.render_fragment("/obj/STAGED_NATIVE")["operations"]
+    types = {
+        operation["operator_type"]
+        for operation in operations
+        if operation.get("op") == "create"
+    }
+    assert types == {"unpack", "xform", "color", "sphere", "merge", "null"}
+    available = hou.sopNodeTypeCategory().nodeTypes()
+    assert types.issubset(available)

@@ -1,0 +1,51 @@
+{
+  "schema": "hermes.houdini.mops_staged_reliquary_acceptance",
+  "schema_version": "1.0",
+  "sprint": 23,
+  "package_version": "0.23.0",
+  "houdini": {"build": "22.0.368", "license": "Apprentice", "architecture": "arm64"},
+  "plugin": {
+    "id": "mops-1.12",
+    "source_commit": "65c4cff83003a51b31edbefa1dd1a11bd3ac3c25",
+    "loading_scope": "isolated_process_environment",
+    "global_preferences_mutated": false,
+    "new_plugin_node_types_certified": []
+  },
+  "enabled_acceptance": {
+    "artifact_run": ".hermes/sprint23-acceptance-20260824-b",
+    "branches": ["native", "mops_plain", "mops_noise", "mops_shape"],
+    "sample_frames": [1, 12, 24],
+    "presentation": {
+      "points": 2472,
+      "primitives": 4160,
+      "vertices": 12480,
+      "bounds_size_frame_24": [23.945817947387695, 6.019200325012207, 1.688580334186554],
+      "distinct_frame_digests": true
+    },
+    "render": {
+      "resolution": [640, 360],
+      "sha256": [
+        "48f90079d3fd992d6858cc3c382f27a8368a6963ca992fc89f60808b6b5143cb",
+        "cb301e6f238fcf61765e1a0a575206908a246a6022c82b74d34dbdc32e812133",
+        "6fbd9ae094490ac0a545e3b71e11e5340a078f54f15d2d0c793a86b7062a092d"
+      ],
+      "panel_count": 4,
+      "visual_status": "pass",
+      "flags": [],
+      "sequence_changed_fraction": [0.064878, 0.062778],
+      "motion_bbox_fill_width": [0.890625, 0.89375],
+      "motion_bbox_fill_height": [0.4, 0.4]
+    }
+  },
+  "plugin_disabled_acceptance": {
+    "artifact_run": ".hermes/sprint23-native-fallback-20260824-b",
+    "branches": ["native"],
+    "presentation_points": 618,
+    "presentation_primitives": 1040,
+    "fallback_contract": "OPTIONAL_MOPS_UNAVAILABLE",
+    "plugin_nodes_instantiated": false,
+    "bare_hython_without_pyyaml": true
+  },
+  "selection": {"winner": null, "automatic_ranking": false, "human_selection_required": true},
+  "known_visual_boundary": "Apprentice watermark can inflate lower-right panel occupancy and bbox metrics"
+}

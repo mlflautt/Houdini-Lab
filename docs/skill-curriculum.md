@@ -348,6 +348,14 @@ isolated from global preferences. Native, plain, animated-noise, and moving-shap
 1/12/24. Three crop-safe, nonduplicate four-panel Karma proofs pass mechanical QA; a zero-MOPs
 launch retains the native graph. See [`mops-kinetic-reliquary.md`](mops-kinetic-reliquary.md).
 
+**Sprint 23 — staged reliquary and perceptual verification.** Implemented in package `0.23.0` as
+`motion.kinetic_reliquary@1.1.0` plus new staged SOP/LOP recipes. Presentation begins after the
+verified packed contracts: camera-facing outer orbits, counter-rotating inner orbits, and focal
+cores create four readable mechanisms. The visual gate now records grid cells, normalized centers,
+margin balance, consecutive-frame pixel change, and motion coverage. The final proof passes with
+40% vertical motion coverage; no metric ranks candidates. See
+[`sprint23-aesthetic-verification.md`](sprint23-aesthetic-verification.md).
+
 The license analysis, live H22.0.368 Apprentice inventory, World Seed Atlas brief, plugin risk
 matrix, Labs/MOPs acceptance gates, and Sprints 19–22 are maintained in
 [`apprentice-creative-expansion-plan.md`](apprentice-creative-expansion-plan.md).

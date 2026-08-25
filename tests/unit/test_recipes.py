@@ -121,9 +121,16 @@ def test_all_bundled_recipes_validate_and_render():
                     "gallery_sop_path": "/obj/LABS/OUT_LABS_GALLERY",
                     "render_picture": "/project/render/sidefx_labs_acceptance.png",
                 }
-            elif recipe.id == "lop.kinetic_reliquary_stage":
+            elif recipe.id in {
+                "lop.kinetic_reliquary_stage",
+                "lop.kinetic_reliquary_staged_stage",
+            }:
                 overrides = {
-                    "gallery_sop_path": "/obj/KINETIC/OUT_KINETIC_COMPARE",
+                    "gallery_sop_path": (
+                        "/obj/KINETIC/OUT_KINETIC_STAGED"
+                        if recipe.id.endswith("staged_stage")
+                        else "/obj/KINETIC/OUT_KINETIC_COMPARE"
+                    ),
                     "render_picture": "/project/render/kinetic_reliquary.png",
                 }
             elif recipe.id == "sop.world_seed_biome":
@@ -153,6 +160,7 @@ def test_all_bundled_recipes_validate_and_render():
         "lop.world_seed_atlas_stage",
         "lop.sidefx_labs_acceptance_stage",
         "lop.kinetic_reliquary_stage",
+        "lop.kinetic_reliquary_staged_stage",
         "cop.reaction_diffusion_pattern",
         "cop.procedural_material_foundry",
         "sop.differential_growth_loop",
@@ -172,6 +180,8 @@ def test_all_bundled_recipes_validate_and_render():
         "sop.kinetic_reliquary_native",
         "sop.kinetic_reliquary_mops",
         "sop.kinetic_reliquary_mops_unavailable",
+        "sop.kinetic_reliquary_staged",
+        "sop.kinetic_reliquary_staged_native",
         "sop.world_seed_labs_enhancement",
         "sop.world_seed_labs_unavailable",
         "top.procedural_district",

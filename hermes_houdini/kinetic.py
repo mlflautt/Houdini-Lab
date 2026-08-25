@@ -288,10 +288,134 @@ def validate_kinetic_stage(*, stage_node_path: str, prim_path: str, max_prims: i
     }
 
 
+def cook_validate_kinetic_presentation(
+    *,
+    network_path: str,
+    presentation_path: str,
+    start_frame: int,
+    end_frame: int,
+    mops_available: bool,
+    output_path: str,
+    max_points: int = 20_000,
+    max_primitives: int = 20_000,
+    max_seconds: float = 120.0,
+) -> dict[str, Any]:
+    """Validate the layered presentation after, without replacing, packed branch contracts."""
+    hou = get_hou()
+    if not isinstance(mops_available, bool):
+        raise ValueError("mops_available must be boolean")
+    if (
+        not isinstance(start_frame, int)
+        or not isinstance(end_frame, int)
+        or start_frame < 1
+        or end_frame <= start_frame
+        or end_frame - start_frame > 48
+    ):
+        raise ValueError("frame range must be increasing, start at 1+, and span at most 48 frames")
+    output = Path(output_path).expanduser()
+    if not output.is_absolute() or output.suffix.lower() != ".json":
+        raise ValueError("output_path must be an absolute JSON path")
+    if output.exists():
+        raise FileExistsError(f"refusing to overwrite validation artifact: {output}")
+    network = hou.node(_safe_node_path(network_path, "network_path"))
+    presentation = hou.node(_safe_node_path(presentation_path, "presentation_path"))
+    if network is None or network.type().category().name() != "Object":
+        raise ValueError("kinetic presentation network must be an Object node")
+    if presentation is None or presentation.parent() != network:
+        raise ValueError("kinetic staged presentation contract is missing or foreign")
+    if presentation.userData("hermes_role") != "kinetic_staged_contract":
+        raise ValueError("kinetic staged presentation role is stale")
+    roles = {child.userData("hermes_role") for child in network.children()}
+    required_roles = (
+        {
+            "kinetic_staged_native_face",
+            "kinetic_staged_plain_face",
+            "kinetic_staged_noise_face",
+            "kinetic_staged_shape_face",
+            "kinetic_staged_native_inner_xform",
+            "kinetic_staged_plain_inner_xform",
+            "kinetic_staged_noise_inner_xform",
+            "kinetic_staged_shape_inner_xform",
+        }
+        if mops_available
+        else {"kinetic_staged_native_only_face", "kinetic_staged_native_only_inner_xform"}
+    )
+    missing_roles = required_roles.difference(roles)
+    if missing_roles:
+        raise ValueError(f"kinetic staged presentation roles are missing: {sorted(missing_roles)}")
+
+    middle = start_frame + ((end_frame - start_frame) // 2)
+    sample_frames = [start_frame, middle, end_frame]
+    started = time.monotonic()
+    original_frame = hou.frame()
+    samples = []
+    digests = []
+    try:
+        for frame in sample_frames:
+            hou.setFrame(frame)
+            presentation.cook(force=True)
+            if list(presentation.errors()) or list(presentation.warnings()):
+                raise ValueError(f"kinetic staged presentation frame {frame} has Houdini messages")
+            metrics = geometry_metrics(presentation)
+            if not metrics["points"] or not metrics["primitives"]:
+                raise ValueError("kinetic staged presentation is empty")
+            if metrics["points"] > max_points or metrics["primitives"] > max_primitives:
+                raise ValueError("kinetic staged presentation exceeds geometry policy budget")
+            if "Cd" not in metrics["point_attributes"]:
+                raise ValueError("kinetic staged presentation lacks point color identity")
+            geometry = presentation.geometry()
+            bounds = geometry.boundingBox()
+            size = bounds.sizevec()
+            min_width = 18.0 if mops_available else 4.0
+            if float(size[0]) < min_width or float(size[1]) < 4.0:
+                raise ValueError("kinetic staged presentation remains a flat or undersized strip")
+            payload = {
+                "P": [round(float(value), 7) for value in geometry.pointFloatAttribValues("P")],
+                "Cd": [round(float(value), 7) for value in geometry.pointFloatAttribValues("Cd")],
+            }
+            digest = hashlib.sha256(
+                json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest()
+            digests.append(digest)
+            samples.append(
+                {
+                    "frame": frame,
+                    "digest": digest,
+                    "bounds_min": list(bounds.minvec()),
+                    "bounds_max": list(bounds.maxvec()),
+                    "bounds_size": list(size),
+                    "metrics": metrics,
+                }
+            )
+    finally:
+        hou.setFrame(original_frame)
+    elapsed = time.monotonic() - started
+    if elapsed > max_seconds:
+        raise TimeoutError("kinetic staged presentation validation exceeded max_seconds")
+    if len(set(digests)) != len(digests):
+        raise ValueError("kinetic staged presentation lacks temporal change")
+    document = {
+        "schema": "hermes.houdini.kinetic_reliquary_presentation_validation",
+        "schema_version": "1.0",
+        "status": "success",
+        "houdini": {"build": hou.applicationVersionString(), "license": hou.licenseCategory().name()},
+        "request": current_envelope().as_dict() if current_envelope() else None,
+        "mops_available": mops_available,
+        "sample_frames": sample_frames,
+        "samples": samples,
+        "elapsed_seconds": round(elapsed, 6),
+        "selection": {"winner": None, "automatic_ranking": False},
+    }
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return {"artifact": str(output), **document}
+
+
 __all__ = [
     "KINETIC_VARIANTS",
     "MOPS_KINETIC_NODE_TYPES",
     "cook_validate_kinetic_reliquary",
+    "cook_validate_kinetic_presentation",
     "detect_mops_capability",
     "validate_kinetic_spec",
     "validate_kinetic_stage",

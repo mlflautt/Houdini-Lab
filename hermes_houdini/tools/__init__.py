@@ -35,7 +35,11 @@ from ..graph_batch import apply_batch
 from ..growth import populate_growth_solver
 from ..ids import make_id
 from ..inspect import describe_hip, describe_network, describe_node
-from ..kinetic import cook_validate_kinetic_reliquary, validate_kinetic_stage
+from ..kinetic import (
+    cook_validate_kinetic_presentation,
+    cook_validate_kinetic_reliquary,
+    validate_kinetic_stage,
+)
 from ..labs_atlas import cook_validate_labs_atlas
 from ..material_foundry import cook_validate_material_foundry, validate_material_foundry_stage
 from ..membrane import cook_validate_membranes
@@ -703,6 +707,15 @@ def motion_kinetic_reliquary_validate(**arguments: Any) -> dict[str, Any]:
 
 
 @tool(
+    "motion.kinetic_reliquary.presentation.validate",
+    risk="low",
+    doc="Validate camera-facing layered presentation bounds, color, budgets, and temporal change.",
+)
+def motion_kinetic_reliquary_presentation_validate(**arguments: Any) -> dict[str, Any]:
+    return cook_validate_kinetic_presentation(**arguments)
+
+
+@tool(
     "solaris.kinetic_reliquary.validate",
     risk="low",
     doc="Validate the kinetic reliquary USD/Karma stage without material assumptions.",
@@ -798,7 +811,7 @@ def viewport_capture_tool(
 @tool(
     "visual.analyze",
     risk="low",
-    doc="Run deterministic blank, exposure, crop, occupancy, edge, panel, and duplicate checks.",
+    doc="Run deterministic exposure, grid composition, sequence motion, and duplicate checks.",
 )
 def visual_analyze(**arguments: Any) -> dict[str, Any]:
     return analyze_visual_evidence(**arguments)

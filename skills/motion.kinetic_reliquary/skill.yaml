@@ -1,7 +1,7 @@
 {
   "id": "motion.kinetic_reliquary",
-  "version": "1.0.0",
-  "summary": "Build a native packed-fragment reliquary with optional MOPs plain, noise, and moving-shape falloff motion studies.",
+  "version": "1.1.0",
+  "summary": "Build verified native/MOPs motion contracts plus a layered camera-facing reliquary presentation with temporal visual diagnostics.",
   "contexts": ["SOP", "LOP", "ROP"],
   "houdini": {"minimum_version": "22.0", "tested_builds": ["22.0.368"]},
   "license": {"mode": "houdini-apprentice-noncommercial", "commercial_use": false, "scene_extension": ".hipnc", "render_ceiling": [1280, 720], "renderer": "Karma CPU", "optional_plugin": "MOPs 1.12 LGPL-3.0"},
@@ -10,10 +10,10 @@
   "risk": "external",
   "checkpoint": "before_native_optional_stage_and_each_render_rop_mutation",
   "cook_budget": {"max_copies": 64, "max_frames": 48, "max_points": 20000, "max_primitives": 20000, "max_memory_bytes": 1073741824, "max_seconds": 120, "default_resolution": [640, 360], "render_samples": 3},
-  "steps": ["instantiate native packed reliquary", "instantiate exact MOPs or unavailable overlay", "validate four transform contracts across three frames", "compose USD stage", "optionally render three Karma CPU sample frames", "capture graph and manifest evidence", "save incremented hipnc"],
-  "verification": {"graph_checks": ["native is Switch input zero", "only four certified MOPs types may appear", "plugin-disabled plan instantiates no MOPs nodes"], "data_checks": ["every branch preserves P orient scale v seed variant_id", "one packed primitive per copy", "three frame digests are deterministic and distinct"], "visual_checks": ["four panels remain present and uncropped", "three sample renders are not exact duplicates"], "selection_checks": ["human ratings remain empty", "automatic ranking remains disabled"]},
-  "outputs": ["native_kinetic_branch", "three_optional_mops_branches_or_unavailable_marker", "four_way_comparison", "three_frame_validation", "usd_stage", "optional_three_frame_karma_proof", "graph_evidence", "final_hipnc_snapshot"],
+  "steps": ["instantiate native packed reliquary", "instantiate exact MOPs or unavailable overlay", "validate four transform contracts across three frames", "layer camera-facing outer and inner orbits after verified contracts", "validate staged bounds color and temporal change", "compose USD stage", "optionally render three Karma CPU sample frames", "measure grid composition and pixel motion", "capture graph and manifest evidence", "save incremented hipnc"],
+  "verification": {"graph_checks": ["native is Switch input zero", "presentation is downstream of packed contracts", "only four certified MOPs types may appear", "plugin-disabled plan instantiates no MOPs nodes"], "data_checks": ["every branch preserves P orient scale v seed variant_id", "one packed primitive per copy", "three frame digests are deterministic and distinct", "staged output has color and non-flat bounds"], "visual_checks": ["four panels remain present and uncropped", "three sample renders are not exact duplicates", "motion is not confined to a narrow image band"], "selection_checks": ["human ratings remain empty", "automatic ranking remains disabled"]},
+  "outputs": ["native_kinetic_branch", "three_optional_mops_branches_or_unavailable_marker", "four_way_contract_comparison", "layered_staged_presentation", "three_frame_contract_and_presentation_validation", "usd_stage", "optional_three_frame_karma_proof", "grid_and_motion_visual_report", "graph_evidence", "final_hipnc_snapshot"],
   "rollback": "restore_checkpoint_or_remove_only_new_run_scoped_nodes_and_disable_isolated_MOPS_environment",
-  "failure_modes": ["requested MOPs types missing", "stale transform or attribute contract", "motion digest unchanged", "geometry or render budget exceeded", "existing artifact refused"],
+  "failure_modes": ["requested MOPs types missing", "stale transform or attribute contract", "presentation remains a flat strip", "motion digest unchanged", "motion pixels confined to a narrow band", "geometry or render budget exceeded", "existing artifact refused"],
   "human_selection": {"automatic_ranking": false, "winner_default": null}
 }

@@ -1,0 +1,58 @@
+{
+  "id": "sop.kinetic_reliquary_staged",
+  "version": "1.0.0",
+  "summary": "Layer four verified kinetic contracts into camera-facing relic orbits without changing their upstream packed geometry.",
+  "contexts": ["SOP"],
+  "inputs": {"run_code": {"type": "string", "default": "KINETIC_RELIQUARY"}},
+  "references": {
+    "native": "{{parent_path}}/OUT_{{run_code}}_NATIVE",
+    "plain": "{{parent_path}}/OUT_{{run_code}}_MOPS_PLAIN",
+    "noise": "{{parent_path}}/OUT_{{run_code}}_MOPS_NOISE",
+    "shape": "{{parent_path}}/OUT_{{run_code}}_MOPS_SHAPE"
+  },
+  "nodes": [
+    {"id": "native_unpack", "type": "unpack", "name": "{{run_code}}_STAGED_NATIVE_UNPACK", "role": "kinetic_staged_native_unpack", "position": [-9, -22], "params": {}, "comment": "Presentation begins after the verified native packed contract"},
+    {"id": "native_face", "type": "xform", "name": "{{run_code}}_STAGED_NATIVE_FACE", "role": "kinetic_staged_native_face", "position": [-9, -24], "params": {"rx": 90.0, "scale": 0.88, "px": -9.0}, "comment": "Turn the ZX orbit toward the explicit Karma camera with comparison breathing room"},
+    {"id": "native_outer", "type": "color", "name": "{{run_code}}_STAGED_NATIVE_OUTER", "role": "kinetic_staged_native_outer", "position": [-11, -26], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.22, 0.045]}, "comment": "Warm candidate identity; no rank implied"},
+    {"id": "native_inner_xform", "type": "xform", "name": "{{run_code}}_STAGED_NATIVE_INNER_XFORM", "role": "kinetic_staged_native_inner_xform", "position": [-8, -26], "params": {"scale": 0.58, "px": -9.0}, "expressions": {"rz": "-$FF*2.5"}, "comment": "Counter-rotating inner orbit around the same candidate center"},
+    {"id": "native_inner", "type": "color", "name": "{{run_code}}_STAGED_NATIVE_INNER", "role": "kinetic_staged_native_inner", "position": [-8, -28], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.58, 0.16]}, "comment": "Inner rhythm layer"},
+    {"id": "native_core", "type": "sphere", "name": "{{run_code}}_STAGED_NATIVE_CORE", "role": "kinetic_staged_native_core", "position": [-5, -26], "params": {"type": "poly", "radx": 0.78, "rady": 0.78, "radz": 0.48, "tx": -9.0, "ty": 0.25, "tz": -0.35}, "comment": "Editable central focal core"},
+    {"id": "native_core_color", "type": "color", "name": "{{run_code}}_STAGED_NATIVE_CORE_COLOR", "role": "kinetic_staged_native_core_color", "position": [-5, -28], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.82, 0.48]}, "comment": "Native focal hierarchy"},
+
+    {"id": "plain_unpack", "type": "unpack", "name": "{{run_code}}_STAGED_PLAIN_UNPACK", "role": "kinetic_staged_plain_unpack", "position": [-3, -22], "params": {}, "comment": "Presentation begins after the verified MOPs plain contract"},
+    {"id": "plain_face", "type": "xform", "name": "{{run_code}}_STAGED_PLAIN_FACE", "role": "kinetic_staged_plain_face", "position": [-3, -24], "params": {"rx": 90.0, "scale": 0.88, "px": -3.0}, "comment": "Camera-facing plain orbit with comparison breathing room"},
+    {"id": "plain_outer", "type": "color", "name": "{{run_code}}_STAGED_PLAIN_OUTER", "role": "kinetic_staged_plain_outer", "position": [-5, -26], "params": {"class": 2, "colortype": 0, "color": [0.04, 0.58, 1.0]}, "comment": "Cyan candidate identity"},
+    {"id": "plain_inner_xform", "type": "xform", "name": "{{run_code}}_STAGED_PLAIN_INNER_XFORM", "role": "kinetic_staged_plain_inner_xform", "position": [-2, -26], "params": {"scale": 0.58, "px": -3.0}, "expressions": {"rz": "$FF*3.0"}, "comment": "Counter-rotating inner orbit"},
+    {"id": "plain_inner", "type": "color", "name": "{{run_code}}_STAGED_PLAIN_INNER", "role": "kinetic_staged_plain_inner", "position": [-2, -28], "params": {"class": 2, "colortype": 0, "color": [0.24, 0.9, 1.0]}, "comment": "Plain rhythm layer"},
+    {"id": "plain_core", "type": "sphere", "name": "{{run_code}}_STAGED_PLAIN_CORE", "role": "kinetic_staged_plain_core", "position": [1, -26], "params": {"type": "poly", "radx": 0.78, "rady": 0.78, "radz": 0.48, "tx": -3.0, "ty": 0.25, "tz": -0.35}, "comment": "Plain focal core"},
+    {"id": "plain_core_color", "type": "color", "name": "{{run_code}}_STAGED_PLAIN_CORE_COLOR", "role": "kinetic_staged_plain_core_color", "position": [1, -28], "params": {"class": 2, "colortype": 0, "color": [0.62, 0.96, 1.0]}, "comment": "Plain focal hierarchy"},
+
+    {"id": "noise_unpack", "type": "unpack", "name": "{{run_code}}_STAGED_NOISE_UNPACK", "role": "kinetic_staged_noise_unpack", "position": [3, -22], "params": {}, "comment": "Presentation begins after the verified MOPs noise contract"},
+    {"id": "noise_face", "type": "xform", "name": "{{run_code}}_STAGED_NOISE_FACE", "role": "kinetic_staged_noise_face", "position": [3, -24], "params": {"rx": 90.0, "scale": 0.88, "px": 3.0}, "comment": "Camera-facing noise orbit with comparison breathing room"},
+    {"id": "noise_outer", "type": "color", "name": "{{run_code}}_STAGED_NOISE_OUTER", "role": "kinetic_staged_noise_outer", "position": [1, -26], "params": {"class": 2, "colortype": 0, "color": [0.68, 0.08, 1.0]}, "comment": "Violet candidate identity"},
+    {"id": "noise_inner_xform", "type": "xform", "name": "{{run_code}}_STAGED_NOISE_INNER_XFORM", "role": "kinetic_staged_noise_inner_xform", "position": [4, -26], "params": {"scale": 0.58, "px": 3.0}, "expressions": {"rz": "-$FF*3.5"}, "comment": "Counter-rotating inner orbit"},
+    {"id": "noise_inner", "type": "color", "name": "{{run_code}}_STAGED_NOISE_INNER", "role": "kinetic_staged_noise_inner", "position": [4, -28], "params": {"class": 2, "colortype": 0, "color": [0.92, 0.38, 1.0]}, "comment": "Noise rhythm layer"},
+    {"id": "noise_core", "type": "sphere", "name": "{{run_code}}_STAGED_NOISE_CORE", "role": "kinetic_staged_noise_core", "position": [7, -26], "params": {"type": "poly", "radx": 0.78, "rady": 0.78, "radz": 0.48, "tx": 3.0, "ty": 0.25, "tz": -0.35}, "comment": "Noise focal core"},
+    {"id": "noise_core_color", "type": "color", "name": "{{run_code}}_STAGED_NOISE_CORE_COLOR", "role": "kinetic_staged_noise_core_color", "position": [7, -28], "params": {"class": 2, "colortype": 0, "color": [0.95, 0.7, 1.0]}, "comment": "Noise focal hierarchy"},
+
+    {"id": "shape_unpack", "type": "unpack", "name": "{{run_code}}_STAGED_SHAPE_UNPACK", "role": "kinetic_staged_shape_unpack", "position": [9, -22], "params": {}, "comment": "Presentation begins after the verified MOPs shape contract"},
+    {"id": "shape_face", "type": "xform", "name": "{{run_code}}_STAGED_SHAPE_FACE", "role": "kinetic_staged_shape_face", "position": [9, -24], "params": {"rx": 90.0, "scale": 0.88, "px": 9.0}, "comment": "Camera-facing shape orbit with comparison breathing room"},
+    {"id": "shape_outer", "type": "color", "name": "{{run_code}}_STAGED_SHAPE_OUTER", "role": "kinetic_staged_shape_outer", "position": [7, -26], "params": {"class": 2, "colortype": 0, "color": [0.95, 0.74, 0.04]}, "comment": "Gold candidate identity"},
+    {"id": "shape_inner_xform", "type": "xform", "name": "{{run_code}}_STAGED_SHAPE_INNER_XFORM", "role": "kinetic_staged_shape_inner_xform", "position": [10, -26], "params": {"scale": 0.58, "px": 9.0}, "expressions": {"rz": "$FF*4.0"}, "comment": "Counter-rotating inner orbit"},
+    {"id": "shape_inner", "type": "color", "name": "{{run_code}}_STAGED_SHAPE_INNER", "role": "kinetic_staged_shape_inner", "position": [10, -28], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.94, 0.34]}, "comment": "Shape rhythm layer"},
+    {"id": "shape_core", "type": "sphere", "name": "{{run_code}}_STAGED_SHAPE_CORE", "role": "kinetic_staged_shape_core", "position": [13, -26], "params": {"type": "poly", "radx": 0.78, "rady": 0.78, "radz": 0.48, "tx": 9.0, "ty": 0.25, "tz": -0.35}, "comment": "Shape focal core"},
+    {"id": "shape_core_color", "type": "color", "name": "{{run_code}}_STAGED_SHAPE_CORE_COLOR", "role": "kinetic_staged_shape_core_color", "position": [13, -28], "params": {"class": 2, "colortype": 0, "color": [1.0, 0.98, 0.66]}, "comment": "Shape focal hierarchy"},
+
+    {"id": "merge", "type": "merge", "name": "{{run_code}}_STAGED_MERGE", "role": "kinetic_staged_merge", "position": [2, -31], "params": {}, "comment": "Four equal-status layered relic mechanisms"},
+    {"id": "out", "type": "null", "name": "OUT_{{run_code}}_KINETIC_STAGED", "role": "kinetic_staged_contract", "position": [2, -33], "params": {}, "flags": {"display": true, "render": true}, "comment": "Presentation-only output; upstream packed contracts remain authoritative"}
+  ],
+  "connections": [
+    ["native", 0, "native_unpack", 0], ["native_unpack", 0, "native_face", 0], ["native_face", 0, "native_outer", 0], ["native_face", 0, "native_inner_xform", 0], ["native_inner_xform", 0, "native_inner", 0], ["native_core", 0, "native_core_color", 0],
+    ["plain", 0, "plain_unpack", 0], ["plain_unpack", 0, "plain_face", 0], ["plain_face", 0, "plain_outer", 0], ["plain_face", 0, "plain_inner_xform", 0], ["plain_inner_xform", 0, "plain_inner", 0], ["plain_core", 0, "plain_core_color", 0],
+    ["noise", 0, "noise_unpack", 0], ["noise_unpack", 0, "noise_face", 0], ["noise_face", 0, "noise_outer", 0], ["noise_face", 0, "noise_inner_xform", 0], ["noise_inner_xform", 0, "noise_inner", 0], ["noise_core", 0, "noise_core_color", 0],
+    ["shape", 0, "shape_unpack", 0], ["shape_unpack", 0, "shape_face", 0], ["shape_face", 0, "shape_outer", 0], ["shape_face", 0, "shape_inner_xform", 0], ["shape_inner_xform", 0, "shape_inner", 0], ["shape_core", 0, "shape_core_color", 0],
+    ["native_outer", 0, "merge", 0], ["native_inner", 0, "merge", 1], ["native_core_color", 0, "merge", 2], ["plain_outer", 0, "merge", 3], ["plain_inner", 0, "merge", 4], ["plain_core_color", 0, "merge", 5], ["noise_outer", 0, "merge", 6], ["noise_inner", 0, "merge", 7], ["noise_core_color", 0, "merge", 8], ["shape_outer", 0, "merge", 9], ["shape_inner", 0, "merge", 10], ["shape_core_color", 0, "merge", 11], ["merge", 0, "out", 0]
+  ],
+  "outputs": ["out"],
+  "meta": {"graph_first": true, "presentation_after_verified_contracts": true, "automatic_ranking": false, "cook_budget": {"max_points": 20000, "max_primitives": 20000, "max_frames": 48}, "license": {"mode": "houdini-apprentice-noncommercial"}}
+}

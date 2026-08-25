@@ -1,0 +1,18 @@
+{
+  "id": "lop.kinetic_reliquary_staged_stage",
+  "version": "1.0.0",
+  "summary": "Stage the layered camera-facing kinetic reliquary with bounded Apprentice-safe Karma settings.",
+  "contexts": ["LOP"],
+  "inputs": {"run_code": {"type": "string", "default": "KINETIC_RELIQUARY"}, "gallery_sop_path": {"type": "string"}, "render_picture": {"type": "string"}, "width": {"type": "integer", "min": 1, "max": 1280, "default": 640}, "height": {"type": "integer", "min": 1, "max": 720, "default": 360}},
+  "references": {},
+  "nodes": [
+    {"id": "gallery", "type": "sopimport", "name": "{{run_code}}_IMPORT_STAGED_KINETIC", "role": "kinetic_staged_import", "position": [-4, 8], "params": {"soppath": "{{gallery_sop_path}}", "primpath": "/World/StagedKineticReliquary", "enable_pathprefix": 1, "pathprefix": "/World/StagedKineticReliquary", "enable_savepath": 0}, "comment": "Explicit staged SOP contract"},
+    {"id": "dome", "type": "domelight", "name": "{{run_code}}_STAGED_DOME", "role": "kinetic_staged_dome", "position": [-2, 6], "params": {"primpath": "/lights/{{run_code}}_StagedDome", "ry": 25.0}, "comment": "Neutral native Karma lighting"},
+    {"id": "camera", "type": "camera", "name": "{{run_code}}_STAGED_CAMERA", "role": "kinetic_staged_camera", "position": [0, 4], "params": {"primpath": "/cameras/{{run_code}}_StagedCamera", "tx": 0.0, "ty": 0.45, "tz": 62.0, "rx": 0.0, "ry": 0.0, "rz": 0.0, "focalLength": 48.0}, "comment": "Front camera preserves the circular orbit silhouettes"},
+    {"id": "settings", "type": "karmarendersettings", "name": "{{run_code}}_STAGED_KARMA_SETTINGS", "role": "kinetic_staged_karma_settings", "position": [0, 2], "params": {"primpath": "/Render/{{run_code}}_StagedSettings", "picture": "{{render_picture}}", "camera": "/cameras/{{run_code}}_StagedCamera", "res_mode": "autoheight", "resolutionx": "{{width}}", "samplesperpixel": 8, "pathtracedsamples": 16, "varianceaa_minsamples": 1, "varianceaa_maxsamples": 8, "setlayerrendersettings": 1}, "comment": "Bounded Karma CPU proof settings"},
+    {"id": "out", "type": "null", "name": "OUT_{{run_code}}_STAGED_STAGE", "role": "kinetic_staged_stage_contract", "position": [0, 0], "params": {}, "flags": {"display": true}, "comment": "Editable staged reliquary; no aesthetic winner"}
+  ],
+  "connections": [["gallery", 0, "dome", 0], ["dome", 0, "camera", 0], ["camera", 0, "settings", 0], ["settings", 0, "out", 0]],
+  "outputs": ["gallery", "camera", "settings", "out"],
+  "meta": {"graph_first": true, "renderer": "Karma CPU", "automatic_ranking": false, "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}}
+}

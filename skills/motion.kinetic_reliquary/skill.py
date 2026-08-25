@@ -1,4 +1,4 @@
-"""Plan Sprint 22's native and optional-MOPs kinetic reliquary."""
+"""Plan the verified kinetic contracts and Sprint 23's layered presentation."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from hermes_houdini.schemas.command import Policy, RiskClass
 from skills._lib import build_envelope
 
 SKILL_ID = "motion.kinetic_reliquary"
-SKILL_VERSION = "1.0.0"
+SKILL_VERSION = "1.1.0"
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,23}\Z")
 
 
@@ -53,13 +53,16 @@ def plan(
     selector_path = f"{network_path}/{run_code}_SELECT_KINETIC"
     selected_path = f"{network_path}/OUT_{run_code}_SELECTED"
     comparison_path = f"{network_path}/OUT_{run_code}_KINETIC_COMPARE"
-    stage_path = f"/stage/OUT_{run_code}_STAGE"
+    presentation_path = f"{network_path}/OUT_{run_code}_KINETIC_STAGED"
+    stage_path = f"/stage/OUT_{run_code}_STAGED_STAGE"
     checkpoint_dir = artifacts / "checkpoints"
     log_dir = artifacts / "logs"
     observation_dir = artifacts / "observations"
     manifest_dir = artifacts / "manifests"
     scene_dir = artifacts / "scenes"
     validation_path = manifest_dir / f"{run_id}_kinetic_validation.json"
+    presentation_validation_path = manifest_dir / f"{run_id}_presentation_validation.json"
+    visual_path = manifest_dir / f"{run_id}_visual_verification.json"
     graph_manifest = manifest_dir / f"{run_id}_kinetic_manifest.json"
     obj_svg = observation_dir / f"{run_id}_obj_graph.svg"
     lop_svg = observation_dir / f"{run_id}_lop_graph.svg"
@@ -96,6 +99,11 @@ def plan(
         "sop.kinetic_reliquary_mops"
         if mops_available
         else "sop.kinetic_reliquary_mops_unavailable"
+    )
+    presentation_recipe = (
+        "sop.kinetic_reliquary_staged"
+        if mops_available
+        else "sop.kinetic_reliquary_staged_native"
     )
     calls = [
         build_envelope(
@@ -160,6 +168,23 @@ def plan(
             policy=graph_policy,
             **common,
         ).as_dict(),
+        build_envelope(
+            "recipe.instantiate",
+            {
+                "recipe_id": presentation_recipe,
+                "version": "1.0.0",
+                "parent_path": network_path,
+                "batch_id": f"{SKILL_ID}:{run_id}:presentation",
+                "checkpoint_dir": str(checkpoint_dir),
+                "log_path": str(log_dir / f"{run_id}_presentation.jsonl"),
+                "inputs": {"run_code": run_code},
+                "label": f"Hermes staged kinetic presentation {run_id}",
+                "checkpoint_stem": f"kinetic_{run_id}_presentation",
+            },
+            request_id=f"{run_id}-presentation",
+            policy=graph_policy,
+            **common,
+        ).as_dict(),
     ]
     validation_arguments: dict[str, object] = {
         "network_path": network_path,
@@ -199,19 +224,38 @@ def plan(
             **common,
         ).as_dict()
     )
+    calls.append(
+        build_envelope(
+            "motion.kinetic_reliquary.presentation.validate",
+            {
+                "network_path": network_path,
+                "presentation_path": presentation_path,
+                "start_frame": start_frame,
+                "end_frame": end_frame,
+                "mops_available": mops_available,
+                "output_path": str(presentation_validation_path),
+                "max_points": 20_000,
+                "max_primitives": 20_000,
+                "max_seconds": 120.0,
+            },
+            request_id=f"{run_id}-presentation-validate",
+            policy=validate_policy,
+            **common,
+        ).as_dict()
+    )
     first_render = render_paths[spec["sample_frames"][0]]
     calls.extend(
         [
             build_envelope(
                 "recipe.instantiate",
                 {
-                    "recipe_id": "lop.kinetic_reliquary_stage",
+                    "recipe_id": "lop.kinetic_reliquary_staged_stage",
                     "version": "1.0.0",
                     "parent_path": "/stage",
                     "batch_id": f"{SKILL_ID}:{run_id}:stage",
                     "checkpoint_dir": str(checkpoint_dir),
                     "log_path": str(log_dir / f"{run_id}_stage.jsonl"),
-                    "inputs": {"run_code": run_code, "gallery_sop_path": comparison_path, "render_picture": str(first_render), "width": width, "height": height},
+                    "inputs": {"run_code": run_code, "gallery_sop_path": presentation_path, "render_picture": str(first_render), "width": width, "height": height},
                     "label": f"Hermes kinetic reliquary stage {run_id}",
                     "checkpoint_stem": f"kinetic_{run_id}_stage",
                 },
@@ -221,7 +265,7 @@ def plan(
             ).as_dict(),
             build_envelope(
                 "solaris.kinetic_reliquary.validate",
-                {"stage_node_path": stage_path, "prim_path": "/World/KineticReliquary", "max_prims": 10_000},
+                {"stage_node_path": stage_path, "prim_path": "/World/StagedKineticReliquary", "max_prims": 10_000},
                 request_id=f"{run_id}-stage-validate",
                 policy=validate_policy,
                 **common,
@@ -236,7 +280,7 @@ def plan(
                 [
                     build_envelope(
                         "solaris.karma_rop.build",
-                        {"stage_node_path": stage_path, "render_settings_path": f"/Render/{run_code}_Settings", "output_path": str(render_path), "checkpoint_dir": str(checkpoint_dir), "log_path": str(log_dir / f"{run_id}_{suffix}_rop.jsonl"), "node_name": f"{run_code}_KARMA_{suffix}", "width": width, "height": height, "frame": float(frame), "time_limit": time_limit, "max_threads": max_threads},
+                        {"stage_node_path": stage_path, "render_settings_path": f"/Render/{run_code}_StagedSettings", "output_path": str(render_path), "checkpoint_dir": str(checkpoint_dir), "log_path": str(log_dir / f"{run_id}_{suffix}_rop.jsonl"), "node_name": f"{run_code}_KARMA_{suffix}", "width": width, "height": height, "frame": float(frame), "time_limit": time_limit, "max_threads": max_threads},
                         request_id=f"{run_id}-{suffix}-rop",
                         policy=graph_policy,
                         **common,
@@ -250,11 +294,26 @@ def plan(
                     ).as_dict(),
                 ]
             )
+        calls.append(
+            build_envelope(
+                "visual.analyze",
+                {
+                    "image_paths": [str(path) for path in render_paths.values()],
+                    "output_path": str(visual_path),
+                    "panel_count": 4 if mops_available else 1,
+                    "panel_rows": 1,
+                    "expect_motion": True,
+                },
+                request_id=f"{run_id}-visual",
+                policy=validate_policy,
+                **common,
+            ).as_dict()
+        )
     calls.append(
         build_envelope(
             "cook.node",
             {
-                "node_path": comparison_path,
+                "node_path": presentation_path,
                 "scope": "single_node",
                 "frame": None,
                 "force": False,
@@ -276,7 +335,12 @@ def plan(
         "run_id": run_id,
         "spec": spec,
         "capability_input": {"mops_available": mops_available, "explicit": True},
-        "recipes": ["sop.kinetic_reliquary_native@1.0.0", f"{overlay_recipe}@1.0.0", "lop.kinetic_reliquary_stage@1.0.0"],
+        "recipes": [
+            "sop.kinetic_reliquary_native@1.0.0",
+            f"{overlay_recipe}@1.0.0",
+            f"{presentation_recipe}@1.0.0",
+            "lop.kinetic_reliquary_staged_stage@1.0.0",
+        ],
         "render": {"requested": render_preview, "delegate": "BRAY_HdKarma", "resolution": [width, height], "frames": spec["sample_frames"], "outputs": [str(path) for path in render_paths.values()]},
         "selection": spec["selection"],
         "license": {"mode": "houdini-apprentice-noncommercial", "scene_extension": ".hipnc", "plugin_license": "LGPL-3.0"},
@@ -285,7 +349,7 @@ def plan(
         [
             build_envelope("graph.capture_svg", {"node_path": network_path, "output_path": str(obj_svg), "max_nodes": 96}, request_id=f"{run_id}-obj-svg", policy=validate_policy, **common).as_dict(),
             build_envelope("graph.capture_svg", {"node_path": "/stage", "output_path": str(lop_svg), "max_nodes": 32}, request_id=f"{run_id}-lop-svg", policy=validate_policy, **common).as_dict(),
-            build_envelope("graph.capture_manifest", {"node_path": network_path, "output_path": str(graph_manifest), "metric_node_paths": [comparison_path], "metadata": metadata}, request_id=f"{run_id}-manifest", policy=validate_policy, **common).as_dict(),
+            build_envelope("graph.capture_manifest", {"node_path": network_path, "output_path": str(graph_manifest), "metric_node_paths": [presentation_path], "metadata": metadata}, request_id=f"{run_id}-manifest", policy=validate_policy, **common).as_dict(),
             build_envelope("hip.save_snapshot", {"output_dir": str(scene_dir), "stem": f"kinetic_reliquary_{run_id}_final"}, request_id=f"{run_id}-snapshot", policy=validate_policy, **common).as_dict(),
         ]
     )
