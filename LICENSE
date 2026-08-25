@@ -19,13 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-NOTE ON HOUDINI ARTIFACTS: This repository's *code* is MIT licensed. Any
-Houdini scene file (*.hipnc / *.hiplc) or digital asset (*.hdanc / *.hda)
-produced or referenced through this system remains governed by the SideFX
-Houdini Apprentice / Non-Commercial license: non-commercial use only,
-watermarked restricted-resolution renders, HDAs not usable with Houdini
-Engine, and no third-party renderers. Nothing in this license removes those
-restrictions. Keep `license.mode` explicit in every project manifest.

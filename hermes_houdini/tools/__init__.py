@@ -68,6 +68,7 @@ from ..solaris import (
 )
 from ..transactions import save_checkpoint
 from ..validation import node_type_exists, validate_cooked_node
+from ..verification_routing import route_verification
 from ..visual_verification import analyze_visual_evidence, build_critique_packet
 from ..world_seed import cook_validate_world_seed_atlas, validate_world_seed_stage
 
@@ -866,6 +867,15 @@ def verification_local_critic_calibrate(**arguments: Any) -> dict[str, Any]:
 )
 def verification_local_critic_corpus_build(**arguments: Any) -> dict[str, Any]:
     return materialize_calibration_corpus(**arguments)
+
+
+@tool(
+    "verification.route",
+    risk="low",
+    doc="Route verified reports to repair, calibration, optional critique, or human review.",
+)
+def verification_route(**arguments: Any) -> dict[str, Any]:
+    return route_verification(**arguments)
 
 
 # ---------------- VEX template ----------------

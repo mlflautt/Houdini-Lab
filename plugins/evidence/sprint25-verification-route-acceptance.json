@@ -1,0 +1,67 @@
+{
+  "automatic_ranking": false,
+  "decision_authority": "routing_only",
+  "disagreements": {
+    "calibrated_critic": false,
+    "structural_pixel": false
+  },
+  "evidence": {
+    "calibration": null,
+    "local_critique": null,
+    "local_probe": {
+      "installed_allowlisted_models": [],
+      "path": "/Users/m1/Houdini Lab/plugins/evidence/local-critic-host-probe-0.32.15.json",
+      "sha256": "5216fb7c101f7af64bc5d2d4be11b4ddbce470685a418cebcfac84a4d73bd512",
+      "status": "available_no_allowlisted_model"
+    },
+    "structural": [
+      {
+        "path": "/Users/m1/Houdini Lab/.hermes/sprint23-acceptance-20260824-b/manifests/sprint23_live_kinetic_validation.json",
+        "schema": "hermes.houdini.kinetic_reliquary_validation",
+        "sha256": "0090fb2151e1bb7a11678772cc78b57a20f650543b9a97d1fbc63b48f3f1d197",
+        "status": "pass"
+      },
+      {
+        "path": "/Users/m1/Houdini Lab/.hermes/sprint23-acceptance-20260824-b/manifests/sprint23_live_presentation_validation.json",
+        "schema": "hermes.houdini.kinetic_reliquary_presentation_validation",
+        "sha256": "545e178c1278e9da29575c26f9e5a23b034cdbd4a1b32bccd5f2509a70e1f6be",
+        "status": "pass"
+      }
+    ],
+    "visual": {
+      "path": "/Users/m1/Houdini Lab/.hermes/sprint23-acceptance-20260824-b/manifests/sprint23_live_visual_verification.json",
+      "schema": "hermes.visual_verification",
+      "sha256": "cfde31c91af4017df5f4560622f2737a6c7f0c8ff8505d9e9e38fb05cae1d459",
+      "status": "pass"
+    }
+  },
+  "external_critic": {
+    "approved": false,
+    "execution_performed": false,
+    "requested": false,
+    "route": "not_requested"
+  },
+  "human_rating": null,
+  "human_review": {
+    "deferred_triggers": [],
+    "final_taste_remains_human": true,
+    "required_now": false,
+    "triggers": []
+  },
+  "local_critic": {
+    "may_reduce_human_review": false,
+    "reliability": "not_calibrated",
+    "status": "not_supplied"
+  },
+  "mechanical_gate": {
+    "model_may_override": false,
+    "status": "pass",
+    "structural_status": "pass",
+    "visual_status": "pass"
+  },
+  "next_action": "ready_with_optional_local_critic_unavailable",
+  "schema": "hermes.verification_route",
+  "schema_version": "1.0",
+  "timestamp_unix": 1787605689.179254,
+  "winner": null
+}

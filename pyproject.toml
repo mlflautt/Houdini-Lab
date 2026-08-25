@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "houdini-creative-dev"
-version = "0.24.0"
+dynamic = ["version"]
 description = "Agentic Houdini development repo: bridge, recipes, HDAs, VEX templates, and skills for graph-first procedural creative work (Apprentice-aware)."
 readme = "README.md"
 license = { text = "MIT" }
@@ -30,6 +30,9 @@ namespaces = false
 recipes = ["sop/*.yaml", "lop/*.yaml", "cop/*.yaml", "top/*.yaml"]
 skills = ["*/README.md", "*/skill.py", "*/skill.yaml"]
 hda = ["source/*/manifest.yaml"]
+
+[tool.setuptools.dynamic]
+version = { attr = "hermes_houdini.__version__" }
 
 [tool.ruff]
 line-length = 100

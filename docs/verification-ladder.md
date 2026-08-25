@@ -94,7 +94,8 @@ IDs, lineage, empty ratings, and all alternatives.
    fixtures, and optional capture integration.
 2. Sprint 24: bounded local Ollama adapter, exact model allowlist, schema validation, time/byte
    limits, and deterministic calibration scoring. Default remains off; live calibration is pending.
-3. Later: consensus/escalation policy across deterministic checks, one local critic, and optionally
-   one external critic; human review only on defined triggers.
+3. Sprint 25: deterministic routing across structural checks, pixel checks, one calibration-matched
+   local critic, optional external eligibility, and named human-review triggers. No critic is run by
+   the router. See [`sprint25-verification-routing.md`](sprint25-verification-routing.md).
 4. Long term: project-specific aesthetic rubrics learned from explicit human ratings without
    changing the invariant that the human remains the final creative authority.

@@ -3,8 +3,17 @@ name: CI
 on:
   push:
     branches: [main]
+  # Run stacked pull requests too. Restricting this event to `main` left PRs whose
+  # base was another sprint branch without any status checks.
   pull_request:
-    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   unit-tests:

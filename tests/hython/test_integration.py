@@ -72,6 +72,7 @@ def test_registry_has_tools():
     assert "verification.local_critic.run" in names
     assert "verification.local_critic.calibrate" in names
     assert "verification.local_critic.corpus.build" in names
+    assert "verification.route" in names
     assert "simulate.membrane.validate" in names
     assert "simulate.mpm.validate" in names
     assert "simulate.rbd.validate" in names
