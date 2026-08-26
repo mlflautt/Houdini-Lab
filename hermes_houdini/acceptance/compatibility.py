@@ -262,6 +262,17 @@ def _template_default(template: Any, hou: Any) -> object:
         return None
 
 
+def validate_compatibility_output_path(output_path: str | os.PathLike[str]) -> Path:
+    """Resolve an explicit compatibility artifact path under an allowed narrow parent."""
+    from .schema import validate_artifact_root
+
+    destination = Path(output_path).expanduser()
+    if not destination.is_absolute():
+        raise ValueError("compatibility output_path must be absolute")
+    validate_artifact_root(str(destination.parent))
+    return destination.resolve(strict=False)
+
+
 def probe_compatibility(
     expectation: Mapping[str, object], *, output_path: str | os.PathLike[str] | None = None
 ) -> dict[str, Any]:
@@ -303,8 +314,9 @@ def probe_compatibility(
     result = compare_compatibility(expected, observation)
     result["mutation_performed"] = False
     if output_path is not None:
+        destination = validate_compatibility_output_path(output_path)
         rendered = json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n"
-        with Path(output_path).open("x", encoding="utf-8") as stream:
+        with destination.open("x", encoding="utf-8") as stream:
             stream.write(rendered)
     return result
 
@@ -314,4 +326,5 @@ __all__ = [
     "compare_compatibility",
     "normalize_expectation",
     "probe_compatibility",
+    "validate_compatibility_output_path",
 ]

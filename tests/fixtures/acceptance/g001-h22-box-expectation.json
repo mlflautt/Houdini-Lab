@@ -1,0 +1,28 @@
+{
+  "category": "Sop",
+  "context": "SOP",
+  "expectation_id": "g001-builtin-box-h22.0.368",
+  "operator_type": "box",
+  "optional_parameters": {
+    "consolidatepts": {"default": true, "type": "Toggle"},
+    "divrate": {"default": [4, 4, 4], "type": "Int"},
+    "divs": {"default": [3, 3, 3], "type": "Int"},
+    "dodivs": {"default": false, "type": "Toggle"},
+    "orderrate": {"default": [4, 4, 4], "type": "Int"},
+    "orientedbbox": {"default": false, "type": "Toggle"},
+    "r": {"default": [0.0, 0.0, 0.0], "type": "Float"},
+    "rebar": {"default": false, "type": "Toggle"},
+    "scale": {"default": [1.0], "type": "Float"},
+    "surftype": {"default": 4, "type": "Menu"},
+    "vertexnormals": {"default": false, "type": "Toggle"}
+  },
+  "required_parameters": {
+    "size": {"default": [1.0, 1.0, 1.0], "type": "Float"},
+    "t": {"default": [0.0, 0.0, 0.0], "type": "Float"},
+    "type": {"default": 0, "type": "Menu"}
+  },
+  "tested_build_range": {
+    "maximum": "22.0.368",
+    "minimum": "22.0.368"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "baseline_id": "g001-small-m1max-h22.0.368",
+  "baseline_version": "1.0.0",
+  "budgets": {
+    "cache_bytes": 268435456,
+    "cook_seconds": 120.0,
+    "frames": 8,
+    "height": 360,
+    "peak_memory_bytes": 268435456,
+    "points": 10000,
+    "primitives": 10000,
+    "render_samples": 16,
+    "width": 640
+  },
+  "schema": "hermes.houdini.acceptance.baseline.v1",
+  "tolerances": {
+    "default_warning_fraction": 0.1,
+    "metrics": {
+      "cook_seconds": 0.25,
+      "peak_memory_bytes": 0.2
+    }
+  }
+}

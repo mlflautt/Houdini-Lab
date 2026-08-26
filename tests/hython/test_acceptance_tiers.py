@@ -53,6 +53,7 @@ def test_graph_edit_builds_readable_tagged_source_without_forced_cook(tmp_path):
     assert observed["forced_cook"] is False
     assert Path(observed["scene_path"]).suffix == ".hipnc"
     assert Path(observed["scene_path"]).is_file()
+    assert result["artifacts"][0]["sha256"]
     assert hou.node(observed["output_node_path"]).name() == "OUT_GEO"
     assert hou.node(observed["simulation_node_path"]).name() == "OUT_SIM"
     assert all(

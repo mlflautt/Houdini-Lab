@@ -114,9 +114,22 @@ def validate_artifact_root(value: str) -> str:
     candidate = Path(value).expanduser()
     if not candidate.is_absolute():
         raise ValueError("artifact_root must be absolute")
+    lexical = Path(value).absolute()
     root = candidate.resolve(strict=False)
     forbidden = {Path("/"), Path.home().resolve(), Path.home().resolve().parent}
-    if root in forbidden or root.is_relative_to(Path("/System")) or root.is_relative_to(Path("/etc")):
+    denied_roots = (
+        Path("/System"),
+        Path("/etc"),
+        Path("/private/etc"),
+        Path("/usr"),
+        Path("/bin"),
+        Path("/sbin"),
+        Path("/Applications"),
+    )
+    if root in forbidden or any(
+        lexical.is_relative_to(denied) or root.is_relative_to(denied)
+        for denied in denied_roots
+    ):
         raise ValueError("artifact_root must be a narrow writable project or temporary path")
     return str(root)
 
@@ -274,7 +287,10 @@ def aggregate_status(results: tuple[TierResult, ...], required_tiers: tuple[str,
     required = [by_tier.get(tier) for tier in required_tiers]
     if any(result is not None and result.status == "blocked" for result in required):
         return "blocked"
-    if any(result is None or result.status == "pending" for result in required):
+    if any(
+        result is None or result.status in {"pending", "not_applicable"}
+        for result in required
+    ):
         return "pending"
     if any(
         result is not None and (result.status == "warn" or result.warnings) for result in required

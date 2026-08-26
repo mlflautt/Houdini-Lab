@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import time
 from collections.abc import Callable
 from datetime import UTC, datetime
@@ -19,6 +20,7 @@ from .fixtures import build_acceptance_fixtures
 
 TINY_CEILINGS = {
     "max_points": 10_000,
+    "max_primitives": 10_000,
     "max_frames": 8,
     "max_memory_bytes": 256 * 1024 * 1024,
     "max_artifact_bytes": 256 * 1024 * 1024,
@@ -90,14 +92,38 @@ def _result(
 
 def _artifact(path: str) -> dict[str, Any]:
     item = Path(path)
-    return {"path": str(item), "bytes": item.stat().st_size, "kind": item.suffix.lstrip(".")}
+    with item.open("rb") as stream:
+        digest = hashlib.file_digest(stream, "sha256").hexdigest()
+    return {
+        "path": str(item),
+        "bytes": item.stat().st_size,
+        "kind": item.suffix.lstrip("."),
+        "sha256": digest,
+    }
 
 
 def _guarded(tier: str, command: str, raw_budget: dict[str, Any], call: Callable) -> dict[str, Any]:
     started_at, started = _started()
     try:
         budget = _budget(raw_budget)
-        return call(started_at, started, budget)
+        result = call(started_at, started, budget)
+        if result["duration_seconds"] > budget["max_seconds"]:
+            return _result(
+                tier,
+                command,
+                started_at,
+                started,
+                budget,
+                status="blocked",
+                observed=result.get("observed", {}),
+                artifacts=result.get("artifacts", []),
+                warnings=result.get("warnings", []),
+                errors=[
+                    f"tier duration {result['duration_seconds']} exceeded "
+                    f"budget.max_seconds {budget['max_seconds']}"
+                ],
+            )
+        return result
     except (ValueError, FileExistsError) as exc:
         return _result(
             tier,
@@ -192,6 +218,8 @@ def _cook_frames(
             metrics.update({"frame": float(frame), "seconds": time.monotonic() - frame_started})
             if metrics["points"] > budget["max_points"]:
                 raise ValueError("observed points exceed budget.max_points")
+            if metrics["primitives"] > budget["max_primitives"]:
+                raise ValueError("observed primitives exceed budget.max_primitives")
             if metrics["memory_bytes"] > budget["max_memory_bytes"]:
                 raise ValueError("observed memory exceeds budget.max_memory_bytes")
             errors = [str(item) for item in node.errors()]
@@ -243,7 +271,7 @@ def run_frame_range_tier(
 def run_pdg_child_tier(
     *, pdg_node_path: str, output_path: str, budget: dict[str, Any], authorized: bool
 ) -> dict[str, Any]:
-    command = f"pdg-child node={pdg_node_path} output={output_path}"
+    command = f"pdg-child node={pdg_node_path} output={output_path} authorized={authorized}"
 
     def execute(started_at: str, started: float, normalized: dict[str, Any]) -> dict[str, Any]:
         if not authorized:
@@ -286,7 +314,7 @@ def run_pdg_child_tier(
 def run_simulation_tier(
     *, node_path: str, frames: list[float], budget: dict[str, Any], authorized: bool
 ) -> dict[str, Any]:
-    command = f"simulation node={node_path} frames={frames}"
+    command = f"simulation node={node_path} frames={frames} authorized={authorized}"
 
     def execute(started_at: str, started: float, normalized: dict[str, Any]) -> dict[str, Any]:
         if not authorized:
@@ -340,7 +368,9 @@ def run_karma_tier(
     *, rop_path: str, output_path: str, log_path: str, frame: float,
     budget: dict[str, Any], authorized: bool
 ) -> dict[str, Any]:
-    command = f"karma rop={rop_path} frame={frame} output={output_path}"
+    command = (
+        f"karma rop={rop_path} frame={frame} output={output_path} authorized={authorized}"
+    )
 
     def execute(started_at: str, started: float, normalized: dict[str, Any]) -> dict[str, Any]:
         if not authorized:

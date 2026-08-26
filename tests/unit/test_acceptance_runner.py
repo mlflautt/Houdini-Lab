@@ -36,7 +36,13 @@ class FailingAdapter:
 def test_plan_aggregates_only_required_cheap_prerequisites():
     plan = plan_tiers(("karma", "simulation"))
     assert plan["selected_tiers"] == ["simulation", "karma"]
-    assert plan["required_tiers"] == ["pure", "hython-read", "simulation", "karma"]
+    assert plan["required_tiers"] == [
+        "pure",
+        "hython-read",
+        "graph-edit",
+        "simulation",
+        "karma",
+    ]
     assert "viewport" not in plan["required_tiers"]
     assert plan["executes"] is False
 
@@ -51,7 +57,7 @@ def test_runner_maps_missing_timeout_and_warning_status_mechanically(tmp_path):
     )
     summary = runner.execute(request)
     statuses = {item.tier: item.status for item in summary.results}
-    assert statuses == {"pure": "pass", "hython-read": "blocked", "graph-edit": "pending"}
+    assert statuses == {"pure": "pass", "hython-read": "blocked", "graph-edit": "blocked"}
     assert summary.overall_status == "blocked"
 
 
@@ -66,6 +72,42 @@ def test_runner_rejects_adapter_result_for_wrong_tier(tmp_path):
     summary = AcceptanceRunner(adapters={"pure": WrongTier()}).execute(request)
     assert summary.overall_status == "blocked"
     assert "wrong tier" in summary.results[0].errors[0]
+
+
+def test_runner_stops_after_blocked_prerequisite(tmp_path):
+    called = []
+
+    class RecordingAdapter(PassingAdapter):
+        def run(self, *, tier, artifact_root, budget):
+            called.append(tier)
+            return super().run(tier=tier, artifact_root=artifact_root, budget=budget)
+
+    request = AcceptanceRequest(
+        tiers=("graph-edit",), artifact_root=str(tmp_path / "artifacts")
+    )
+    runner = AcceptanceRunner(
+        adapters={
+            "pure": FailingAdapter(),
+            "hython-read": RecordingAdapter(),
+            "graph-edit": RecordingAdapter(),
+        }
+    )
+    summary = runner.execute(request)
+    assert called == []
+    assert [item.status for item in summary.results] == ["blocked", "blocked", "blocked"]
+
+
+def test_runner_rejects_adapter_budget_drift(tmp_path):
+    class BudgetDrift(PassingAdapter):
+        def run(self, *, tier, artifact_root, budget):
+            result = super().run(tier=tier, artifact_root=artifact_root, budget=budget)
+            result["budget"] = {**budget, "seconds": 999}
+            return result
+
+    request = AcceptanceRequest(tiers=("pure",), artifact_root=str(tmp_path / "artifacts"))
+    summary = AcceptanceRunner(adapters={"pure": BudgetDrift()}).execute(request)
+    assert summary.overall_status == "blocked"
+    assert "budget different" in summary.results[0].errors[0]
 
 
 def _cli(*arguments):
@@ -95,6 +137,18 @@ def test_cli_plan_does_not_import_hou_spawn_or_create_artifact_root(tmp_path):
     assert payload["executes"] is False
     assert not root.exists()
     assert "hou" not in sys.modules
+
+
+def test_cli_exposes_separate_expensive_tier_authorizations():
+    result = _cli("--help")
+    assert result.returncode == 0
+    for flag in (
+        "--allow-pdg-child",
+        "--allow-simulation",
+        "--allow-viewport",
+        "--allow-karma",
+    ):
+        assert flag in result.stdout
 
 
 def test_cli_execution_requires_explicit_tier_and_absolute_artifact_root():

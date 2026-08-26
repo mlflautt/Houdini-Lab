@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 
 import pytest
 from hermes_houdini.acceptance.schema import (
@@ -68,7 +69,7 @@ def test_request_rejects_duplicate_and_unknown_tiers(tiers):
         AcceptanceRequest(tiers=tiers, artifact_root="/private/tmp/hermes-acceptance")
 
 
-@pytest.mark.parametrize("root", ["relative/path", "/", "/Users/m1"])
+@pytest.mark.parametrize("root", ["relative/path", "/", str(Path.home())])
 def test_request_rejects_unsafe_artifact_roots(root):
     with pytest.raises(ValueError, match="artifact_root"):
         AcceptanceRequest(tiers=("pure",), artifact_root=root)
@@ -90,3 +91,12 @@ def test_result_rejects_malformed_fields_and_artifacts_outside_root():
             artifacts=[{"path": "/etc/passwd", "kind": "text"}],
             artifact_root="/private/tmp/hermes-acceptance",
         )
+
+
+def test_required_not_applicable_tier_keeps_summary_pending():
+    request = AcceptanceRequest(tiers=("pure",), artifact_root="/private/tmp/hermes-acceptance")
+    summary = AcceptanceSummary.create(
+        request=request,
+        results=(_result(status="not_applicable"),),
+    )
+    assert summary.overall_status == "pending"

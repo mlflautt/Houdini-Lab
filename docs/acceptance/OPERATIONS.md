@@ -7,13 +7,8 @@
 
 This runbook separates pure, Hython, interactive, render, model, plugin, and human evidence. Run
 only tiers authorized for the current acceptance request. A lower rung never promotes an unrun
-higher rung.
-
-> **G001 integration placeholder:** Lane A owns `scripts/run_acceptance.py` and the acceptance
-> schema/runner; Lane B owns Hython tiers/fixtures; Lane C owns compatibility/baseline probes.
-> Their branches are intentionally absent from Lane D's base. Commands marked `INTEGRATION` show
-> the frozen interface and must be reconciled by the integration captain against `--help` and the
-> merged implementations before use.
+higher rung. The G001 integration reconciles the schema/runner, Hython adapters, compatibility
+probes, baselines, and this operator surface behind `scripts/run_acceptance.py`.
 
 ## Roles and approval boundary
 
@@ -52,8 +47,9 @@ plugin state, fixture revision, and acceptance schema before the first test.
 Create a disposable root outside the repository without reusing a prior path:
 
 ```bash
-ACCEPTANCE_ROOT="$(mktemp -d /private/tmp/hermes-v035-acceptance.XXXXXX)"
-test -d "$ACCEPTANCE_ROOT"
+ACCEPTANCE_RUN="$(mktemp -d /private/tmp/hermes-v035-acceptance.XXXXXX)"
+ACCEPTANCE_ROOT="$ACCEPTANCE_RUN/artifacts"
+test ! -e "$ACCEPTANCE_ROOT"
 ```
 
 The shell variable is illustrative; record its resolved absolute value in evidence. Do not use
@@ -90,15 +86,17 @@ test -x "$HYTHON"
 "$HYTHON" --version
 ```
 
-Then run the repository Hython read suite or the integrated read tier:
+Then run the repository Hython read suite or the integrated read tier. Live tiers must invoke the
+entry point with Hython; the integrated CLI rejects them under ordinary Python before creating the
+artifact root:
 
 ```bash
 "$HYTHON" -m pytest tests/hython -o addopts='' -q
 
-# INTEGRATION: confirm exact syntax with `.venv/bin/python scripts/run_acceptance.py --help`.
-.venv/bin/python scripts/run_acceptance.py \
+"$HYTHON" scripts/run_acceptance.py \
+  --execute \
   --tier hython-read \
-  --artifact-dir "$ACCEPTANCE_ROOT"
+  --artifact-root "$ACCEPTANCE_ROOT"
 ```
 
 The read tier may inventory build, license, packages, operators, session, and allowed roots. It must
@@ -113,8 +111,8 @@ List the exact integrated interface and save it with the run:
 ```bash
 .venv/bin/python scripts/run_acceptance.py --help
 
-# INTEGRATION placeholder: use the merged CLI's dry-run spelling.
 .venv/bin/python scripts/run_acceptance.py \
+  --plan \
   --tier pure \
   --tier hython-read \
   --tier graph-edit \
@@ -124,8 +122,7 @@ List the exact integrated interface and save it with the run:
   --tier simulation \
   --tier viewport \
   --tier karma \
-  --artifact-dir "$ACCEPTANCE_ROOT" \
-  --dry-run
+  --artifact-root "$ACCEPTANCE_ROOT"
 ```
 
 Review the plan for exact commands, required approvals, fixture source, context/operator types,
@@ -154,8 +151,23 @@ Run from least to most costly, stopping on a required `blocked` state:
 9. `karma`: exact external-process approval, Karma CPU, one frame unless separately approved,
    conservative resolution at or below 1280x720, time/thread/output-byte limits, and fresh output.
 
-The integration captain must replace this generic placeholder with the exact merged CLI invocation
-and must not change the tier IDs.
+For the accepted cheap G001 live envelope, one exact invocation reaches both bounded cook tiers and
+their prerequisites:
+
+```bash
+"$HYTHON" scripts/run_acceptance.py \
+  --execute \
+  --tier single-frame \
+  --tier frame-range \
+  --artifact-root "$ACCEPTANCE_ROOT"
+```
+
+`--allow-pdg-child`, `--allow-simulation`, `--allow-viewport`, and `--allow-karma` are separate,
+operator-supplied authorization assertions for their named adapters. They do not activate a
+self-hosted runner, change global policy, install a plugin, or grant a different tier. Review the
+printed plan and the underlying approval record before supplying any flag. An explicit tier without
+its required flag fails closed; an unavailable interactive viewer remains `pending` even when its
+flag is present.
 
 ## 6. Plugin-disabled and plugin-enabled comparisons
 

@@ -17,31 +17,31 @@ _CHEAP_PREREQUISITES = {
     "pure": (),
     "hython-read": ("pure",),
     "graph-edit": ("pure", "hython-read"),
-    "single-frame": ("pure", "hython-read"),
-    "frame-range": ("pure", "hython-read"),
-    "pdg-child": ("pure", "hython-read"),
-    "simulation": ("pure", "hython-read"),
-    "viewport": ("pure", "hython-read"),
-    "karma": ("pure", "hython-read"),
+    "single-frame": ("pure", "hython-read", "graph-edit"),
+    "frame-range": ("pure", "hython-read", "graph-edit"),
+    "pdg-child": ("pure", "hython-read", "graph-edit"),
+    "simulation": ("pure", "hython-read", "graph-edit"),
+    "viewport": ("pure", "hython-read", "graph-edit"),
+    "karma": ("pure", "hython-read", "graph-edit"),
 }
 _EXPENSIVE_TIERS = frozenset(
     {"frame-range", "pdg-child", "simulation", "viewport", "karma"}
 )
+_LIVE_BUDGET = {
+    "max_points": 10_000,
+    "max_primitives": 10_000,
+    "max_frames": 8,
+    "max_memory_bytes": 256 * 1024 * 1024,
+    "max_artifact_bytes": 256 * 1024 * 1024,
+    "width": 640,
+    "height": 360,
+    "samples": 16,
+    "max_seconds": 120.0,
+    "max_work_items": 1,
+}
 DEFAULT_BUDGETS: dict[str, dict[str, Any]] = {
     "pure": {"seconds": 60, "memory_bytes": 536_870_912},
-    "hython-read": {"seconds": 30, "memory_bytes": 536_870_912, "frames": 0},
-    "graph-edit": {"seconds": 30, "memory_bytes": 536_870_912, "frames": 0},
-    "single-frame": {"seconds": 60, "memory_bytes": 1_073_741_824, "frames": 1},
-    "frame-range": {"seconds": 120, "memory_bytes": 1_073_741_824, "frames": 8},
-    "pdg-child": {"seconds": 120, "memory_bytes": 1_073_741_824, "work_items": 4},
-    "simulation": {"seconds": 120, "memory_bytes": 1_073_741_824, "frames": 8},
-    "viewport": {"seconds": 120, "memory_bytes": 1_073_741_824, "resolution": [640, 360]},
-    "karma": {
-        "seconds": 120,
-        "memory_bytes": 1_073_741_824,
-        "resolution": [640, 360],
-        "samples": 16,
-    },
+    **{tier: dict(_LIVE_BUDGET) for tier in TIER_IDS if tier != "pure"},
 }
 
 
@@ -72,6 +72,15 @@ def plan_tiers(tiers: tuple[str, ...]) -> dict[str, Any]:
         "expensive_tiers": [tier for tier in selected if tier in _EXPENSIVE_TIERS],
         "executes": False,
         "approvals_granted": [],
+        "approvals_required": {
+            tier: {
+                "pdg-child": ["external_process"],
+                "simulation": ["simulation"],
+                "viewport": ["interactive_viewport"],
+                "karma": ["render", "external_process"],
+            }.get(tier, [])
+            for tier in selected
+        },
     }
 
 
@@ -124,23 +133,49 @@ class AcceptanceRunner:
     ) -> AcceptanceSummary:
         plan = plan_tiers(request.tiers)
         required = tuple(plan["required_tiers"])
-        results = []
+        results: list[TierResult] = []
+        by_tier: dict[str, TierResult] = {}
         for tier in required:
             budget = request.budget_for(tier, DEFAULT_BUDGETS[tier])
+            prerequisites = [by_tier[item] for item in _CHEAP_PREREQUISITES[tier]]
+            blocked = [item.tier for item in prerequisites if item.status == "blocked"]
+            incomplete = [
+                item.tier
+                for item in prerequisites
+                if item.status in {"pending", "not_applicable"}
+            ]
+            if blocked or incomplete:
+                status = "blocked" if blocked else "pending"
+                message = (
+                    f"required prerequisite tier(s) did not pass: "
+                    f"{', '.join(blocked or incomplete)}"
+                )
+                result = _mapped_result(
+                    tier=tier,
+                    status=status,
+                    budget=budget,
+                    started_at=_now(),
+                    duration_seconds=0.0,
+                    error=message if blocked else "",
+                    warning=message if incomplete else "",
+                )
+                results.append(result)
+                by_tier[tier] = result
+                continue
             adapter = self._adapters.get(tier)
             started_at = _now()
             before = time.monotonic()
             if adapter is None:
-                results.append(
-                    _mapped_result(
-                        tier=tier,
-                        status="pending",
-                        budget=budget,
-                        started_at=started_at,
-                        duration_seconds=0.0,
-                        warning="no adapter registered; tier was not run",
-                    )
+                result = _mapped_result(
+                    tier=tier,
+                    status="pending",
+                    budget=budget,
+                    started_at=started_at,
+                    duration_seconds=0.0,
+                    warning="no adapter registered; tier was not run",
                 )
+                results.append(result)
+                by_tier[tier] = result
                 continue
             try:
                 raw = dict(
@@ -154,30 +189,30 @@ class AcceptanceRunner:
                     raise ValueError(
                         f"adapter returned wrong tier {raw.get('tier')!r}; expected {tier!r}"
                     )
+                if raw.get("budget") != budget:
+                    raise ValueError("adapter returned a budget different from the request")
                 raw["artifact_root"] = request.artifact_root
-                results.append(TierResult.from_dict(raw))
+                result = TierResult.from_dict(raw)
             except TimeoutError as exc:
-                results.append(
-                    _mapped_result(
-                        tier=tier,
-                        status="blocked",
-                        budget=budget,
-                        started_at=started_at,
-                        duration_seconds=time.monotonic() - before,
-                        error=f"tier timed out: {exc}",
-                    )
+                result = _mapped_result(
+                    tier=tier,
+                    status="blocked",
+                    budget=budget,
+                    started_at=started_at,
+                    duration_seconds=time.monotonic() - before,
+                    error=f"tier timed out: {exc}",
                 )
             except Exception as exc:
-                results.append(
-                    _mapped_result(
-                        tier=tier,
-                        status="blocked",
-                        budget=budget,
-                        started_at=started_at,
-                        duration_seconds=time.monotonic() - before,
-                        error=f"adapter result invalid or failed: {exc}",
-                    )
+                result = _mapped_result(
+                    tier=tier,
+                    status="blocked",
+                    budget=budget,
+                    started_at=started_at,
+                    duration_seconds=time.monotonic() - before,
+                    error=f"adapter result invalid or failed: {exc}",
                 )
+            results.append(result)
+            by_tier[tier] = result
         return AcceptanceSummary.create(
             request=request,
             results=tuple(results),

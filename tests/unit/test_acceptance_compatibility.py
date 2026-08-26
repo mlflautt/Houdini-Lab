@@ -4,6 +4,7 @@ import pytest
 from hermes_houdini.acceptance.compatibility import (
     compare_compatibility,
     normalize_expectation,
+    validate_compatibility_output_path,
 )
 
 
@@ -141,3 +142,10 @@ def test_invalid_expectation_rejects_overlap_and_reversed_build_range() -> None:
     reversed_range["tested_build_range"] = {"minimum": "22.0.400", "maximum": "22.0.368"}
     with pytest.raises(ValueError, match="minimum must not exceed maximum"):
         normalize_expectation(reversed_range)
+
+
+def test_probe_output_path_policy_rejects_relative_and_system_roots() -> None:
+    with pytest.raises(ValueError, match="must be absolute"):
+        validate_compatibility_output_path("relative/probe.json")
+    with pytest.raises(ValueError, match="narrow writable"):
+        validate_compatibility_output_path("/etc/probe.json")
