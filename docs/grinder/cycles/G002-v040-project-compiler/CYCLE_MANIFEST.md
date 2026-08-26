@@ -1,22 +1,26 @@
 # Grinder Cycle G002 — Horizon 3 Project Compiler Kernel
 
-- State: `PROPOSED — DO NOT LAUNCH`
-- Manifest version: `1.0-draft`
+- State: `ACCEPTED — LANES A-D AUTHORIZED`
+- Manifest version: `1.0`
 - Proposed on: `2026-08-26`
+- Accepted on: `2026-08-26`
+- Acceptance instruction: `proceed with publishing and continue development`
 - Target horizon: Horizon 3, project compiler and compositional graphs
 - Repository: `mlflautt/Houdini-Lab`
-- Candidate base tag: `v0.35.0` (`PENDING PUBLICATION — DO NOT LAUNCH`)
-- Candidate base commit: `8bb50a9a78bd870ba0d256fbb52c7aa904d21efa`
+- Base tag: `v0.35.0`
+- Base commit: `8bb50a9a78bd870ba0d256fbb52c7aa904d21efa`
+- Base release: `https://github.com/mlflautt/Houdini-Lab/releases/tag/v0.35.0`
 - Integration branch after acceptance: `codex/grinder-g002-integration`
 - Target runtime: pure Python 3.11+; regression on Houdini Apprentice 22.0.368
 - Release intent: compiler foundation for the `v0.40` band; no package-version promise
 
-## Acceptance boundary
+## Launch authority
 
-This proposal is reviewable but not dispatchable. The owner must first authorize and verify
-publication of tag `v0.35.0` at the exact candidate base commit above, then accept this manifest.
-Acceptance will change the candidate fields to a frozen base without changing lane scope. No lane
-may begin from PR head `f45a55f422f93f39f21a120c4142e21a7384129f` or an arbitrary newer `main`.
+The owner authorized publication and continued development on `2026-08-26`. The annotated
+`v0.35.0` tag and public release were verified at the exact base commit above. Lanes A-D are
+authorized to begin from that immutable commit under this manifest's frozen ownership and mapping
+contracts. No lane may begin from PR head `f45a55f422f93f39f21a120c4142e21a7384129f` or an arbitrary
+newer `main`. Any material contract or ownership change requires an owner-approved amendment.
 
 ## Outcome
 
@@ -169,8 +173,10 @@ fixture, produces a stable DAG and observer index, diagnoses all deliberate mism
 passes protected CI. The result remains a plan, not a built scene. G003 stays `PROPOSED` until the
 G002 contracts and source commit are merged and frozen.
 
-## Acceptance phrase
+## Recorded acceptance
 
-After the candidate tag/SHA are published and frozen, the owner may authorize dispatch with:
+The owner accepted publication and continuation with:
 
-> Accept Grinder Cycle G002 and launch lanes A-D from the frozen G001 release.
+> proceed with publishing and continue development
+
+This is the dispatch authority for G002 lanes A-D from the frozen G001 release.

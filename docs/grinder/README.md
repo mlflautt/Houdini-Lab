@@ -10,10 +10,10 @@ Houdini work; the Grinder controls how this repository is changed.
 ## Start here
 
 1. Read [the Grinder architecture](GRINDER_ARCHITECTURE.md).
-2. Review the proposed
+2. Review the accepted
    [G002 project-compiler manifest](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md).
-3. Do not dispatch it until its G001 base tag/SHA placeholders are frozen and the owner accepts it.
-4. After acceptance, use the
+3. Verify frozen tag `v0.35.0` resolves to the exact G002 base commit before dispatch.
+4. Use the
    [G002 launch checklist](cycles/G002-v040-project-compiler/LAUNCH_CHECKLIST.md) and paste the
    [one-line worker prompts](cycles/G002-v040-project-compiler/COPY_PASTE_PROMPTS.md).
 5. Keep the [G003 Living Biome outline](cycles/G003-v040-living-biome-shot/PROPOSAL.md) blocked until
@@ -21,10 +21,10 @@ Houdini work; the Grinder controls how this repository is changed.
 
 ## Cycle history
 
-- [G001 — v0.35 live verification](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md): integrated
-  through PR #15; technical evidence lives in `docs/grinder/receipts/G001-I.md`. Release
-  publication remains a separate action.
-- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): proposed.
+- [G001 — v0.35 live verification](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md): released
+  as `v0.35.0`; technical evidence lives in `docs/grinder/receipts/G001-I.md`.
+- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): accepted;
+  lanes A-D authorized from frozen `v0.35.0`.
 - [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/PROPOSAL.md): outline, blocked on G002.
 
 ## Dispatch rule
