@@ -18,25 +18,25 @@ are ready. Then open four new Codex sessions and paste one prompt into each.
 ## Worker A
 
 ```text
-Execute Grinder worker G001-A: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_A_ACCEPTANCE_CORE.md and follow it exactly from start to finish; work only in the isolated G001-A worktree, push the completed branch and open the required component PR, but do not merge it.
+Execute Grinder worker G001-A in the prepared worktree /Users/m1/houdini-g001-a: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_A_ACCEPTANCE_CORE.md and follow it exactly from start to finish; push the completed branch and open the required component PR, but do not merge it.
 ```
 
 ## Worker B
 
 ```text
-Execute Grinder worker G001-B: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_B_HYTHON_TIERS.md and follow it exactly from start to finish; work only in the isolated G001-B worktree, push the completed branch and open the required component PR, but do not merge it.
+Execute Grinder worker G001-B in the prepared worktree /Users/m1/houdini-g001-b: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_B_HYTHON_TIERS.md and follow it exactly from start to finish; push the completed branch and open the required component PR, but do not merge it.
 ```
 
 ## Worker C
 
 ```text
-Execute Grinder worker G001-C: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_C_COMPATIBILITY_BASELINES.md and follow it exactly from start to finish; work only in the isolated G001-C worktree, push the completed branch and open the required component PR, but do not merge it.
+Execute Grinder worker G001-C in the prepared worktree /Users/m1/houdini-g001-c: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_C_COMPATIBILITY_BASELINES.md and follow it exactly from start to finish; push the completed branch and open the required component PR, but do not merge it.
 ```
 
 ## Worker D
 
 ```text
-Execute Grinder worker G001-D: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_D_RUNNER_GOVERNANCE.md and follow it exactly from start to finish; work only in the isolated G001-D worktree, push the completed branch and open the required component PR, but do not merge it.
+Execute Grinder worker G001-D in the prepared worktree /Users/m1/houdini-g001-d: read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LANE_D_RUNNER_GOVERNANCE.md and follow it exactly from start to finish; push the completed branch and open the required component PR, but do not merge it.
 ```
 
 ## Integration captain
@@ -55,4 +55,3 @@ Paste this single correction into that worker session:
 ```text
 Stop without editing main. Read /Users/m1/Houdini Lab/docs/grinder/cycles/G001-v035-live-verification/LAUNCH_CHECKLIST.md, create or locate the exact isolated worktree and branch assigned to your lane from the frozen v0.30.0 commit, switch your task to that worktree, and then resume your lane brief.
 ```
-
