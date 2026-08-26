@@ -1,0 +1,102 @@
+schema: hermes.houdini.project.v1
+project_id: living-biome-dry
+title: Living Biome Dry Project
+brief: Compose exact capabilities while preserving three equal-status biome directions.
+references:
+  - reference_id: terrain-shapes
+    path: references/terrain-shapes.png
+    description: Silhouette and erosion reference supplied by the artist.
+  - reference_id: palette-notes
+    path: references/palette-notes.md
+    description: Palette notes without an implied winning direction.
+compatibility:
+  houdini_build: 22.0.368
+  license_mode: houdini-apprentice-noncommercial
+  package_version: 0.35.0
+  optional_dependencies:
+    - dependency_id: sidefx-labs
+      version: 20.5.278
+roots:
+  project: .
+  assets: assets
+  cache: cache/g002
+  renders: renders/g002
+seed_policy:
+  mode: fixed
+  seed: 420040
+timeline:
+  start_frame: 1
+  end_frame: 72
+  fps: 24
+budgets:
+  aggregate: {points: 500000, primitives: 500000, peak_memory_bytes: 4294967296, cook_seconds: 300.0, cache_bytes: 2147483648, frames: 72, width: 1280, height: 720, render_samples: 64}
+  stages:
+    - instance_id: world
+      limits: {points: 350000, primitives: 350000, peak_memory_bytes: 2147483648, cook_seconds: 120.0, cache_bytes: 1073741824, frames: 1, width: 0, height: 0, render_samples: 0}
+    - instance_id: materials
+      limits: {points: 500000, primitives: 500000, peak_memory_bytes: 1073741824, cook_seconds: 60.0, cache_bytes: 536870912, frames: 1, width: 0, height: 0, render_samples: 0}
+capability_instances:
+  - instance_id: world
+    capability_id: world_seed
+    capability_version: 1.0.0
+    context: SOP
+    inputs:
+      frequency: 0.008
+      octaves: 6
+    output_contracts: [terrain-geo]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: []
+    requested_evidence: [graph-structure, geometry-stats]
+  - instance_id: materials
+    capability_id: procedural_materials
+    capability_version: 1.2.0
+    context: LOP
+    inputs:
+      roughness: 0.45
+    output_contracts: [material-library]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: [world]
+    requested_evidence: [graph-structure]
+variants:
+  - variant_id: amber-mesa
+    title: Amber Mesa
+    description: Warm eroded strata and dry botanical accents.
+    human_rating: null
+    selected_for_continuation: null
+  - variant_id: verdant-rift
+    title: Verdant Rift
+    description: Humid cleft with dense green procedural growth.
+    human_rating: null
+    selected_for_continuation: null
+  - variant_id: lunar-basin
+    title: Lunar Basin
+    description: Pale mineral basin with restrained cold vegetation.
+    human_rating: null
+    selected_for_continuation: null
+output_contracts:
+  - contract_id: terrain-geo
+    producer_instance_id: world
+    context: SOP
+    name: OUT_GEO
+    artifact_path: outputs/terrain.bgeo.sc
+  - contract_id: material-library
+    producer_instance_id: materials
+    context: LOP
+    name: OUT_MATERIALS
+    artifact_path: outputs/materials.usda
+evidence_gates:
+  - gate_id: graph-structure
+    evidence_type: graph
+    required: true
+    status: pending
+  - gate_id: geometry-stats
+    evidence_type: data
+    required: true
+    status: pending
+human_decisions:
+  - decision_id: continue-biome-direction
+    prompt: Which equal-status biome lineage should continue into live development?
+    winner: null
+    selected_for_continuation: null
+automatic_ranking: false
+winner: null
