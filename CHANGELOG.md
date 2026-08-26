@@ -25,6 +25,16 @@ distinguish pure tests, Houdini runtime tests, authentic pixels, external models
 - Compatibility output paths are absolute, confined, exclusive, and checked across lexical and
   resolved system paths.
 
+### Evidence
+
+- Pure: 225 passed inside the native acceptance process; standalone restricted run 221 passed and
+  4 skipped; Ruff and `git diff --check` passed.
+- Houdini: 52 Hython integration tests passed on Apprentice 22.0.368.
+- Bounded live packet: Hython read, current-build compatibility, 38-node graph edit, one-frame cook,
+  frames 1–3, frame restoration, and resource baselines passed.
+- Packaging: wheel metadata reported `0.35.0`; PDG, simulation, viewport, and Karma execution remain
+  separately pending, and the self-hosted runner remains disabled.
+
 ## 0.30.0 — 2026-08-25
 
 ### Added

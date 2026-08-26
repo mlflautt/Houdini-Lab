@@ -110,6 +110,8 @@ native fixtures, H22 compatibility diffs, resource baselines, the
 [`operator guide`](docs/acceptance/OPERATIONS.md), and the
 [`release evidence matrix`](docs/acceptance/RELEASE_EVIDENCE_MATRIX.md) keep unrun runtime, pixel,
 plugin, model, and human evidence visibly distinct. The self-hosted Houdini runner remains disabled.
+The integrated candidate evidence is recorded in
+[`docs/releases/v0.35.0.md`](docs/releases/v0.35.0.md).
 
 The first executable creative skill is `model.fractal_relic` (Sprint 4). It creates three
 deterministic native-SOP alternatives, keeps them together in `OUT_COMPARISON`, and exposes a

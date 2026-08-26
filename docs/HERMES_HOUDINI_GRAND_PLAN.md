@@ -173,7 +173,7 @@ gate on Houdini Apprentice 22.0.368 with
 an authenticated loopback bootstrap, one bounded Karma proof, a hashed handoff, and 46/46 stable IDs
 resolved in the second process; human aesthetic review remains explicitly pending.
 
-### Horizon 2 — Live verification as routine infrastructure (`v0.35` candidate)
+### Horizon 2 — Live verification as routine infrastructure (`v0.35`, complete)
 
 Outcome: every claim has a named evidence rung and live Houdini validation becomes repeatable rather
 than artisanal.
@@ -192,8 +192,13 @@ Deliverables:
   license behavior, cleanup, process isolation, caches, concurrency, and artifact retention;
 - no self-hosted runner activation until that threat model and operational cost are approved.
 
-Exit evidence: a release matrix clearly distinguishes pure CI, live Hython, interactive Houdini,
-plugin-enabled/disabled, render, local-model, external-model, and human-review status.
+Exit evidence: source commit `d9841f7fd01f5821374c9ff8045609694c6b5b4c` passed 225 pure cases
+inside the native Hython acceptance process, 52 full Hython integration cases, Ruff, and a bounded
+Apprentice 22.0.368 graph/data packet. The packet built 38 managed native nodes, cooked one frame
+and frames 1–3 at 8 points/6 primitives under baseline, restored the frame, and emitted summary
+hash `1945c004d4d3c555f03c7396dc7aebfc8ed4546d336b27d5f87ebd41b474c196`.
+The release matrix keeps PDG, simulation, viewport, Karma, plugin, bridge, model, downstream, and
+human statuses separate; no unrun rung is inferred. The self-hosted runner remains disabled.
 
 ### Horizon 3 — Project compiler and compositional graphs (`v0.40` candidate)
 

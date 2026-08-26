@@ -88,42 +88,49 @@ Evidence is immutable; drift creates a new row/run rather than editing old prove
 | Downstream app/build/import settings | downstream row only, unless it produces an artifact used elsewhere |
 | Human feedback or candidate ordering | never rewrite prior review; append a new review/lineage record |
 
-## G001 / v0.35 interpretation
+## G001 / v0.35 integrated candidate
 
-G001 targets routine live verification, but parallel lanes start independently at v0.30.0. Lane D
-must not claim evidence from Lane A/B/C before integration. The integration captain populates the
-candidate matrix from actual merged commands and artifacts.
+This matrix binds the integrated code gates to source commit
+`d9841f7fd01f5821374c9ff8045609694c6b5b4c`. The final acceptance packet is
+`/private/tmp/hermes-v035-acceptance-20260825-03/acceptance-summary.json`: canonical semantic hash
+`1945c004d4d3c555f03c7396dc7aebfc8ed4546d336b27d5f87ebd41b474c196`, file SHA-256
+`be4e3d71f299d8ec19e15330a7811768befb6852ebc450f47e06caf64e753ea8`. It records a clean source
+tree, package `0.35.0`, Python 3.13.10, Houdini Apprentice 22.0.368, SideFX Labs loaded, and MOPs
+absent. Documentation-only changes after this source commit do not alter the tested package or
+fixtures; any code, fixture, dependency, or runtime drift invalidates the affected evidence.
 
-| Evidence type / tier | G001 candidate requirement | Lane D status | Lane D provenance or reason |
-|---|---:|---|---|
-| Pure CI | required | `pass` only after recorded full pure/Ruff gates | documentation regression gate; exact result belongs in `docs/grinder/receipts/G001-D.md` |
-| Hython read | required integrated | `not_applicable` | documentation-only lane; Lane B/integration owns live evidence |
-| Graph edit | required integrated | `not_applicable` | documentation-only lane; no graph claim |
-| Single-frame cook | required integrated | `not_applicable` | documentation-only lane; no cook claim |
-| Frame range | required integrated | `not_applicable` | documentation-only lane; no range claim |
-| PDG child process | required integrated | `not_applicable` | documentation-only lane; no child-process execution |
-| Simulation | required integrated | `not_applicable` | documentation-only lane; no simulation execution |
-| Viewport | authentic pass or explicit pending at cycle gate | `not_applicable` | documentation-only lane; no pixels produced |
-| Karma | authentic pass or explicit pending at cycle gate | `not_applicable` | documentation-only lane; no render produced |
-| Plugins disabled | required when plugin behavior is claimed | `not_applicable` | documentation-only lane; operations define the future comparison |
-| Plugins enabled | required when plugin output is claimed | `not_applicable` | no plugin installed, enabled, or executed |
-| Interactive bridge | separately reported | `not_applicable` | no live bridge run |
-| Local model | optional/advisory unless release declares otherwise | `not_applicable` | no model needed for documentation mechanics |
-| External model | optional and separately approved | `not_applicable` | no disclosure or network inference performed |
-| Human aesthetic review | remains human-owned | `not_applicable` | Lane D has no creative candidate; integrated creative evidence may remain `pending` |
-| Downstream-app review | required only for a downstream compatibility claim | `not_applicable` | Lane D makes no downstream-app claim |
+`Required? yes` below means that row must pass for the G001 technical exit. `report` means its
+independent status must be preserved, while actual execution was not a G001 exit requirement.
 
-For the integrated v0.35 candidate, convert a Lane D `not_applicable` row to the actual integrated
-status. If a required runtime was not executed, use `pending` or `blocked`—never retain Lane D's
-documentation-only rationale.
+| Evidence type / tier | Required? | Status | Provenance or pending/not-applicable reason | Promoter | Depends on |
+|---|---:|---|---|---|---|
+| Pure CI | yes | `pass` | final native acceptance: 225 passed in 4.39s; standalone restricted run: 221 passed, 4 skipped; Ruff and whitespace pass | technical reviewer | clean source identity |
+| Hython read | yes | `pass` | no-cook `/obj` read plus exact H22 `Sop/box` compatibility; frame 1 and dirty state preserved | Houdini technical reviewer | pure CI, build/license identity |
+| Graph edit | yes | `pass` | 38 stable-ID native nodes; no forced cook; rebuildable `.hipnc`, 408,264 bytes, SHA-256 `dfcdef5fd206875b1b1d295e40d21160f9db58525bf87bd68d17fb5f9106ba97` | Houdini technical reviewer | Hython read, accepted G001 graph envelope |
+| Single-frame cook | yes | `pass` | frame 1; 8 points, 6 primitives, 3,544 bytes; 0.000848s cook; resource baseline pass; frame restored | Houdini technical reviewer | graph edit |
+| Frame range | yes | `pass` | inclusive frames 1–3; each 8 points/6 primitives/3,544 bytes; 0.001029s aggregate cook; baseline pass; frame restored | Houdini technical reviewer | graph edit |
+| PDG child process | report | `pending` | adapter and refusal tests pass; no separate external-process authorization was supplied and no child ran | runtime/security reviewer | Hython read, external-process approval |
+| Simulation | report | `pending` | managed Solver fixture and refusal tests pass; no separate simulation authorization was supplied and no simulation ran | Houdini technical reviewer | graph edit, simulation approval |
+| Viewport | report | `pending` | adapter requires separate `--allow-viewport`; final Hython packet had no interactive viewer and produced no PNG | visual-mechanics reviewer | graph/data, isolated UI approval |
+| Karma | report | `pending` | adapter requires separate `--allow-karma`; no v0.35 render/external-process authorization was supplied and no render ran | render reviewer | graph/data, render and external-process approval |
+| Plugins disabled | conditional | `not_applicable` | G001 makes no plugin-behavior claim; package inventory only reports current state | plugin owner | Hython identity |
+| Plugins enabled | conditional | `not_applicable` | SideFX Labs was discoverable but no plugin node/output was exercised or certified by G001 | plugin owner | plugins-disabled proof when a plugin claim exists |
+| Interactive bridge | report | `not_applicable` | G001 validates the local acceptance CLI, not a bridge roundtrip; v0.30 bridge proof is not relabeled as v0.35 evidence | runtime/security reviewer | bridge-specific request |
+| Local model | no | `not_applicable` | no model is needed for these mechanical infrastructure gates | model reviewer | authentic evidence, consent |
+| External model | no | `not_applicable` | no disclosure, endpoint, or external inference was requested | model + privacy reviewer | explicit network approval |
+| Human aesthetic review | no | `not_applicable` | infrastructure release has no creative candidate, rating, or winner to judge | human artist/reviewer only | authentic creative candidates |
+| Downstream-app review | no | `not_applicable` | G001 makes no Blender, Resolve, or other consumer compatibility claim | downstream-app owner | promoted source artifact |
 
 ## Release sign-off
 
-- Source commit: `[full SHA]`
-- Matrix artifact SHA-256: `[hash after finalization]`
-- Required rows and policy: `[release declaration]`
-- Mechanical overall status: `[pass|warn|pending|blocked]`
-- Human aesthetic status: `[pass|warn|pending|blocked|not_applicable]`
-- Unaccepted warnings/residual risks: `[list]`
-- Release owner and timestamp: `[identity/time]`
-- Human decision record, if applicable: `[exact record; never inferred]`
+- Source commit: `d9841f7fd01f5821374c9ff8045609694c6b5b4c`
+- Matrix artifact SHA-256: recorded after finalization in `docs/grinder/receipts/G001-I.md` to avoid
+  embedding a self-invalidating file hash
+- Required rows and policy: core pure/Hython/graph/single/range gates; independent status reporting
+  for PDG, simulation, viewport, Karma, plugin, bridge, model, human, and downstream evidence
+- Mechanical overall status: `pass`
+- Human aesthetic status: `not_applicable` — no creative candidate exists in this infrastructure release
+- Unaccepted warnings/residual risks: PDG, simulation, viewport, and Karma execution remain pending;
+  self-hosted runner activation remains blocked by its separate threat-model checklist
+- Release owner and timestamp: integration captain technical sign-off, `2026-08-25` America/Chicago
+- Human decision record, if applicable: none; no rating, winner, or continuation choice was inferred
