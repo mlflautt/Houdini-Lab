@@ -1,0 +1,18 @@
+{
+  "schema": "hermes.houdini.project_adapter.v1",
+  "adapter_id": "project.pbr_channels_to_material_bindings",
+  "version": "1.0.0",
+  "from_contract": "three_usd_material_cop_contracts",
+  "to_contract": "named_material_bindings",
+  "source_context": "COP",
+  "target_context": "LOP",
+  "recipe": {"id": "lop.procedural_material_foundry_stage", "version": "1.0.0"},
+  "risk": "external",
+  "approvals": ["explicit_external_risk_approval"],
+  "budget_effect": {"cook_scope": "single_three_material_lop_stage", "max_primitives": 10000, "max_seconds": 30, "render_frames": 0},
+  "tested_builds": ["22.0.368"],
+  "license_modes": ["houdini-apprentice-noncommercial"],
+  "optional_dependencies": [],
+  "evidence_status": "pending",
+  "source_audit": ["skills/lookdev.procedural_material_foundry/skill.yaml", "recipes/lop/procedural_material_foundry_stage.yaml"]
+}
