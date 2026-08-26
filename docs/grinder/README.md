@@ -10,22 +10,28 @@ Houdini work; the Grinder controls how this repository is changed.
 ## Start here
 
 1. Read [the Grinder architecture](GRINDER_ARCHITECTURE.md).
-2. Inspect the proposed [G001 cycle manifest](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md).
-3. Run [the launch checklist](cycles/G001-v035-live-verification/LAUNCH_CHECKLIST.md).
-4. Copy the one-line worker prompts from
-   [G001 copy-paste prompts](cycles/G001-v035-live-verification/COPY_PASTE_PROMPTS.md).
-5. Each prompt directs its Codex instance to exactly one lane brief:
-   - [Lane A — acceptance core](cycles/G001-v035-live-verification/LANE_A_ACCEPTANCE_CORE.md)
-   - [Lane B — Hython tiers and fixtures](cycles/G001-v035-live-verification/LANE_B_HYTHON_TIERS.md)
-   - [Lane C — compatibility and baselines](cycles/G001-v035-live-verification/LANE_C_COMPATIBILITY_BASELINES.md)
-   - [Lane D — runner governance](cycles/G001-v035-live-verification/LANE_D_RUNNER_GOVERNANCE.md)
-6. After the four lanes have reviewable commits, give a fresh instance the
-   [integration-captain brief](cycles/G001-v035-live-verification/INTEGRATION_CAPTAIN.md).
+2. Review the proposed
+   [G002 project-compiler manifest](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md).
+3. Do not dispatch it until its G001 base tag/SHA placeholders are frozen and the owner accepts it.
+4. After acceptance, use the
+   [G002 launch checklist](cycles/G002-v040-project-compiler/LAUNCH_CHECKLIST.md) and paste the
+   [one-line worker prompts](cycles/G002-v040-project-compiler/COPY_PASTE_PROMPTS.md).
+5. Keep the [G003 Living Biome outline](cycles/G003-v040-living-biome-shot/PROPOSAL.md) blocked until
+   G002 merges; it intentionally has no launch prompts yet.
+
+## Cycle history
+
+- [G001 — v0.35 live verification](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md): integrated
+  through PR #15; technical evidence lives in `docs/grinder/receipts/G001-I.md`. Release
+  publication remains a separate action.
+- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): proposed.
+- [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/PROPOSAL.md): outline, blocked on G002.
 
 ## Dispatch rule
 
 Every cycle begins as `PROPOSED`. Do not launch its lane briefs until the human owner explicitly
-accepts the named cycle. For G001, the exact launch phrase is:
+accepts the named cycle. The manifest supplies the exact phrase only after its base is immutable.
+G001 used:
 
 > Accept Grinder Cycle G001 and launch lanes A-D from v0.30.0.
 
