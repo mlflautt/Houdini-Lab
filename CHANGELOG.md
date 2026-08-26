@@ -3,6 +3,38 @@
 All notable released changes are recorded here. Versions follow semantic versioning; evidence states
 distinguish pure tests, Houdini runtime tests, authentic pixels, external models, and human review.
 
+## 0.35.0 — 2026-08-25
+
+### Added
+
+- One fail-closed `scripts/run_acceptance.py` interface for pure, read-only Hython, graph-edit,
+  single-frame, frame-range, PDG-child, simulation, viewport, and Karma evidence tiers.
+- Canonical hashed acceptance summaries bound to source commit/dirty state, Houdini build/license,
+  package inventory, exact budgets, commands, observations, artifacts, warnings, and errors.
+- Rebuildable native H22 fixture graphs, current-build operator/parameter compatibility probes, and
+  versioned resource baselines with actionable drift diagnostics.
+- A self-hosted Houdini-runner threat model, clean-checkout operator runbook, and evidence matrix;
+  runner activation remains separately blocked pending the documented host/security approvals.
+
+### Hardened
+
+- Required prerequisites stop downstream execution on `blocked`, `pending`, or `not_applicable`
+  evidence, and adapter budget drift is rejected.
+- Live tiers share a complete frozen ceiling contract, hash every retained artifact, preserve the
+  current frame, refuse overwrite, and separate PDG, simulation, viewport, and Karma authorization.
+- Compatibility output paths are absolute, confined, exclusive, and checked across lexical and
+  resolved system paths.
+
+### Evidence
+
+- Pure: 225 passed inside the native acceptance process; standalone restricted run 221 passed and
+  4 skipped; Ruff and `git diff --check` passed.
+- Houdini: 52 Hython integration tests passed on Apprentice 22.0.368.
+- Bounded live packet: Hython read, current-build compatibility, 38-node graph edit, one-frame cook,
+  frames 1–3, frame restoration, and resource baselines passed.
+- Packaging: wheel metadata reported `0.35.0`; PDG, simulation, viewport, and Karma execution remain
+  separately pending, and the self-hosted runner remains disabled.
+
 ## 0.30.0 — 2026-08-25
 
 ### Added

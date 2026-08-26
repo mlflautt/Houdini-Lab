@@ -16,7 +16,7 @@ This repo hosts:
 > *Hermes Houdini Apprentice: Agentic Architecture and Development Guide*, integrated here.
 
 > **Forward roadmap:** [`docs/HERMES_HOUDINI_GRAND_PLAN.md`](docs/HERMES_HOUDINI_GRAND_PLAN.md) —
-> the post-`v0.25.0` program from Hermes control plane through compositional projects and cross-tool
+> the post-`v0.30.0` program from routine live verification through compositional projects and cross-tool
 > creative handoffs.
 
 > **Agent entry path:** [`docs/HERMES_V030_OPERATOR_RUNBOOK.md`](docs/HERMES_V030_OPERATOR_RUNBOOK.md)
@@ -101,6 +101,17 @@ reviewable intent plans, hashed continuation handoffs, compatibility-gated dry r
 two-process relic acceptance harness. Start with the
 [`v0.30 operator runbook`](docs/HERMES_V030_OPERATOR_RUNBOOK.md); release evidence is recorded in
 [`docs/releases/v0.30.0.md`](docs/releases/v0.30.0.md).
+
+Version `0.35.0` makes live verification a routine, explicit ladder. The unified
+[`run_acceptance.py`](scripts/run_acceptance.py) entry point plans or executes only named tiers,
+records source/build/license/package identity and bounded observations in one hashed summary, and
+fails closed at separate PDG, simulation, viewport, and Karma authorization boundaries. Rebuildable
+native fixtures, H22 compatibility diffs, resource baselines, the
+[`operator guide`](docs/acceptance/OPERATIONS.md), and the
+[`release evidence matrix`](docs/acceptance/RELEASE_EVIDENCE_MATRIX.md) keep unrun runtime, pixel,
+plugin, model, and human evidence visibly distinct. The self-hosted Houdini runner remains disabled.
+The integrated candidate evidence is recorded in
+[`docs/releases/v0.35.0.md`](docs/releases/v0.35.0.md).
 
 The first executable creative skill is `model.fractal_relic` (Sprint 4). It creates three
 deterministic native-SOP alternatives, keeps them together in `OUT_COMPARISON`, and exposes a
