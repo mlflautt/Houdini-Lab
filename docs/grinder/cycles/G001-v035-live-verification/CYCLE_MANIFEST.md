@@ -1,8 +1,10 @@
 # Grinder Cycle G001 — v0.35 Live Verification Infrastructure
 
-- State: `PROPOSED — DO NOT DISPATCH`
-- Manifest version: `1.0-proposal`
+- State: `ACCEPTED — LANES A-D AUTHORIZED`
+- Manifest version: `1.0`
 - Proposed on: `2026-08-25`
+- Accepted on: `2026-08-25`
+- Acceptance instruction: `Accept Grinder Cycle G001 and launch lanes A-D from v0.30.0.`
 - Target horizon: Horizon 2, `v0.35` candidate
 - Repository: `mlflautt/Houdini-Lab`
 - Base tag: `v0.30.0`
@@ -13,13 +15,12 @@
 
 ## Launch authority
 
-Do not run the implementation lanes while this manifest is `PROPOSED`. The human owner accepts and
-freezes it with:
+The human owner accepted and froze this cycle with:
 
 > Accept Grinder Cycle G001 and launch lanes A-D from v0.30.0.
 
-At dispatch, change only the state to `ACCEPTED` and record the acceptance date/commit. Material
-contract changes require a manifest amendment approved by the owner.
+Lanes A-D are authorized to begin from the frozen base commit. Material contract changes require a
+manifest amendment approved by the owner.
 
 ## Outcome
 
