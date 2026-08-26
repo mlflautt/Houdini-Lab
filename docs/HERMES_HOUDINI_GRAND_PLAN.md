@@ -1,6 +1,6 @@
 # Hermes Houdini Grand Development Plan
 
-- Status: governing roadmap after the `v0.25.0` integration release
+- Status: governing roadmap after the `v0.30.0` control-plane release
 - Planning horizon: control plane → creative compositions → cross-tool studio
 - Runtime baseline: Houdini Apprentice 22.0.368, Apple silicon, macOS
 - License baseline: personal, educational, non-commercial
@@ -120,6 +120,11 @@ Version 1.0 is not “every Houdini feature supported.” It is the point where 
 
 Development proceeds through nine horizons. Release numbers are directional bands, not promises;
 acceptance evidence—not calendar time—advances the project.
+
+Parallel implementation is governed by the repository's
+[Grinder architecture](grinder/GRINDER_ARCHITECTURE.md). Grinder cycle manifests freeze an immutable
+base, disjoint lane ownership, integration order, and evidence gates before separate agents begin;
+the roadmap itself is not an implicit dispatch instruction.
 
 ### Horizon 0 — Repository and release substrate (`v0.25`, complete)
 
