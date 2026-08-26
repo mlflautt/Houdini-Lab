@@ -11,6 +11,7 @@
 - Base commit: `b8b8f4c4b702b4f895bbee3098c90006541a7373`
 - Integration branch after acceptance: `codex/grinder-g001-integration`
 - Integration PR: `https://github.com/mlflautt/Houdini-Lab/pull/15`
+- Integration-head CI: `https://github.com/mlflautt/Houdini-Lab/actions/runs/32984337058` (attempt 2)
 - Protected-main merge commit: `8bb50a9a78bd870ba0d256fbb52c7aa904d21efa`
 - Final-main CI: `https://github.com/mlflautt/Houdini-Lab/actions/runs/32989880360`
 - Target runtime: Houdini Apprentice `22.0.368`, Apple silicon, macOS
