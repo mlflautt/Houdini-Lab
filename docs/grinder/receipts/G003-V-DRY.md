@@ -1,6 +1,6 @@
 # Grinder Receipt G003-V-DRY — Visual Audition Plan
 
-- State: `dry-ready — live blocked on SideFX Apprentice login and exact approval`
+- State: `dry-ready — valid Apprentice runtime verified; awaiting exact live approval`
 - Branch: `codex/grinder-g003-v-visual-audition`
 - Accepted protected-main base: `df476c1af5db0cda4b80d8cc7ff5bd384cb51389`
 - Acceptance PR: `#25`
@@ -22,11 +22,11 @@ false/null.
 ## Authoritative ignored manifest
 
 - Path:
-  `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-a-manifest.json`
+  `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-a-manifest-license-ready.json`
 - Canonical approval-subject SHA-256:
-  `c96c0cfcd17ac924cd521a78ce0ea237727f2e2041b26be5dc3fe09095806fdd`
+  `e751eab063835132fa4d611def27a8e3ab476eca63cb35afc10769403c6e26ce`
 - Exact file-byte SHA-256:
-  `37594eaf948706eb86750b8c3f7eb5921a2e98f07a492bd7259a6673fa77a8ec`
+  `1c7dd3e3169aa134cc70a15b3c54b4bcc7c535c792a5def5534c85979a25e4c8`
 - Planned live root:
   `/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-a`
 - Live-root existence at planning time: absent
@@ -36,6 +36,11 @@ The approval-subject hash uses canonical compact JSON with its self-referential
 `approval.manifest_sha256_subject` normalized to null. The file-byte hash covers the indented
 on-disk JSON. Regeneration in two fresh temporary paths produced identical canonical and byte
 hashes before the final manifest was written exclusively.
+
+The earlier blocked-runtime manifest remains preserved at
+`/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-a-manifest.json`. Its canonical hash
+`c96c0cfcd17ac924cd521a78ce0ea237727f2e2041b26be5dc3fe09095806fdd` is superseded and is not a
+valid live-approval subject.
 
 ## Exact planned creative evidence
 
@@ -75,14 +80,14 @@ PYTHONPATH=.
 /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython
 ```
 
-It stopped before importing `hou` because no license could be acquired:
+The first attempt stopped before importing `hou` because no license could be acquired:
 
 ```text
 No licenses could be found to run this application.
 Please check for a valid license server host
 ```
 
-Read-only diagnostics then verified:
+Read-only diagnostics at that time verified:
 
 - `hserver` and `sesinetd` processes are running;
 - hserver build is `22.0.368` and points to `https://www.sidefx.com/license/sesinetd`;
@@ -91,8 +96,24 @@ Read-only diagnostics then verified:
 - no used license is present; and
 - no runtime probe mutated a scene, frame, graph, package, preference, or license configuration.
 
-Exact current-build operator/parameter observations therefore remain `blocked`, not passed. The
-operator must repeat the same read-only probe after the owner signs into SideFX licensing.
+After the owner reactivated Apprentice, the same mutation-free Hython probe passed. Current evidence
+is:
+
+- Hython reports build `22.0.368` and `licenseCategoryType.Apprentice`;
+- the active Houdini Apprentice 22.0 entitlement is acquired by `m1@M1` and expires
+  `05-sep-2026`;
+- SOP Import LOP, Dome Light LOP, Camera LOP, Karma Render Settings LOP, and USD Render ROP are
+  available;
+- exact tuple interfaces are Camera LOP `t`/`r`, Karma Render Settings LOP `resolution`, and USD
+  Render ROP `res_user`;
+- the required remaining parameters were also found: `soppath`, `primpath`, `enable_pathprefix`,
+  `pathprefix`, `focalLength`, `camera`, `samplesperpixel`, `pathtracedsamples`, `renderer`,
+  `loppath`, `rendersettings`, `outputimage`, `husk_timelimit`, and `maxthreads`;
+- frame, HIP path, and the complete root-child list were identical before and after inspection; and
+- `tests/hython/test_acceptance_probes.py` passed all three read-only tests in `0.22s`.
+
+No graph, cook, save, render, package, preference, or license mutation was performed. The fresh
+manifest records this passing runtime observation and is the sole live-approval subject.
 
 ## Verification
 
@@ -105,6 +126,11 @@ All checks passed!
 
 git diff --check
 pass
+
+env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
+  /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython \
+  -m pytest tests/hython/test_acceptance_probes.py -o addopts='' -q
+3 passed in 0.22s
 ```
 
 The first Ruff attempt without `--no-cache` could not create `.ruff_cache` in the external worktree
@@ -119,7 +145,7 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 | acceptance/source | pass | exact protected-main base and successful CI |
 | pure dry manifest | pass | deterministic canonical and byte hashes |
 | registered capability identities | pass | exact four skill-loader identities |
-| H22 build/license/operator probe | blocked | SideFX login missing, error L01 |
+| H22 build/license/operator probe | pass | Apprentice acquired; exact build, types, tuples, and unchanged scene state observed |
 | graph edit and cook | pending | not authorized or run |
 | scene save | pending | not authorized or run |
 | Karma and pixels | pending | not authorized or run |
@@ -129,7 +155,8 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 
 ## Next stop
 
-The owner must sign into the SideFX License Administrator so Apprentice can be acquired. The
-operator then reruns the read-only build/license/operator probe and regenerates the manifest only if
-runtime identity changes its observed-status field. That new exact canonical hash becomes the live
-approval subject. No graph, cook, render, or scene action may begin before both conditions pass.
+The runtime gate now passes. No graph, cook, render, or scene action may begin until the owner gives
+explicit approval bound to canonical manifest hash
+`e751eab063835132fa4d611def27a8e3ab476eca63cb35afc10769403c6e26ce` and exact live root
+`/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-a`. Approval does not select a creative
+winner and does not authorize continuation into downstream G003 lanes.
