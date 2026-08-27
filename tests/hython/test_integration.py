@@ -292,7 +292,10 @@ def test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_re
     dispatcher = Dispatcher(policy=default_policy([str(tmp_path)]))
     created_lops = []
     try:
-        results = [_dispatch_planned_call(dispatcher, call) for call in calls]
+        results = [_dispatch_planned_call(dispatcher, call) for call in calls[:2]]
+        cached_stage = hou.node("/stage/OUT_HYTHON_LOOKDEV_STAGE").stage(frame=1)
+        assert not cached_stage.GetPrimAtPath("/World/HermesRelic").IsValid()
+        results.extend(_dispatch_planned_call(dispatcher, call) for call in calls[2:])
         assert all(result.status.value == "success" for result in results), [
             result.errors for result in results
         ]

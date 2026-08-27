@@ -1,12 +1,12 @@
 # Grinder Receipt G003-V-DRY — Visual Audition Plan
 
-- State: `dry-ready B — A stopped safely at USD frame contract; awaiting exact B approval`
+- State: `dry-ready C — A/B stopped safely at USD frame contract; awaiting exact C approval`
 - Branch: `codex/grinder-g003-v-visual-audition`
 - Accepted protected-main base: `df476c1af5db0cda4b80d8cc7ff5bd384cb51389`
 - Acceptance PR: `#25`
 - Accepted-base final-main CI: `33094029963`, success
 - Runtime target: Houdini Apprentice `22.0.368`, Python `3.13`, Karma CPU
-- Live work performed: stopped A proof through registered call 8; no render launched
+- Live work performed: stopped A and B proofs through registered call 8; no render launched
 
 ## Delivered planning code
 
@@ -33,13 +33,13 @@ agents.
 ## Authoritative ignored manifest
 
 - Path:
-  `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-b-manifest-license-ready.json`
+  `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-c-manifest-explicit-lop-frame.json`
 - Canonical approval-subject SHA-256:
-  `048c008a323790c6117088b4518a60149603f95343aca3cecc72401de40c6551`
+  `e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351`
 - Exact file-byte SHA-256:
-  `050ae0d6079ae99dee7cc7996d2e6d36e9b5ec230d479027070426d7c867a041`
+  `7f6ec3746e762dd915130c372ea2c352381839152f09d80935925a87f01a027d`
 - Planned live root:
-  `/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-b`
+  `/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-c`
 - Live-root existence at planning time: absent
 - Automatic execution: false
 
@@ -56,6 +56,11 @@ valid live-approval subject.
 The first license-ready A manifest also remains preserved. Its canonical hash
 `e751eab063835132fa4d611def27a8e3ab476eca63cb35afc10769403c6e26ce` was approved and consumed by
 the stopped A attempt described below; it is not reusable for B.
+
+The license-ready B manifest also remains preserved at
+`/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-b-manifest-license-ready.json`. Its
+canonical hash `048c008a323790c6117088b4518a60149603f95343aca3cecc72401de40c6551` was approved with the exact
+owner wording `proceed` and consumed by the stopped B attempt below; it is not reusable for C.
 
 ## Approved A execution and safe stop
 
@@ -85,6 +90,23 @@ Commit `aba5ddd` adds explicit-frame evaluation to `solaris.stage.validate`, res
 frame in a `finally` boundary, passes the chosen frame from `lookdev.relic_stage`, and adds a Hython
 regression whose source is empty at frame 1 and populated at frame 11. The regression passes and
 confirms frame 1 is restored. B binds this corrected call shape and uses a fresh output root.
+
+## Approved B execution and safe stop
+
+The owner approved B with the exact word `proceed`. The permanent runner revalidated the canonical
+hash, clean branch, accepted-base ancestry, fresh scene, Apprentice build/license, 115 registered
+calls, untouched B root, ffmpeg `9.0.1`, and all declared ceilings. Calls 1–8 again succeeded and
+call 9 again stopped on the absent animated asset prim. B preserved 2,364,068 bytes with peak RSS
+627,179,520 bytes and launched zero render calls.
+
+Read-only inspection of B's MaterialX checkpoint proved the graph and saved stage are correct:
+frame 1 lacks the asset prim, while frame 24 contains 2,070 SOP points, 1,932 SOP primitives, and
+`/World/G003V/ParticleCalligraphy`. The remaining defect was the evaluation API: changing the
+global frame did not reliably bypass a LOP stage cached by the prior live calls. Houdini 22's
+official `hou.LopNode.stage` contract accepts an explicit `frame` argument. The C fix now calls
+`node.stage(frame=frame_value)` directly, never mutates global frame state, and extends the Hython
+regression to cache an empty frame-1 stage before validating the populated frame-11 stage. C uses
+a new manifest and untouched root.
 
 ## Exact planned creative evidence
 
@@ -202,14 +224,14 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 | Rung | Status | Evidence |
 |---|---|---|
 | acceptance/source | pass | exact protected-main base and successful CI |
-| pure dry manifest | pass | deterministic B canonical and byte hashes; fresh B root absent |
+| pure dry manifest | pass | deterministic C canonical and byte hashes; fresh C root absent |
 | registered capability identities | pass | exact four skill-loader identities |
 | portable live-runner preflight | pass | pure contract plus clean Hython/dispatcher/runtime/tool preflight; no mutation |
 | H22 build/license/operator probe | pass | Apprentice acquired; exact build, types, tuples, and unchanged scene state observed |
-| graph edit and cook | partial/stopped | eight A calls passed; call 9 stopped on explicit USD frame contract |
-| scene save | pass for stopped A | non-overwriting partial Calligraphy `.hipnc` preserved |
-| Karma and pixels | pending | A was authorized but stopped before render; B is not yet authorized |
-| preview/contact sheet | pending | no source pixels yet; A postprocessing did not run |
+| graph edit and cook | partial/stopped | eight calls passed in both A and B; both stopped at call 9 |
+| scene save | pass for stopped A/B | non-overwriting partial Calligraphy `.hipnc` scenes preserved |
+| Karma and pixels | pending | A/B were authorized but stopped before render; C is not yet authorized |
+| preview/contact sheet | pending | no source pixels yet; A/B postprocessing did not run |
 | external model/plugin | not applicable | absent from plan |
 | human motion selection | pending | requires authentic Gate V review |
 
@@ -217,6 +239,6 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 
 The runtime gate now passes. No graph, cook, render, or scene action may begin until the owner gives
 explicit approval bound to canonical manifest hash
-`048c008a323790c6117088b4518a60149603f95343aca3cecc72401de40c6551` and exact live root
-`/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-b`. Approval does not select a creative
+`e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351` and exact live root
+`/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-c`. Approval does not select a creative
 winner and does not authorize continuation into downstream G003 lanes.

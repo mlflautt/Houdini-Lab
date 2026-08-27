@@ -314,48 +314,45 @@ def validate_stage(
     if node is None or node.type().category().name() != "Lop":
         raise ValueError(f"LOP stage node not found: {stage_node_path}")
     original_frame = hou.frame()
-    try:
-        if frame_value is not None:
-            hou.setFrame(frame_value)
-        started = time.monotonic()
-        with hou.InterruptableOperation(
-            "Hermes bounded USD stage composition",
-            "Composing one LOP stage",
-            open_interrupt_dialog=False,
-        ):
-            stage = node.stage()
-        elapsed = time.monotonic() - started
-        if policy is not None and elapsed > policy.max_seconds:
-            raise RuntimeError(
-                f"USD stage composition took {elapsed:.3f}s > policy {policy.max_seconds:.3f}s"
-            )
-        if stage is None:
-            raise RuntimeError(f"LOP did not produce a USD stage: {stage_node_path}")
-        prims: list[Any] = []
-        type_counts: dict[str, int] = {}
-        for prim in stage.Traverse():
-            prims.append(prim)
-            if len(prims) > max_prims:
-                raise RuntimeError(f"USD stage exceeds max_prims={max_prims}")
-            type_name = prim.GetTypeName() or "untyped"
-            type_counts[type_name] = type_counts.get(type_name, 0) + 1
-        missing = [path for path in paths if not stage.GetPrimAtPath(path).IsValid()]
-        if missing:
-            raise RuntimeError(f"USD stage missing expected prims: {', '.join(missing)}")
-        binding_prim = stage.GetPrimAtPath(binding_path)
-        if not binding_prim.IsValid():
-            raise RuntimeError(f"USD binding prim missing: {binding_path}")
-        material, relationship = UsdShade.MaterialBindingAPI(binding_prim).ComputeBoundMaterial()
-        material_path = str(material.GetPath()) if material else ""
-        if not material_path:
-            raise RuntimeError(f"USD prim has no computed material binding: {binding_path}")
-        errors = list(node.errors())
-        if errors:
-            raise RuntimeError("LOP stage errors: " + "; ".join(errors))
-        warnings = list(node.warnings())
-    finally:
-        if hou.frame() != original_frame:
-            hou.setFrame(original_frame)
+    started = time.monotonic()
+    with hou.InterruptableOperation(
+        "Hermes bounded USD stage composition",
+        "Composing one LOP stage",
+        open_interrupt_dialog=False,
+    ):
+        # Houdini 22's LOP API accepts an explicit cook frame.  Passing it here
+        # avoids global-frame state and, importantly, bypasses a previously
+        # cached stage cooked at another frame.
+        stage = node.stage() if frame_value is None else node.stage(frame=frame_value)
+    elapsed = time.monotonic() - started
+    if policy is not None and elapsed > policy.max_seconds:
+        raise RuntimeError(
+            f"USD stage composition took {elapsed:.3f}s > policy {policy.max_seconds:.3f}s"
+        )
+    if stage is None:
+        raise RuntimeError(f"LOP did not produce a USD stage: {stage_node_path}")
+    prims: list[Any] = []
+    type_counts: dict[str, int] = {}
+    for prim in stage.Traverse():
+        prims.append(prim)
+        if len(prims) > max_prims:
+            raise RuntimeError(f"USD stage exceeds max_prims={max_prims}")
+        type_name = prim.GetTypeName() or "untyped"
+        type_counts[type_name] = type_counts.get(type_name, 0) + 1
+    missing = [path for path in paths if not stage.GetPrimAtPath(path).IsValid()]
+    if missing:
+        raise RuntimeError(f"USD stage missing expected prims: {', '.join(missing)}")
+    binding_prim = stage.GetPrimAtPath(binding_path)
+    if not binding_prim.IsValid():
+        raise RuntimeError(f"USD binding prim missing: {binding_path}")
+    material, relationship = UsdShade.MaterialBindingAPI(binding_prim).ComputeBoundMaterial()
+    material_path = str(material.GetPath()) if material else ""
+    if not material_path:
+        raise RuntimeError(f"USD prim has no computed material binding: {binding_path}")
+    errors = list(node.errors())
+    if errors:
+        raise RuntimeError("LOP stage errors: " + "; ".join(errors))
+    warnings = list(node.warnings())
     return {
         "stage_node_path": stage_node_path,
         "frame": frame_value if frame_value is not None else original_frame,
