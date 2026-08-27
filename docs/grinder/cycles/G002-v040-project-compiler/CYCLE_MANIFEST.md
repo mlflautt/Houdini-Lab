@@ -1,6 +1,6 @@
 # Grinder Cycle G002 — Horizon 3 Project Compiler Kernel
 
-- State: `VERIFIED CANDIDATE — PROTECTED-MAIN PR PENDING`
+- State: `VERIFIED — MERGED TO PROTECTED MAIN`
 - Manifest version: `1.0`
 - Proposed on: `2026-08-26`
 - Accepted on: `2026-08-26`
@@ -13,6 +13,9 @@
 - Integration branch after acceptance: `codex/grinder-g002-integration`
 - Target runtime: pure Python 3.11+; regression on Houdini Apprentice 22.0.368
 - Release intent: compiler foundation for the `v0.40` band; no package-version promise
+- Integration PR: `https://github.com/mlflautt/Houdini-Lab/pull/22`
+- Protected-main merge: `44727325ecb5262a613d259d6db2ff23274ed211`
+- Final-main CI: `https://github.com/mlflautt/Houdini-Lab/actions/runs/33029329282`
 
 ## Launch authority
 

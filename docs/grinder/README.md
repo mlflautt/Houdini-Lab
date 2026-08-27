@@ -10,23 +10,24 @@ Houdini work; the Grinder controls how this repository is changed.
 ## Start here
 
 1. Read [the Grinder architecture](GRINDER_ARCHITECTURE.md).
-2. Review the verified-candidate
-   [G002 project-compiler manifest](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md).
-3. Verify frozen tag `v0.35.0` resolves to the exact G002 base commit before dispatch.
-4. Use the
-   [G002 launch checklist](cycles/G002-v040-project-compiler/LAUNCH_CHECKLIST.md) and paste the
-   [one-line worker prompts](cycles/G002-v040-project-compiler/COPY_PASTE_PROMPTS.md).
-5. Review the [G003 Living Biome outline](cycles/G003-v040-living-biome-shot/PROPOSAL.md). It remains
-   non-dispatchable until G002 merges and the owner chooses a motion direction.
+2. Treat the verified
+   [G002 project-compiler manifest](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md) as the
+   current composition-contract baseline.
+3. Review the proposed
+   [G003 live-composition manifest](cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md).
+4. Make the owner-owned [motion decision](cycles/G003-v040-living-biome-shot/MOTION_DECISION.md).
+5. Only after the manifest records that choice and explicit acceptance, use the
+   [G003 launch checklist](cycles/G003-v040-living-biome-shot/LAUNCH_CHECKLIST.md) and
+   [one-line worker prompts](cycles/G003-v040-living-biome-shot/COPY_PASTE_PROMPTS.md).
 
 ## Cycle history
 
 - [G001 — v0.35 live verification](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md): released
   as `v0.35.0`; technical evidence lives in `docs/grinder/receipts/G001-I.md`.
-- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): verified
-  integration candidate; protected-main PR pending.
-- [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/PROPOSAL.md): outline awaiting the
-  exact merged G002 base and an owner-owned motion choice.
+- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): verified and
+  merged through protected main at `44727325ecb5262a613d259d6db2ff23274ed211`.
+- [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md): complete proposed
+  parallel packet on the exact G002 merge; blocked only on owner motion choice and acceptance.
 
 ## Dispatch rule
 
