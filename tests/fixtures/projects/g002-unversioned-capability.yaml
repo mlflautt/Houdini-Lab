@@ -1,0 +1,23 @@
+schema: hermes.houdini.project.v1
+project_id: latest-capability
+title: Latest capability
+brief: Floating capability versions are invalid.
+references: []
+compatibility: {houdini_build: 22.0.368, license_mode: houdini-apprentice-noncommercial, package_version: 0.35.0, optional_dependencies: []}
+roots: {project: ., assets: assets, cache: cache, renders: renders}
+seed_policy: {mode: fixed, seed: 1}
+timeline: {start_frame: 1, end_frame: 1, fps: 24}
+budgets:
+  aggregate: &budget {points: 1, primitives: 1, peak_memory_bytes: 1, cook_seconds: 1, cache_bytes: 1, frames: 1, width: 1, height: 1, render_samples: 1}
+  stages: [{instance_id: seed, limits: *budget}]
+capability_instances:
+  - {instance_id: seed, capability_id: world_seed, capability_version: latest, context: SOP, inputs: {}, output_contracts: [terrain], variant_scope: [one, two, three], dependencies: [], requested_evidence: [graph]}
+variants:
+  - {variant_id: one, title: One, description: One, human_rating: null, selected_for_continuation: null}
+  - {variant_id: two, title: Two, description: Two, human_rating: null, selected_for_continuation: null}
+  - {variant_id: three, title: Three, description: Three, human_rating: null, selected_for_continuation: null}
+output_contracts: [{contract_id: terrain, producer_instance_id: seed, context: SOP, name: OUT_GEO, artifact_path: outputs/terrain.bgeo.sc}]
+evidence_gates: [{gate_id: graph, evidence_type: graph, required: true, status: pending}]
+human_decisions: [{decision_id: direction, prompt: Choose., winner: null, selected_for_continuation: null}]
+automatic_ranking: false
+winner: null
