@@ -1,8 +1,10 @@
 # Grinder Cycle G003 — Creative-First Living Biome
 
-- State: `PROPOSED — OWNER ACCEPTANCE AND LIVE AUDITION AUTHORITY REQUIRED`
-- Manifest version: `2.0-creative-first-draft`
+- State: `ACCEPTED — GATE V DRY MANIFEST PREPARATION ONLY`
+- Manifest version: `2.0-creative-first-accepted`
 - Proposed on: `2026-08-26`
+- Accepted on: `2026-08-27T11:33:30-05:00`
+- Acceptance record: `docs/grinder/receipts/G003-ACCEPTANCE.md`
 - Target horizon: Horizon 3 visible reference composition
 - Repository: `mlflautt/Houdini-Lab`
 - Base selector: protected-main commit carrying this manifest version; resolve and record its exact
