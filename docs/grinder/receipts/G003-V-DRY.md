@@ -202,16 +202,16 @@ env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
   /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython \
   -m pytest tests/hython/test_integration.py::test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_render \
   -o addopts='' -q
-1 passed in 1.09s
+1 passed in 0.86s
 
 env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
   /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython \
   scripts/run_g003_visual_audition.py \
-  --manifest '/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-b-manifest-license-ready.json' \
-  --approved-manifest-sha256 048c008a323790c6117088b4518a60149603f95343aca3cecc72401de40c6551 \
+  --manifest '/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-c-manifest-explicit-lop-frame.json' \
+  --approved-manifest-sha256 e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351 \
   --preflight-only
-pass; 115 calls, 36 renders, clean head 027d51c, Apprentice 22.0.368, ffmpeg 9.0.1,
-fresh scene, absent B root, mutation_performed=false
+pass; 115 calls, 36 renders, clean head 77e6542, Apprentice 22.0.368, ffmpeg 9.0.1,
+fresh scene, absent C root, mutation_performed=false
 ```
 
 The first Ruff attempt without `--no-cache` could not create `.ruff_cache` in the external worktree
