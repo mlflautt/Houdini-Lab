@@ -493,6 +493,8 @@ def test_relic_lookdev_skill_separates_stage_validation_and_external_render(tmp_
     assert [item["id"] for item in materials] == ["oxide", "amber", "ivory"]
     stage = calls[2]
     assert stage["arguments"]["binding_prim_path"] == "/World/Asset"
+    assert stage["arguments"]["source_sop_path"] == "/obj/RELIC/OUT_GEO"
+    assert stage["arguments"]["source_start_frame"] == 1.0
     assert stage["arguments"]["frame"] == 1.0
     render = calls[4]
     assert render["policy"]["allow_external_process"] is True

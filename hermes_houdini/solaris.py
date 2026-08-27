@@ -287,12 +287,32 @@ def populate_materialx_library(
         return result
 
 
+def _managed_sop_import(stage_node: Any, source_sop_path: str) -> Any:
+    matching = []
+    for ancestor in stage_node.inputAncestors():
+        sop_path_parm = ancestor.parm("soppath")
+        if (
+            ancestor.type().name().split("::", 1)[0] == "sopimport"
+            and sop_path_parm is not None
+            and sop_path_parm.evalAsString() == source_sop_path
+        ):
+            matching.append(ancestor)
+    if len(matching) != 1:
+        raise RuntimeError(
+            "expected exactly one upstream SOP Import for "
+            f"{source_sop_path}, found {len(matching)}"
+        )
+    return matching[0]
+
+
 def validate_stage(
     *,
     stage_node_path: str,
+    source_sop_path: str,
     expected_paths: list[str],
     binding_prim_path: str,
     max_prims: int = 10000,
+    source_start_frame: float = 1.0,
     frame: float | None = None,
 ) -> dict[str, Any]:
     """Compose one bounded USD stage at an explicit frame and verify its contracts."""
@@ -306,55 +326,106 @@ def validate_stage(
     if policy is not None and max_prims > policy.max_primitives:
         raise ValueError("max_prims exceeds command policy.max_primitives")
     frame_value = None if frame is None else _finite(frame, "frame")
-    if frame_value is not None and policy is not None and policy.max_frames < 1:
-        raise ValueError("command policy does not permit one explicit evaluation frame")
+    source_start_value = _finite(source_start_frame, "source_start_frame")
+    evaluation_frame = hou.frame() if frame_value is None else frame_value
+    if not source_start_value.is_integer() or not evaluation_frame.is_integer():
+        raise ValueError("source_start_frame and frame must be integer frames")
+    source_start = int(source_start_value)
+    source_end = int(evaluation_frame)
+    if source_start > source_end:
+        raise ValueError("source_start_frame must be <= frame")
+    source_frames = tuple(range(source_start, source_end + 1))
+    if policy is not None and len(source_frames) > policy.max_frames:
+        raise ValueError(
+            f"source warm-up needs {len(source_frames)} frames > policy {policy.max_frames}"
+        )
     paths = [_usd_path(path, "expected_paths item") for path in expected_paths]
     binding_path = _usd_path(binding_prim_path, "binding_prim_path")
     node = hou.node(stage_node_path)
     if node is None or node.type().category().name() != "Lop":
         raise ValueError(f"LOP stage node not found: {stage_node_path}")
+    source = hou.node(source_sop_path)
+    if source is None or source.type().category().name() != "Sop":
+        raise ValueError(f"source SOP node not found: {source_sop_path}")
     original_frame = hou.frame()
     started = time.monotonic()
-    with hou.InterruptableOperation(
-        "Hermes bounded USD stage composition",
-        "Composing one LOP stage",
-        open_interrupt_dialog=False,
-    ):
-        # Houdini 22's LOP API accepts an explicit cook frame.  Passing it here
-        # avoids global-frame state and, importantly, bypasses a previously
-        # cached stage cooked at another frame.
-        stage = node.stage() if frame_value is None else node.stage(frame=frame_value)
-    elapsed = time.monotonic() - started
-    if policy is not None and elapsed > policy.max_seconds:
-        raise RuntimeError(
-            f"USD stage composition took {elapsed:.3f}s > policy {policy.max_seconds:.3f}s"
-        )
-    if stage is None:
-        raise RuntimeError(f"LOP did not produce a USD stage: {stage_node_path}")
-    prims: list[Any] = []
-    type_counts: dict[str, int] = {}
-    for prim in stage.Traverse():
-        prims.append(prim)
-        if len(prims) > max_prims:
-            raise RuntimeError(f"USD stage exceeds max_prims={max_prims}")
-        type_name = prim.GetTypeName() or "untyped"
-        type_counts[type_name] = type_counts.get(type_name, 0) + 1
-    missing = [path for path in paths if not stage.GetPrimAtPath(path).IsValid()]
-    if missing:
-        raise RuntimeError(f"USD stage missing expected prims: {', '.join(missing)}")
-    binding_prim = stage.GetPrimAtPath(binding_path)
-    if not binding_prim.IsValid():
-        raise RuntimeError(f"USD binding prim missing: {binding_path}")
-    material, relationship = UsdShade.MaterialBindingAPI(binding_prim).ComputeBoundMaterial()
-    material_path = str(material.GetPath()) if material else ""
-    if not material_path:
-        raise RuntimeError(f"USD prim has no computed material binding: {binding_path}")
-    errors = list(node.errors())
-    if errors:
-        raise RuntimeError("LOP stage errors: " + "; ".join(errors))
-    warnings = list(node.warnings())
+    try:
+        with hou.InterruptableOperation(
+            "Hermes bounded USD stage composition",
+            "Composing one LOP stage",
+            open_interrupt_dialog=False,
+        ):
+            # A SOP Import LOP can retain an empty external-SOP result after a
+            # temporal validation call. Evaluate the declared source in the
+            # same explicit global-frame context used by SOP Import, force its
+            # output, then dirty and force the managed LOP output.
+            for source_frame in source_frames:
+                hou.setFrame(source_frame)
+                source.cook(force=True)
+            source_geometry = source.geometry()
+            if source_geometry is None:
+                raise RuntimeError(f"source SOP produced no geometry handle: {source_sop_path}")
+            source_points = len(source_geometry.points())
+            source_primitives = len(source_geometry.prims())
+            if policy is not None and source_points > policy.max_points:
+                raise RuntimeError(
+                    f"source SOP exceeds policy.max_points={policy.max_points}: {source_points}"
+                )
+            if policy is not None and source_primitives > policy.max_primitives:
+                raise RuntimeError(
+                    "source SOP exceeds "
+                    f"policy.max_primitives={policy.max_primitives}: {source_primitives}"
+                )
+            source_errors = list(source.errors())
+            if source_errors:
+                raise RuntimeError("source SOP errors: " + "; ".join(source_errors))
+            source_import = _managed_sop_import(node, source_sop_path)
+            source_import.invalidateOutput()
+            source_import.cook(force=True)
+            node.cook(force=True)
+            stage = node.stage()
+        elapsed = time.monotonic() - started
+        if policy is not None and elapsed > policy.max_seconds:
+            raise RuntimeError(
+                f"USD stage composition took {elapsed:.3f}s > policy {policy.max_seconds:.3f}s"
+            )
+        if stage is None:
+            raise RuntimeError(f"LOP did not produce a USD stage: {stage_node_path}")
+        prims: list[Any] = []
+        type_counts: dict[str, int] = {}
+        for prim in stage.Traverse():
+            prims.append(prim)
+            if len(prims) > max_prims:
+                raise RuntimeError(f"USD stage exceeds max_prims={max_prims}")
+            type_name = prim.GetTypeName() or "untyped"
+            type_counts[type_name] = type_counts.get(type_name, 0) + 1
+        missing = [path for path in paths if not stage.GetPrimAtPath(path).IsValid()]
+        if missing:
+            raise RuntimeError(f"USD stage missing expected prims: {', '.join(missing)}")
+        binding_prim = stage.GetPrimAtPath(binding_path)
+        if not binding_prim.IsValid():
+            raise RuntimeError(f"USD binding prim missing: {binding_path}")
+        material, relationship = UsdShade.MaterialBindingAPI(binding_prim).ComputeBoundMaterial()
+        material_path = str(material.GetPath()) if material else ""
+        relationship_path = str(relationship.GetPath()) if relationship else ""
+        if not material_path:
+            raise RuntimeError(f"USD prim has no computed material binding: {binding_path}")
+        errors = list(node.errors())
+        if errors:
+            raise RuntimeError("LOP stage errors: " + "; ".join(errors))
+        warnings = list(node.warnings())
+    finally:
+        if hou.frame() != original_frame:
+            hou.setFrame(original_frame)
     return {
         "stage_node_path": stage_node_path,
+        "source_import_lop_path": source_import.path(),
+        "source_sop_path": source_sop_path,
+        "source_geometry": {
+            "points": source_points,
+            "primitives": source_primitives,
+        },
+        "source_frames_cooked": list(source_frames),
         "frame": frame_value if frame_value is not None else original_frame,
         "restored_frame": original_frame,
         "seconds": round(elapsed, 6),
@@ -364,7 +435,7 @@ def validate_stage(
         "binding": {
             "prim_path": binding_path,
             "material_path": material_path,
-            "relationship": str(relationship.GetPath()) if relationship else "",
+            "relationship": relationship_path,
         },
         "warnings": warnings,
         "errors": errors,
@@ -471,7 +542,13 @@ def build_karma_render_rop(
 
 
 def render_karma_preview(
-    *, rop_path: str, output_path: str, log_path: str, frame: float = 1.0
+    *,
+    rop_path: str,
+    output_path: str,
+    log_path: str,
+    frame: float = 1.0,
+    source_sop_path: str | None = None,
+    source_start_frame: float | None = None,
 ) -> ToolResult:
     """Launch one explicitly approved, bounded Karma CPU preview via a managed USD Render ROP."""
     hou = get_hou()
@@ -507,15 +584,66 @@ def render_karma_preview(
     policy_w, policy_h = policy.max_resolution
     if width > policy_w or height > policy_h:
         raise ValueError("render resolution exceeds command policy.max_resolution")
-    if policy.max_frames < 1:
-        raise ValueError("command policy does not permit one render frame")
+    if (source_sop_path is None) != (source_start_frame is None):
+        raise ValueError("source_sop_path and source_start_frame must be provided together")
+    source = None
+    source_frames: tuple[int, ...] = ()
+    source_import = None
+    if source_sop_path is not None and source_start_frame is not None:
+        source = hou.node(source_sop_path)
+        if source is None or source.type().category().name() != "Sop":
+            raise ValueError(f"source SOP node not found: {source_sop_path}")
+        start_value = _finite(source_start_frame, "source_start_frame")
+        if not start_value.is_integer() or not spec["frame"].is_integer():
+            raise ValueError("source_start_frame and frame must be integer frames")
+        start_frame = int(start_value)
+        end_frame = int(spec["frame"])
+        if start_frame > end_frame:
+            raise ValueError("source_start_frame must be <= frame")
+        source_frames = tuple(range(start_frame, end_frame + 1))
+        stage_node = hou.node(rop.parm("loppath").evalAsString())
+        if stage_node is None or stage_node.type().category().name() != "Lop":
+            raise ValueError("managed USD Render ROP has no valid LOP stage")
+        source_import = _managed_sop_import(stage_node, source_sop_path)
+    required_frames = max(1, len(source_frames))
+    if policy.max_frames < required_frames:
+        raise ValueError(
+            f"render warm-up needs {required_frames} frames > policy {policy.max_frames}"
+        )
     output = Path(spec["output_path"])
     if output.exists():
         raise FileExistsError(f"refusing to overwrite existing render: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
-    rop.render(frame_range=(spec["frame"], spec["frame"], 1.0), verbose=True, output_progress=True)
-    elapsed = time.monotonic() - started
+    original_frame = hou.frame()
+    try:
+        if source is not None and source_import is not None:
+            for source_frame in source_frames:
+                hou.setFrame(source_frame)
+                source.cook(force=True)
+            source_geometry = source.geometry()
+            source_points = len(source_geometry.points())
+            source_primitives = len(source_geometry.prims())
+            if source_points > policy.max_points or source_primitives > policy.max_primitives:
+                raise RuntimeError("render source geometry exceeds command topology policy")
+            source_errors = list(source.errors())
+            if source_errors:
+                raise RuntimeError("render source SOP errors: " + "; ".join(source_errors))
+            source_import.invalidateOutput()
+            source_import.cook(force=True)
+        rop.render(
+            frame_range=(spec["frame"], spec["frame"], 1.0),
+            verbose=True,
+            output_progress=True,
+        )
+        elapsed = time.monotonic() - started
+        if elapsed > policy.max_seconds:
+            raise RuntimeError(
+                f"render plus source warm-up took {elapsed:.3f}s > policy {policy.max_seconds:.3f}s"
+            )
+    finally:
+        if hou.frame() != original_frame:
+            hou.setFrame(original_frame)
     if not output.is_file():
         raise RuntimeError(f"Karma render completed without expected artifact: {output}")
     size = output.stat().st_size
@@ -526,6 +654,13 @@ def render_karma_preview(
         "rop_path": rop_path,
         "seconds": round(elapsed, 6),
         "bytes": size,
+        "source_sop_path": source_sop_path,
+        "source_frames_cooked": list(source_frames),
+        "source_geometry": (
+            {"points": source_points, "primitives": source_primitives}
+            if source is not None
+            else None
+        ),
         **spec,
     }
     _append_jsonl(log_path, _record("karma_preview", payload))

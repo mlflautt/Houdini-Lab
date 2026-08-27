@@ -73,6 +73,10 @@
       "type": "number",
       "default": 1
     },
+    "source_start_frame": {
+      "type": "number",
+      "default": 1
+    },
     "time_limit": {
       "type": "number",
       "min": 1,

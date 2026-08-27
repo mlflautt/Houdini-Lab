@@ -61,6 +61,22 @@ def test_approved_manifest_validation_is_pure_and_preserves_human_authority(tmp_
             ),
             "must be inside",
         ),
+        (
+            lambda value: next(
+                call
+                for call in value["methods"][0]["calls"]
+                if call["tool"] == "render.karma.preview"
+            )["arguments"].update(source_start_frame=2.0),
+            "warm-up start drift",
+        ),
+        (
+            lambda value: next(
+                call
+                for call in value["methods"][1]["calls"]
+                if call["tool"] == "solaris.stage.validate"
+            )["policy"].update(max_frames=1),
+            "warm-up budget drift",
+        ),
     ],
 )
 def test_approved_manifest_refuses_policy_human_and_path_drift(

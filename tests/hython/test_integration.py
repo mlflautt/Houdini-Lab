@@ -557,6 +557,72 @@ def test_particle_calligraphy_skill_validates_native_temporal_fixture(tmp_path):
             geo.destroy()
 
 
+def test_particle_calligraphy_lookdev_recooks_declared_source_after_temporal_validation(
+    tmp_path,
+):
+    original_frame = hou.frame()
+    hou.setFrame(1)
+    obj = hou.node("/obj")
+    geo = obj.createNode(
+        "geo", node_name="HERMES_CALLIGRAPHY_LOP_FRAME", run_init_scripts=False
+    )
+    calligraphy = load_skill("skills/motion.particle_calligraphy")
+    calligraphy_calls = calligraphy.plan(
+        parent_node_id=geo.path(),
+        artifact_dir=str(tmp_path / "calligraphy"),
+        run_id="hython_lop_frame",
+        start_frame=1,
+        end_frame=24,
+        seed=5201,
+    )
+    lookdev = load_skill("skills/lookdev.relic_stage")
+    lookdev_calls = lookdev.plan(
+        source_sop_path=f"{geo.path()}/OUT_HYTHON_LOP_FRAME_COMPARE",
+        artifact_dir=str(tmp_path / "lookdev"),
+        run_id="hython_lop_cached",
+        asset_prim_path="/World/HythonCalligraphy",
+        candidate_index=2,
+        width=320,
+        height=180,
+        frame=24,
+        render_preview=False,
+    )
+    dispatcher = Dispatcher(policy=default_policy([str(tmp_path)]))
+    try:
+        calligraphy_results = [
+            _dispatch_planned_call(dispatcher, call) for call in calligraphy_calls
+        ]
+        assert all(result.status.value == "success" for result in calligraphy_results), [
+            result.errors for result in calligraphy_results
+        ]
+        setup_results = [
+            _dispatch_planned_call(dispatcher, call) for call in lookdev_calls[:2]
+        ]
+        assert all(result.status.value == "success" for result in setup_results), [
+            result.errors for result in setup_results
+        ]
+        stage_node = hou.node("/stage/OUT_HYTHON_LOP_CACHED_STAGE")
+        frame_one_stage = stage_node.stage(frame=1)
+        assert not frame_one_stage.GetPrimAtPath("/World/HythonCalligraphy").IsValid()
+
+        validation = _dispatch_planned_call(dispatcher, lookdev_calls[2])
+        assert validation.status.value == "success", validation.errors
+        assert validation.data["frame"] == 24
+        assert validation.data["source_geometry"]["points"] > 0
+        assert validation.data["source_geometry"]["primitives"] > 0
+        assert hou.frame() == pytest.approx(1)
+    finally:
+        hou.setFrame(original_frame)
+        stage = hou.node("/stage")
+        for node in reversed(stage.children()):
+            if node.name().startswith("HYTHON_LOP_CACHED") or node.name().startswith(
+                "OUT_HYTHON_LOP_CACHED"
+            ):
+                node.destroy()
+        if geo.parent() is not None:
+            geo.destroy()
+
+
 def test_particle_calligraphy_applies_project_relative_baked_envelope(tmp_path):
     obj = hou.node("/obj")
     geo = obj.createNode("geo", node_name="HERMES_CALLIGRAPHY_AUDIO", run_init_scripts=False)

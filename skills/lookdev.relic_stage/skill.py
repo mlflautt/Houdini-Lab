@@ -25,6 +25,7 @@ def plan(
     width: int = 640,
     height: int = 360,
     frame: float = 1.0,
+    source_start_frame: float = 1.0,
     time_limit: float = 30.0,
     max_threads: int = 4,
     render_preview: bool = True,
@@ -39,6 +40,11 @@ def plan(
         raise ValueError("artifact_dir must be absolute")
     if not _RUN_ID.fullmatch(run_id):
         raise ValueError("run_id must be 1-24 filename-safe characters")
+    if not float(frame).is_integer() or not float(source_start_frame).is_integer():
+        raise ValueError("frame and source_start_frame must be integer frames")
+    if source_start_frame > frame:
+        raise ValueError("source_start_frame must be <= frame")
+    source_frame_count = int(frame) - int(source_start_frame) + 1
 
     run_code = run_id.upper().replace("-", "_")
     checkpoint_dir = artifacts / "checkpoints"
@@ -111,15 +117,16 @@ def plan(
         max_seconds=30,
         max_primitives=max_prims,
         max_memory_bytes=max_memory,
+        max_frames=source_frame_count,
         max_resolution=(width, height),
     )
     render_policy = Policy(
         risk=RiskClass.EXTERNAL,
         allow_external_process=True,
-        max_seconds=time_limit,
+        max_seconds=time_limit + 30.0,
         max_primitives=max_prims,
         max_memory_bytes=max_memory,
-        max_frames=1,
+        max_frames=source_frame_count,
         max_output_bytes=536_870_912,
         max_resolution=(width, height),
     )
@@ -170,6 +177,7 @@ def plan(
             "solaris.stage.validate",
             {
                 "stage_node_path": stage_output_path,
+                "source_sop_path": source_sop_path,
                 "expected_paths": [
                     asset_prim_path,
                     *[material["material_path"] for material in materials],
@@ -179,6 +187,7 @@ def plan(
                 ],
                 "binding_prim_path": asset_prim_path,
                 "max_prims": max_prims,
+                "source_start_frame": source_start_frame,
                 "frame": frame,
             },
             request_id=f"{run_id}-usd-validate",
@@ -215,6 +224,8 @@ def plan(
                         "output_path": str(preview_path),
                         "log_path": str(render_log),
                         "frame": frame,
+                        "source_sop_path": source_sop_path,
+                        "source_start_frame": source_start_frame,
                     },
                     request_id=f"{run_id}-karma-render",
                     policy=render_policy,

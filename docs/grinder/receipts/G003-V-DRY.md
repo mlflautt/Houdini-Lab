@@ -1,12 +1,12 @@
 # Grinder Receipt G003-V-DRY — Visual Audition Plan
 
-- State: `dry-ready C — A/B stopped safely at USD frame contract; awaiting exact C approval`
+- State: `dry-ready E — A/B/C stopped safely at USD frame contract; awaiting exact E approval`
 - Branch: `codex/grinder-g003-v-visual-audition`
 - Accepted protected-main base: `df476c1af5db0cda4b80d8cc7ff5bd384cb51389`
 - Acceptance PR: `#25`
 - Accepted-base final-main CI: `33094029963`, success
 - Runtime target: Houdini Apprentice `22.0.368`, Python `3.13`, Karma CPU
-- Live work performed: stopped A and B proofs through registered call 8; no render launched
+- Live work performed: stopped A, B, and C proofs through registered call 8; no render launched
 
 ## Delivered planning code
 
@@ -33,13 +33,13 @@ agents.
 ## Authoritative ignored manifest
 
 - Path:
-  `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-c-manifest-explicit-lop-frame.json`
+  `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-e-manifest-sequential-source-cook.json`
 - Canonical approval-subject SHA-256:
-  `e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351`
+  `e7baa437bb0804adac5001c3cb4ab11efe550d6fa5d1f350e1b6cfd529377c3f`
 - Exact file-byte SHA-256:
-  `7f6ec3746e762dd915130c372ea2c352381839152f09d80935925a87f01a027d`
+  `162c10c88c0c35ce677b77c030dde3e9864a9d3bb896c5726327f12c87140104`
 - Planned live root:
-  `/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-c`
+  `/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-e`
 - Live-root existence at planning time: absent
 - Automatic execution: false
 
@@ -61,6 +61,16 @@ The license-ready B manifest also remains preserved at
 `/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-b-manifest-license-ready.json`. Its
 canonical hash `048c008a323790c6117088b4518a60149603f95343aca3cecc72401de40c6551` was approved with the exact
 owner wording `proceed` and consumed by the stopped B attempt below; it is not reusable for C.
+
+The explicit-LOP-frame C manifest remains preserved at
+`/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-c-manifest-explicit-lop-frame.json`.
+Its canonical hash `e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351` was approved with the exact
+owner wording `proceed` and consumed by the stopped C attempt below; it is not reusable for E.
+
+An unapproved D draft remains preserved at
+`/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-d-manifest-sequential-source-cook.json`.
+It was superseded before live authority because its external render policy did not separately
+budget the 30-second husk ceiling and sequential source warm-up. No D root was created.
 
 ## Approved A execution and safe stop
 
@@ -108,6 +118,22 @@ official `hou.LopNode.stage` contract accepts an explicit `frame` argument. The 
 regression to cache an empty frame-1 stage before validating the populated frame-11 stage. C uses
 a new manifest and untouched root.
 
+## Approved C execution and safe stop
+
+The owner approved C with the exact word `proceed`. The permanent runner again passed its complete
+preflight. Calls 1–8 succeeded and call 9 stopped before any render on the same absent asset prim.
+C preserved 2,364,078 bytes with peak RSS 626,556,928 bytes and launched zero render calls.
+
+The full native regression then reproduced the live sequence rather than substituting a simple
+Switch SOP. It proved Particle Calligraphy is stateful: after frame restoration, a direct jump to
+frame 24 does not replay frames 1–23, even if the target SOP and LOP are individually forced.
+The E contract therefore declares `source_start_frame`, sequentially cooks every source frame
+through the requested target, invalidates the exact upstream SOP Import LOP, composes the stage,
+and restores the original frame. Every sparse render call carries the same source path, warm-up
+start, target frame, and matching `policy.max_frames`; the pure manifest validator rejects any
+drift in those fields. A Hython regression using the actual Particle Calligraphy graph now passes
+after caching an empty frame-1 USD stage and validating the populated frame-24 stage.
+
 ## Exact planned creative evidence
 
 Stable order:
@@ -121,7 +147,10 @@ Stable order:
 All three use frames `1–24` and render frames `2,4,6,8,10,12,14,16,18,20,22,24`. The manifest
 contains 115 registered calls: 37 Particle Calligraphy, 40 Differential Growth, and 38 Kinetic
 Instances. Exactly 36 calls launch one-frame Karma CPU renders at `640×360`, at most 16 path-traced
-samples, four threads, and 30 seconds per frame.
+samples, four threads, a 30-second husk ceiling, and a 35-second total call ceiling. Before each
+sparse frame, the registered render tool
+sequentially evaluates its declared source from frame 1 through the target; 468 source-frame cooks
+are explicit across the three methods rather than relying on hidden simulation state.
 
 The global ceilings are 20 minutes aggregate render time, 4 GiB peak memory, 1 GiB output, and zero
 retained disk cache. Capability ceilings remain 100,000 points/primitives for calligraphy, 50,000
@@ -224,14 +253,14 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 | Rung | Status | Evidence |
 |---|---|---|
 | acceptance/source | pass | exact protected-main base and successful CI |
-| pure dry manifest | pass | deterministic C canonical and byte hashes; fresh C root absent |
+| pure dry manifest | pass | deterministic E canonical and byte hashes; fresh E root absent |
 | registered capability identities | pass | exact four skill-loader identities |
 | portable live-runner preflight | pass | pure contract plus clean Hython/dispatcher/runtime/tool preflight; no mutation |
 | H22 build/license/operator probe | pass | Apprentice acquired; exact build, types, tuples, and unchanged scene state observed |
-| graph edit and cook | partial/stopped | eight calls passed in both A and B; both stopped at call 9 |
-| scene save | pass for stopped A/B | non-overwriting partial Calligraphy `.hipnc` scenes preserved |
-| Karma and pixels | pending | A/B were authorized but stopped before render; C is not yet authorized |
-| preview/contact sheet | pending | no source pixels yet; A/B postprocessing did not run |
+| graph edit and cook | partial/stopped | eight calls passed in A/B/C; all stopped at call 9 |
+| scene save | pass for stopped A/B/C | non-overwriting partial Calligraphy `.hipnc` scenes preserved |
+| Karma and pixels | pending | A/B/C were authorized but stopped before render; E is not yet authorized |
+| preview/contact sheet | pending | no source pixels yet; A/B/C postprocessing did not run |
 | external model/plugin | not applicable | absent from plan |
 | human motion selection | pending | requires authentic Gate V review |
 
@@ -239,6 +268,6 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 
 The runtime gate now passes. No graph, cook, render, or scene action may begin until the owner gives
 explicit approval bound to canonical manifest hash
-`e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351` and exact live root
-`/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-c`. Approval does not select a creative
+`e7baa437bb0804adac5001c3cb4ab11efe550d6fa5d1f350e1b6cfd529377c3f` and exact live root
+`/Users/m1/Houdini Lab/.hermes/g003/gate-v/g003-v-20260827-e`. Approval does not select a creative
 winner and does not authorize continuation into downstream G003 lanes.

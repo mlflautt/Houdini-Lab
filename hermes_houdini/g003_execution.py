@@ -102,6 +102,30 @@ def validate_approved_manifest(
         raise ValueError("presentation capability order drift")
     if [item.get("presentation_index") for item in methods] != [0, 1, 2]:
         raise ValueError("presentation indices must remain 0, 1, 2")
+    for method_index, method in enumerate(methods):
+        method = _mapping(method, f"methods[{method_index}]")
+        source_sop_path = str(method.get("source_sop_path", ""))
+        method_calls = method.get("calls")
+        if not isinstance(method_calls, list):
+            raise ValueError(f"methods[{method_index}].calls must be a list")
+        for call_index, call in enumerate(method_calls):
+            if call.get("tool") not in {"solaris.stage.validate", "render.karma.preview"}:
+                continue
+            arguments = _mapping(
+                call.get("arguments"),
+                f"methods[{method_index}].calls[{call_index}].arguments",
+            )
+            policy = _mapping(
+                call.get("policy"),
+                f"methods[{method_index}].calls[{call_index}].policy",
+            )
+            frame = int(arguments.get("frame", 0))
+            if arguments.get("source_sop_path") != source_sop_path:
+                raise ValueError("stateful source SOP path drift")
+            if arguments.get("source_start_frame") != 1.0:
+                raise ValueError("stateful source warm-up start drift")
+            if policy.get("max_frames") != frame:
+                raise ValueError("stateful source warm-up budget drift")
     calls = flatten_manifest_calls(manifest)
     if len(calls) != EXPECTED_CALL_COUNT:
         raise ValueError(f"expected {EXPECTED_CALL_COUNT} registered calls, found {len(calls)}")

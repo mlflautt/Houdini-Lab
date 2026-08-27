@@ -53,6 +53,9 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
         render_calls = [call for call in method["calls"] if call["tool"] == "render.karma.preview"]
         assert len(render_calls) == 12
         assert [int(call["arguments"]["frame"]) for call in render_calls] == list(SAMPLE_FRAMES)
+        assert all(call["arguments"]["source_sop_path"] == method["source_sop_path"] for call in render_calls)
+        assert all(call["arguments"]["source_start_frame"] == 1.0 for call in render_calls)
+        assert [call["policy"]["max_frames"] for call in render_calls] == list(SAMPLE_FRAMES)
         assert all(call["policy"]["allow_external_process"] for call in render_calls)
         assert len(method["render_paths"]) == 12
     calligraphy_stage = next(

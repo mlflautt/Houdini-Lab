@@ -37,6 +37,11 @@ The runner restores the frame after every envelope, checks `CANCEL` between call
 request/result/approval/frame transition as JSONL, enforces aggregate time/memory/byte ceilings,
 refuses existing outputs, and leaves creative selection fields null.
 
+Stateful SOP sources never rely on a prior command's cache. Stage validation and each sparse render
+declare the exact source SOP, warm-up start, target frame, and frame budget; the registered tools
+sequentially replay that range, invalidate the matching SOP Import LOP, and restore the caller's
+frame. The Houdini-free validator rejects any source-path or warm-up-budget drift.
+
 ## Harness procedure
 
 From the dedicated clean worktree:
