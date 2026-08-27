@@ -1,50 +1,77 @@
-# G003 Launch Checklist
+# G003 Creative-First Launch Checklist
 
-Do not execute this checklist while `CYCLE_MANIFEST.md` is `PROPOSED` or motion is `UNSET`.
+Do not skip gates. A later gate never retroactively authorizes an earlier or broader action.
 
-## 1. Freeze owner decision and baseline
+## 1. Merge and accept the planning packet
 
-- Record the owner's exact motion sentence in the manifest and freeze ID/version, candidate outputs,
-  risk, frame/resource ceilings, and any native-only restriction.
-- Obtain explicit cycle acceptance and change state to `ACCEPTED` with date/instruction.
-- Fetch/prune origin; verify `origin/main` and all lane bases equal the manifest's full SHA.
-- Verify clean root, `gh auth status`, SSH greeting, pure/Ruff baseline, H22.0.368 installation and
-  Apprentice license. Do not install plugins or alter global Houdini configuration.
+- Merge manifest version `2.0-creative-first` through protected main.
+- Record the exact protected-main commit carrying the accepted manifest and its file hash.
+- Verify clean canonical checkout, origin/main equality, `gh api user`, SSH greeting, pure/Ruff
+  baseline, Houdini 22.0.368 installation, and Apprentice license.
+- Record the owner's explicit cycle-acceptance words. Acceptance permits repository development and
+  read-only probes only.
 
-## 2. Create isolated worktrees
+## 2. Prepare Gate V visual audition
 
-```bash
-git fetch origin --tags --prune
-git worktree add /Users/m1/houdini-g003-a -b codex/grinder-g003-a-run-governor 44727325ecb5262a613d259d6db2ff23274ed211
-git worktree add /Users/m1/houdini-g003-b -b codex/grinder-g003-b-sop-composition 44727325ecb5262a613d259d6db2ff23274ed211
-git worktree add /Users/m1/houdini-g003-c -b codex/grinder-g003-c-solaris-assembly 44727325ecb5262a613d259d6db2ff23274ed211
-git worktree add /Users/m1/houdini-g003-d -b codex/grinder-g003-d-run-receipt 44727325ecb5262a613d259d6db2ff23274ed211
-```
-
-Verify each cwd, branch, clean status, exact HEAD, remote, accepted manifest, and lane brief. Create a
-project `.venv` in each worktree if needed. Planning files must already be merged to main before
-dispatch; do not point workers at an unmerged planning checkout.
-
-## 3. Dispatch and readiness
-
-Paste one sentence per lane from `COPY_PASTE_PROMPTS.md` into four separate Codex sessions. A lane is
-ready only when owned-path diff, exact base/head, targeted/full pure, Ruff, read-only probes where
-required, committed receipt, pushed branch, and unmerged component PR are all verified. Runtime or
-creative claims must be pending/not applicable. Return defects to the owning lane.
-
-## 4. Integration worktree
-
-After all four lanes are ready:
+Create one isolated audition worktree from the accepted commit:
 
 ```bash
-git worktree add /Users/m1/houdini-g003-integration -b codex/grinder-g003-integration 44727325ecb5262a613d259d6db2ff23274ed211
+git worktree add /Users/m1/houdini-g003-v-audition -b codex/grinder-g003-v-visual-audition <accepted-full-sha>
 ```
 
-Give the captain the four PR URLs/full heads/receipts and `INTEGRATION_CAPTAIN.md`. Dispatching the
-captain does not pre-authorize live mutation. The captain must stop after the final dry run manifest
-and obtain exact graph/data approval before executing it.
+Give the operator `AUDITION_OPERATOR.md`. The operator first produces a no-side-effect execution
+manifest and stops. Verify exact scene/output paths, hashes, graph changes, cooks, frames, resolution,
+samples, time, memory, bytes, checkpoints, rollback, and cancellation. Only then request Gate V live
+authority using `VISUAL_AUDITION.md`.
 
-## 5. Completion boundary
+After execution, independently inspect the receipt, actual artifact bytes, temporal nonduplication,
+stable order, and mechanics. Merge the receipt/code PR through protected main only after CI.
 
-Merge only through protected main and verify final-main CI. Do not tag `v0.40.0`, publish a GitHub
-release, enable a runner, install plugins, run Karma, or choose a biome without separate authority.
+## 3. Human Gate H1 and launch record
+
+- Present all three authentic playable previews and the contact sheet to the owner.
+- Bind the owner's exact words to all three artifact hashes.
+- Record one continuation from `MOTION_DECISION.md`, an explicit decline, or a separately accepted
+  hybrid amendment.
+- Freeze exact capability ID/version, candidate outputs, seeds, timing, risk, ceilings, accepted
+  protected-main lane base, worktree paths, and branches in `docs/grinder/receipts/G003-LAUNCH.md`.
+- Merge that launch record through protected main. Lane worktrees use the frozen base named in it;
+  they do not silently move to a newer main.
+
+## 4. Create creative-discipline worktrees
+
+```bash
+git worktree add /Users/m1/houdini-g003-a -b codex/grinder-g003-a-world-composition <frozen-full-sha>
+git worktree add /Users/m1/houdini-g003-b -b codex/grinder-g003-b-motion-integration <frozen-full-sha>
+git worktree add /Users/m1/houdini-g003-c -b codex/grinder-g003-c-lookdev-presentation <frozen-full-sha>
+git worktree add /Users/m1/houdini-g003-d -b codex/grinder-g003-d-creative-review <frozen-full-sha>
+```
+
+Verify cwd, branch, clean status, exact HEAD, remote, launch record, and owned paths in each. Paste
+the one-line prompts from `COPY_PASTE_PROMPTS.md` into four separate Codex sessions.
+
+A lane is ready only after exact base/head, owned diff, targeted/full pure, Ruff, recipe/current-build
+probes where required, factual receipt, pushed branch, component PR, and green CI are independently
+verified. Lanes produce no live/pixel/taste claims.
+
+## 5. Integration and visible Living Biome
+
+After lanes A-D are ready:
+
+```bash
+git worktree add /Users/m1/houdini-g003-integration -b codex/grinder-g003-integration <frozen-full-sha>
+```
+
+Give the captain four PR URLs/full heads/receipts, Gate V/H1/launch records, and
+`INTEGRATION_CAPTAIN.md`. Dispatch does not authorize scene mutation or pixels. The captain stops for
+an exact graph/data approval and again for an exact visual approval.
+
+The owner then receives authentic Living Biome stills and motion previews. The captain remains open
+for H2 critique, proposes bounded R1 hypotheses, requests exact revision authority, and produces one
+non-overwriting before/after revision.
+
+## 6. Completion boundary
+
+Integrate only through protected main and verify final-main CI. Do not tag `v0.40.0`, publish a
+release, install plugins, use external models, transfer downstream, or choose a creative winner
+without separate owner authority.

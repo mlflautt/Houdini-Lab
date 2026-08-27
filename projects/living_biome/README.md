@@ -7,7 +7,9 @@ and Lunar Basin in equal source order with blank human fields.
 `motion.particle_calligraphy@1.0.0` is present only as the G002 technical motion fixture. Its
 `human_selected_contract` output name is an existing capability contract; it does not mean that a
 human selected Particle Calligraphy for G003. The `choose-motion-system` decision remains blank,
-and G003 must present viable registered motion options to the owner before freezing its manifest.
+and G003 must render all three registered motion options as authentic, equal-status temporal studies
+before the owner chooses a continuation. Capability prose or an old sprint render is not sufficient
+creative evidence.
 
 The World Seed capability is `world.world_seed_atlas_labs@1.0.0` because its declared
 `three_native_worlds` contract exactly matches the audited project adapter. G002 neither enables

@@ -117,7 +117,17 @@ The Horizon 3 project-compiler kernel adds a pure `hermes.houdini.project.v1` sp
 versioned contract adapters, deterministic checkpointed DAG compilation, and a coherent dry
 observer/drift index. Use `scripts/plan_project.py` to validate, plan, or observe the included
 [`Living Biome`](projects/living_biome/README.md) fixture. These commands never start Houdini or
-execute a plan; graph, cook, pixel, and human evidence remain separate future gates.
+execute a plan. The proposed
+[`G003 creative-first cycle`](docs/grinder/cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md)
+begins with three authentic motion auditions, then develops world composition, temporal design,
+lookdev/presentation, and creative review as isolated lanes. Its integrated exit requires visible
+still and motion evidence plus one owner-directed before/after revision; graph, cook, viewport, and
+Karma remain separately authorized actions.
+
+Any Codex, Hermes, or other harness entering for creative work should begin with
+[`Creative Agent Start Here`](docs/CREATIVE_AGENT_START_HERE.md). It defines the shared
+intent → alternatives → authentic preview → human critique → bounded revision → reusable-method
+loop and the minimum evidence required before a visual or motion claim is considered real.
 
 The first executable creative skill is `model.fractal_relic` (Sprint 4). It creates three
 deterministic native-SOP alternatives, keeps them together in `OUT_COMPARISON`, and exposes a

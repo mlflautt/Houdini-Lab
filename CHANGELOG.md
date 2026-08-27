@@ -13,6 +13,9 @@ distinguish pure tests, Houdini runtime tests, authentic pixels, external models
   confined optional outputs; it has no execution mode.
 - A three-direction Living Biome dry fixture with exact capability versions, bounded stages,
   stable hashes, and blank human-owned decisions.
+- A creative-first G003 packet that requires a three-way authentic motion audition before selection,
+  organizes parallel work by world, motion, lookdev, and review disciplines, and requires an
+  integrated animated comparison plus one owner-directed non-overwriting revision.
 
 ### Evidence
 
@@ -20,6 +23,8 @@ distinguish pure tests, Houdini runtime tests, authentic pixels, external models
 - Houdini regression: 52 Hython integration items passed on Apprentice 22.0.368.
 - Dry plan: 15 stages, three equal-status variants, zero blockers, and no automatic execution,
   ranking, rating, or winner. Live project construction and visual/human evidence remain unrun.
+- G003 visual audition, integrated scene, animated pixels, and owner critique remain proposed and
+  require their recorded live/render/human gates; planning alone does not claim those outputs.
 
 ## 0.35.0 — 2026-08-25
 
