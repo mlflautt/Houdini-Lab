@@ -23,11 +23,12 @@ dev = ["pytest>=8", "ruff>=0.5"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["hermes_houdini*", "bridge*", "recipes*", "skills", "skills._lib", "hda*"]
+include = ["hermes_houdini*", "bridge*", "recipes*", "project_contracts*", "skills", "skills._lib", "hda*"]
 namespaces = false
 
 [tool.setuptools.package-data]
 recipes = ["sop/*.yaml", "lop/*.yaml", "cop/*.yaml", "top/*.yaml"]
+project_contracts = ["adapters/*.yaml"]
 skills = ["*/README.md", "*/skill.py", "*/skill.yaml"]
 hda = ["source/*/manifest.yaml"]
 

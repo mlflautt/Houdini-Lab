@@ -205,7 +205,7 @@ hash `1945c004d4d3c555f03c7396dc7aebfc8ed4546d336b27d5f87ebd41b474c196`.
 The release matrix keeps PDG, simulation, viewport, Karma, plugin, bridge, model, downstream, and
 human statuses separate; no unrun rung is inferred. The self-hosted runner remains disabled.
 
-### Horizon 3 — Project compiler and compositional graphs (`v0.40` candidate)
+### Horizon 3 — Project compiler and compositional graphs (`v0.40` candidate; kernel verified)
 
 Outcome: existing skills compose into coherent projects rather than remaining an anthology of
 individual studies.
@@ -230,6 +230,11 @@ short shot. Preserve three equal-status biome directions and ask the user which 
 
 Exit evidence: rebuild the project from its specification and source recipes; compare hashes and
 declared tolerances; open a readable scene in which an artist can continue every major layer.
+
+Kernel evidence: G002 dry-compiles the three-direction Living Biome specification into a stable
+15-stage DAG with exact capability/adapter identities, explicit budgets and blockers, a coherent
+observer index, and no execution authority. The live readable scene, cooked data, authentic pixels,
+and owner motion/lineage selections remain G003 work.
 
 ### Horizon 4 — Human-guided refinement and creative memory (`v0.50` candidate)
 
