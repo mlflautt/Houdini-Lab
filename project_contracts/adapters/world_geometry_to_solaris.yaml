@@ -1,0 +1,18 @@
+{
+  "schema": "hermes.houdini.project_adapter.v1",
+  "adapter_id": "project.world_geometry_to_solaris",
+  "version": "1.0.0",
+  "from_contract": "three_native_worlds",
+  "to_contract": "usd_stage",
+  "source_context": "SOP",
+  "target_context": "LOP",
+  "recipe": {"id": "lop.world_seed_atlas_stage", "version": "1.0.0"},
+  "risk": "external",
+  "approvals": ["explicit_external_risk_approval"],
+  "budget_effect": {"cook_scope": "single_three_world_lop_stage", "max_primitives": 25000, "max_seconds": 60, "render_frames": 0},
+  "tested_builds": ["22.0.368"],
+  "license_modes": ["houdini-apprentice-noncommercial"],
+  "optional_dependencies": [],
+  "evidence_status": "pending",
+  "source_audit": ["skills/world.world_seed_atlas_labs/skill.yaml", "recipes/lop/world_seed_atlas_stage.yaml"]
+}

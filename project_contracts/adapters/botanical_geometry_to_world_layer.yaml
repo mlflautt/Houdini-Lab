@@ -1,0 +1,18 @@
+{
+  "schema": "hermes.houdini.project_adapter.v1",
+  "adapter_id": "project.botanical_geometry_to_world_layer",
+  "version": "1.0.0",
+  "from_contract": "selected_botanical_contract",
+  "to_contract": "world_layer_contract",
+  "source_context": "SOP",
+  "target_context": "SOP",
+  "native_fallback": "g003.native_merge_botanical_world_layer",
+  "risk": "medium",
+  "approvals": ["explicit_medium_risk_approval"],
+  "budget_effect": {"cook_scope": "single_selected_botanical_merge", "max_points": 250000, "max_primitives": 250000, "max_seconds": 90},
+  "tested_builds": ["22.0.368"],
+  "license_modes": ["houdini-apprentice-noncommercial"],
+  "optional_dependencies": [],
+  "evidence_status": "pending",
+  "source_audit": ["skills/grow.botanical_grammar/skill.yaml", "recipes/sop/lsystem_botanical.yaml"]
+}
