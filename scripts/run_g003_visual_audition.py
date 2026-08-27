@@ -28,8 +28,8 @@ from hermes_houdini.policy import default_policy
 from hermes_houdini.schemas.command import CommandEnvelope
 
 
-def _emit(kind: str, **values: object) -> None:
-    print(json.dumps({"event": kind, **values}, sort_keys=True, default=str), flush=True)
+def _emit(event: str, **values: object) -> None:
+    print(json.dumps({"event": event, **values}, sort_keys=True, default=str), flush=True)
 
 
 def _peak_rss_bytes() -> int:
