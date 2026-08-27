@@ -55,6 +55,14 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
         assert [int(call["arguments"]["frame"]) for call in render_calls] == list(SAMPLE_FRAMES)
         assert all(call["policy"]["allow_external_process"] for call in render_calls)
         assert len(method["render_paths"]) == 12
+    calligraphy_stage = next(
+        call for call in methods[0]["calls"] if call["tool"] == "solaris.stage.validate"
+    )
+    differential_stage = next(
+        call for call in methods[1]["calls"] if call["tool"] == "solaris.stage.validate"
+    )
+    assert calligraphy_stage["arguments"]["frame"] == 24
+    assert differential_stage["arguments"]["frame"] == 24
     assert methods[2]["mode"] == "native_only_mops_false"
     assert manifest["postprocess"][0]["kind"] == "stable_order_contact_sheet"
     assert manifest["postprocess"][0]["labels"] == [

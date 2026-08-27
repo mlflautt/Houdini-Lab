@@ -264,12 +264,20 @@ def test_bundled_recipe_nodes_match_pinned_houdini_build():
 
 
 def test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_render(tmp_path):
+    original_frame = hou.frame()
+    hou.setFrame(1)
     obj = hou.node("/obj")
     geo = obj.createNode("geo", node_name="HERMES_LOOKDEV_SOURCE", run_init_scripts=False)
     sphere = geo.createNode("sphere", node_name="SOURCE_RELIC")
     sphere.parmTuple("rad").set((1.0, 1.0, 1.0))
+    empty = geo.createNode("add", node_name="EMPTY_AT_START")
+    animated = geo.createNode("switch", node_name="ANIMATED_SOURCE")
+    animated.setInput(0, empty)
+    animated.setInput(1, sphere)
+    animated.parm("input").setExpression("$F > 1", language=hou.exprLanguage.Hscript)
     source = geo.createNode("null", node_name="OUT_GEO")
-    source.setInput(0, sphere)
+    source.setInput(0, animated)
+    assert len(source.geometry().prims()) == 0
     skill = load_skill("skills/lookdev.relic_stage")
     calls = skill.plan(
         source_sop_path=source.path(),
@@ -278,6 +286,7 @@ def test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_re
         candidate_index=1,
         width=320,
         height=180,
+        frame=11,
         render_preview=False,
     )
     dispatcher = Dispatcher(policy=default_policy([str(tmp_path)]))
@@ -303,6 +312,9 @@ def test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_re
             for builder in builders
         )
         stage_result = results[2].data
+        assert stage_result["frame"] == 11
+        assert stage_result["restored_frame"] == 1
+        assert hou.frame() == 1
         assert stage_result["prim_count"] > 0
         assert stage_result["binding"]["material_path"] == "/materials/HYTHON_LOOKDEV_amber"
         assert stage_result["errors"] == []
@@ -314,6 +326,7 @@ def test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_re
         assert manifest["metadata"]["selection"]["automatic_ranking"] is False
         assert list((tmp_path / "scenes").glob("lookdev_hython_lookdev_final_v*.hipnc"))
     finally:
+        hou.setFrame(original_frame)
         for node in reversed(created_lops):
             if node is not None and node.parent() is not None:
                 node.destroy()

@@ -179,6 +179,7 @@ def plan(
                 ],
                 "binding_prim_path": asset_prim_path,
                 "max_prims": max_prims,
+                "frame": frame,
             },
             request_id=f"{run_id}-usd-validate",
             policy=stage_policy,
