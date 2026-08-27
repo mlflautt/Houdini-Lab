@@ -66,6 +66,18 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
     )
     assert calligraphy_stage["arguments"]["frame"] == 24
     assert differential_stage["arguments"]["frame"] == 24
+    calligraphy_recipe = next(
+        call for call in methods[0]["calls"] if call["tool"] == "recipe.instantiate"
+        and call["arguments"]["recipe_id"] == "lop.relic_lookdev_stage"
+    )
+    differential_recipe = next(
+        call for call in methods[1]["calls"] if call["tool"] == "recipe.instantiate"
+        and call["arguments"]["recipe_id"] == "lop.relic_lookdev_stage"
+    )
+    assert calligraphy_recipe["arguments"]["inputs"]["camera_tz"] == 6.4
+    assert differential_recipe["arguments"]["inputs"]["camera_tx"] == -2.0
+    assert differential_recipe["arguments"]["inputs"]["camera_tz"] == 20.0
+    assert calligraphy_recipe["arguments"]["inputs"]["dome_exposure"] == 1.0
     assert methods[2]["mode"] == "native_only_mops_false"
     assert manifest["postprocess"][0]["kind"] == "stable_order_contact_sheet"
     assert manifest["postprocess"][0]["labels"] == [

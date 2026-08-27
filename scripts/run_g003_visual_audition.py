@@ -267,8 +267,18 @@ def main() -> None:
             if envelope.tool == "visual.analyze":
                 visual_status = result.data.get("status")
                 if visual_status == "fail":
+                    image_flags = [
+                        {
+                            "path": item.get("path"),
+                            "flags": item.get("flags", []),
+                        }
+                        for item in result.data.get("images", [])
+                        if item.get("flags")
+                    ]
                     raise RuntimeError(
                         "mechanical visual verification failed: "
+                        f"image_flags={image_flags}; "
+                        "sequence_flags="
                         f"{result.data.get('sequence', {}).get('flags', [])}"
                     )
                 if visual_status == "warn":

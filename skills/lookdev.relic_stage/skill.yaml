@@ -1,6 +1,6 @@
 {
   "id": "lookdev.relic_stage",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "Assemble an explicit SOP asset into an editable USD lookdev stage with three MaterialX candidates and an optional bounded Karma CPU preview.",
   "contexts": [
     "LOP",
@@ -92,6 +92,30 @@
     "render_preview": {
       "type": "boolean",
       "default": true
+    },
+    "dome_intensity": {
+      "type": "number",
+      "min": 0,
+      "max": 16,
+      "default": 1
+    },
+    "dome_exposure": {
+      "type": "number",
+      "min": -8,
+      "max": 8,
+      "default": 0
+    },
+    "camera_tx": {"type": "number", "min": -1000, "max": 1000, "default": 6},
+    "camera_ty": {"type": "number", "min": -1000, "max": 1000, "default": 4},
+    "camera_tz": {"type": "number", "min": -1000, "max": 1000, "default": 8},
+    "camera_rx": {"type": "number", "min": -360, "max": 360, "default": -22.3},
+    "camera_ry": {"type": "number", "min": -360, "max": 360, "default": 36.9},
+    "camera_rz": {"type": "number", "min": -360, "max": 360, "default": 0},
+    "camera_focal_length": {
+      "type": "number",
+      "min": 1,
+      "max": 300,
+      "default": 45
     }
   },
   "preconditions": [
@@ -119,7 +143,7 @@
   },
   "steps": [
     {
-      "recipe.instantiate": "lop.relic_lookdev_stage@1.0.0"
+      "recipe.instantiate": "lop.relic_lookdev_stage@1.1.0"
     },
     {
       "solaris.materialx.populate": "three native MaterialX builder subnets"
@@ -147,6 +171,7 @@
     "graph_checks": [
       "native SOP Import, Material Library, Assign Material, Switch, Dome Light, Camera, Karma Render Settings, and Null LOPs",
       "three assignment branches remain present behind a human-controlled Switch",
+      "dome intensity/exposure and camera transform/focal length are explicit graph parameters",
       "MaterialX shaders live inside builder subnets in the Material Library",
       "no selection, pane, viewport, Python SOP, generated VEX, or hidden display-chain dependency"
     ],

@@ -258,7 +258,7 @@ def test_lop_lookdev_recipe_preserves_three_assignments_and_human_switch():
     )
     creates = [operation for operation in fragment["operations"] if operation["op"] == "create"]
     connects = [operation for operation in fragment["operations"] if operation["op"] == "connect"]
-    assert fragment["recipe"] == {"id": "lop.relic_lookdev_stage", "version": "1.0.0"}
+    assert fragment["recipe"] == {"id": "lop.relic_lookdev_stage", "version": "1.1.0"}
     assert len(creates) == 10
     assert len(connects) == 11
     assert all(operation["category"] == "Lop" for operation in creates)
@@ -270,6 +270,17 @@ def test_lop_lookdev_recipe_preserves_three_assignments_and_human_switch():
     ]
     selector = next(item for item in creates if item["operator_type"] == "switch")
     assert selector["parameters"]["input"] == 2
+    dome = next(item for item in creates if item["operator_type"] == "domelight")
+    assert dome["parameters"]["intensity"] == 1.0
+    assert dome["parameters"]["exposure"] == 0.0
+    camera = next(item for item in creates if item["operator_type"] == "camera")
+    assert [camera["parameters"][name] for name in ("tx", "ty", "tz")] == [6.0, 4.0, 8.0]
+    assert [camera["parameters"][name] for name in ("rx", "ry", "rz")] == [
+        -22.3,
+        36.9,
+        0.0,
+    ]
+    assert camera["parameters"]["focalLength"] == 45.0
     selector_inputs = [item for item in connects if item["to"] == "select"]
     assert [(item["from"], item["input_index"]) for item in selector_inputs] == [
         ("assign_a", 0),

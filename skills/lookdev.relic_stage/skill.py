@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 
@@ -9,9 +10,9 @@ from hermes_houdini.schemas.command import Policy, RiskClass
 from skills._lib import build_envelope
 
 SKILL_ID = "lookdev.relic_stage"
-SKILL_VERSION = "1.0.0"
+SKILL_VERSION = "1.1.0"
 RECIPE_ID = "lop.relic_lookdev_stage"
-RECIPE_VERSION = "1.0.0"
+RECIPE_VERSION = "1.1.0"
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,23}\Z")
 
 
@@ -29,6 +30,15 @@ def plan(
     time_limit: float = 30.0,
     max_threads: int = 4,
     render_preview: bool = True,
+    dome_intensity: float = 1.0,
+    dome_exposure: float = 0.0,
+    camera_tx: float = 6.0,
+    camera_ty: float = 4.0,
+    camera_tz: float = 8.0,
+    camera_rx: float = -22.3,
+    camera_ry: float = 36.9,
+    camera_rz: float = 0.0,
+    camera_focal_length: float = 45.0,
 ) -> list[dict[str, object]]:
     """Return graph, MaterialX, USD validation, preview, observation, and snapshot calls."""
     if not source_sop_path.startswith("/") or source_sop_path == "/":
@@ -44,6 +54,25 @@ def plan(
         raise ValueError("frame and source_start_frame must be integer frames")
     if source_start_frame > frame:
         raise ValueError("source_start_frame must be <= frame")
+    presentation_controls = {
+        "dome_intensity": (dome_intensity, 0.0, 16.0),
+        "dome_exposure": (dome_exposure, -8.0, 8.0),
+        "camera_tx": (camera_tx, -1000.0, 1000.0),
+        "camera_ty": (camera_ty, -1000.0, 1000.0),
+        "camera_tz": (camera_tz, -1000.0, 1000.0),
+        "camera_rx": (camera_rx, -360.0, 360.0),
+        "camera_ry": (camera_ry, -360.0, 360.0),
+        "camera_rz": (camera_rz, -360.0, 360.0),
+        "camera_focal_length": (camera_focal_length, 1.0, 300.0),
+    }
+    for name, (value, minimum, maximum) in presentation_controls.items():
+        if (
+            not isinstance(value, (int, float))
+            or isinstance(value, bool)
+            or not math.isfinite(float(value))
+            or not minimum <= float(value) <= maximum
+        ):
+            raise ValueError(f"{name} must be a finite number between {minimum} and {maximum}")
     source_frame_count = int(frame) - int(source_start_frame) + 1
 
     run_code = run_id.upper().replace("-", "_")
@@ -153,6 +182,7 @@ def plan(
                     "render_picture": str(preview_path),
                     "width": width,
                     "height": height,
+                    **{name: float(value[0]) for name, value in presentation_controls.items()},
                 },
                 "label": f"Hermes {SKILL_ID} {run_id}",
                 "checkpoint_stem": f"lookdev_{run_id}",
@@ -267,6 +297,13 @@ def plan(
             "time_limit": time_limit,
             "max_threads": max_threads,
             "output": str(preview_path),
+        },
+        "presentation": {
+            "dome_intensity": float(dome_intensity),
+            "dome_exposure": float(dome_exposure),
+            "camera_translate": [float(camera_tx), float(camera_ty), float(camera_tz)],
+            "camera_rotate": [float(camera_rx), float(camera_ry), float(camera_rz)],
+            "camera_focal_length": float(camera_focal_length),
         },
         "license": {
             "mode": "houdini-apprentice-noncommercial",

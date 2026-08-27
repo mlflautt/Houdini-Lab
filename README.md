@@ -153,7 +153,7 @@ The cook controller now supports policy-bounded inclusive frame ranges, reports 
 and restores the artist's timeline state. The skill configures but never implicitly writes its
 versioned `.bgeo.sc` sequence. See [`docs/vellum-simulation.md`](docs/vellum-simulation.md).
 
-Sprint 8 adds `lookdev.relic_stage@1.0.0`: an editable SOP Import → Material Library → three
+Sprint 8 adds `lookdev.relic_stage@1.1.0`: an editable SOP Import → Material Library → three
 Assign Material branches → human Switch → light/camera → Karma Render Settings LOP graph. Native
 MaterialX builder subnets preserve three unranked candidates. USD stage composition is an explicit
 bounded validation step; the optional one-frame Karma CPU preview is a separate approved `husk`

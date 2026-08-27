@@ -306,8 +306,14 @@ def test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_re
         ] + [hou.node("/stage/OUT_HYTHON_LOOKDEV_STAGE")]
         library = hou.node("/stage/HYTHON_LOOKDEV_MATERIALS")
         selector = hou.node("/stage/HYTHON_LOOKDEV_SELECT_MATERIAL")
-        assert library is not None and selector is not None
+        dome = hou.node("/stage/HYTHON_LOOKDEV_DOME")
+        camera = hou.node("/stage/HYTHON_LOOKDEV_CAMERA")
+        assert all(node is not None for node in (library, selector, dome, camera))
         assert selector.parm("input").eval() == 1
+        assert dome.parm("intensity").eval() == 1.0
+        assert dome.parm("exposure").eval() == 0.0
+        assert camera.parmTuple("t").eval() == (6.0, 4.0, 8.0)
+        assert camera.parmTuple("r").eval() == (-22.3, 36.9, 0.0)
         builders = [child for child in library.children() if child.type().name() == "subnet"]
         assert len(builders) == 3
         assert all(

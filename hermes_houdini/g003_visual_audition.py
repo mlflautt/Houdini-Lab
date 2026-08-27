@@ -267,6 +267,7 @@ def build_visual_audition_manifest(
             start_frame=1,
             end_frame=24,
             candidate_index=0,
+            wire_radius=0.06,
         )
     )
     calligraphy_lookdev = "g003_v_calligraphy_ld"
@@ -284,6 +285,15 @@ def build_visual_audition_manifest(
             time_limit=30,
             max_threads=4,
             render_preview=False,
+            dome_intensity=1.5,
+            dome_exposure=1.0,
+            camera_tx=0.0,
+            camera_ty=-0.55,
+            camera_tz=6.4,
+            camera_rx=0.0,
+            camera_ry=0.0,
+            camera_rz=0.0,
+            camera_focal_length=45.0,
         )
     )
     extra, calligraphy_renders = _render_calls(
@@ -313,6 +323,7 @@ def build_visual_audition_manifest(
             start_frame=1,
             end_frame=24,
             frame_step=1,
+            wire_radius=0.06,
         )
     )
     differential_lookdev = "g003_v_differential_ld"
@@ -330,6 +341,15 @@ def build_visual_audition_manifest(
             time_limit=30,
             max_threads=4,
             render_preview=False,
+            dome_intensity=1.5,
+            dome_exposure=1.0,
+            camera_tx=-2.0,
+            camera_ty=0.0,
+            camera_tz=20.0,
+            camera_rx=0.0,
+            camera_ry=0.0,
+            camera_rz=0.0,
+            camera_focal_length=45.0,
         )
     )
     extra, differential_renders = _render_calls(
