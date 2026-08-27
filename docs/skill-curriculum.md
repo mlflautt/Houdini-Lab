@@ -30,7 +30,7 @@ caches, and an editable contact-sheet gallery without automatic ranking. Sprint 
 `sop.vellum_relic_drop@1.0.0`, `simulate.vellum_relic_drop@1.0.0`, a native Cloth + Pressure
 Vellum graph, configured non-writing File Cache boundary, and an explicit policy-bounded
 frame-range cook with per-frame metrics and timeline restoration. Sprint 8 adds
-`lop.relic_lookdev_stage@1.0.0`, `lookdev.relic_stage@1.0.0`, three native MaterialX candidates,
+`lop.relic_lookdev_stage@1.2.0`, `lookdev.relic_stage@1.2.0`, three native MaterialX candidates,
 bounded USD composition/material-binding validation, and a separately approved one-frame Karma
 CPU preview through a managed USD Render ROP. Sprint 9 adds
 `sop.differential_growth_loop@1.0.0`, `generate.differential_growth@1.0.0`, three editable native

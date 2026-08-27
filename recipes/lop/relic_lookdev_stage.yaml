@@ -1,6 +1,6 @@
 {
   "id": "lop.relic_lookdev_stage",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "summary": "Import one explicit SOP contract into USD and preserve three editable MaterialX lookdev branches for human selection.",
   "contexts": ["LOP"],
   "inputs": {
@@ -10,7 +10,17 @@
     "candidate_index": {"type": "integer", "min": 0, "max": 2, "default": 0},
     "render_picture": {"type": "string"},
     "width": {"type": "integer", "min": 1, "max": 1280, "default": 640},
-    "height": {"type": "integer", "min": 1, "max": 720, "default": 360}
+    "height": {"type": "integer", "min": 1, "max": 720, "default": 360},
+    "dome_intensity": {"type": "number", "min": 0.0, "max": 16.0, "default": 1.0},
+    "dome_exposure": {"type": "number", "min": -8.0, "max": 8.0, "default": 0.0},
+    "camera_tx": {"type": "number", "min": -1000.0, "max": 1000.0, "default": 6.0},
+    "camera_ty": {"type": "number", "min": -1000.0, "max": 1000.0, "default": 4.0},
+    "camera_tz": {"type": "number", "min": -1000.0, "max": 1000.0, "default": 8.0},
+    "camera_rx": {"type": "number", "min": -360.0, "max": 360.0, "default": -22.3},
+    "camera_ry": {"type": "number", "min": -360.0, "max": 360.0, "default": 36.9},
+    "camera_rz": {"type": "number", "min": -360.0, "max": 360.0, "default": 0.0},
+    "camera_focal_length": {"type": "number", "min": 1.0, "max": 300.0, "default": 45.0},
+    "max_primitives": {"type": "integer", "min": 1, "max": 100000, "default": 10000}
   },
   "nodes": [
     {
@@ -91,9 +101,11 @@
       "role": "neutral_lookdev_light",
       "position": [-6, -1],
       "params": {
-        "primpath": "/lights/{{run_code}}_Dome"
+        "primpath": "/lights/{{run_code}}_Dome",
+        "intensity": "{{dome_intensity}}",
+        "exposure": "{{dome_exposure}}"
       },
-      "comment": "Neutral default dome; author explicit HDRI/color controls in the graph when desired."
+      "comment": "Explicit neutral dome intensity and exposure; no hidden viewport lighting dependency."
     },
     {
       "id": "camera",
@@ -103,13 +115,13 @@
       "position": [-6, -3],
       "params": {
         "primpath": "/cameras/{{run_code}}_Camera",
-        "tx": 6.0,
-        "ty": 4.0,
-        "tz": 8.0,
-        "rx": -22.3,
-        "ry": 36.9,
-        "rz": 0.0,
-        "focalLength": 45.0
+        "tx": "{{camera_tx}}",
+        "ty": "{{camera_ty}}",
+        "tz": "{{camera_tz}}",
+        "rx": "{{camera_rx}}",
+        "ry": "{{camera_ry}}",
+        "rz": "{{camera_rz}}",
+        "focalLength": "{{camera_focal_length}}"
       }
     },
     {
@@ -159,7 +171,7 @@
     "graph_first": true,
     "automatic_ranking": false,
     "renderer": "Karma CPU",
-    "cook_budget": {"scope": "single_lop_stage", "max_prims": 10000, "max_seconds": 30},
+    "cook_budget": {"scope": "single_lop_stage", "max_prims": "{{max_primitives}}", "max_seconds": 30},
     "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}
   }
 }

@@ -393,11 +393,23 @@ def analyze_visual_evidence(
         for pair in comparable_pairs
     ):
         sequence_flags.append("motion_confined_to_narrow_band")
+    failed_image_indices = [
+        index for index, image in enumerate(images) if image["status"] == "fail"
+    ]
+    if expect_motion and failed_image_indices:
+        if len(failed_image_indices) == len(images):
+            sequence_flags.append("all_motion_frames_mechanically_failed")
+        elif failed_image_indices[-1] == len(images) - 1:
+            sequence_flags.append("terminal_motion_frame_mechanically_failed")
+        else:
+            sequence_flags.append("sparse_or_exposure_failed_motion_frames")
     sequence_failures = {
+        "all_motion_frames_mechanically_failed",
         "duplicate_motion_frame",
         "incompatible_sequence_dimensions",
         "insufficient_motion_samples",
         "motion_too_subtle",
+        "terminal_motion_frame_mechanically_failed",
     }
     sequence_status = (
         "fail"
@@ -405,11 +417,22 @@ def analyze_visual_evidence(
         else ("warn" if sequence_flags else "pass")
     )
     statuses = [item["status"] for item in images]
-    overall = (
-        "fail"
-        if "fail" in statuses or sequence_status == "fail"
-        else ("warn" if "warn" in statuses or sequence_status == "warn" else "pass")
-    )
+    if expect_motion:
+        overall = (
+            "fail"
+            if sequence_status == "fail"
+            else (
+                "warn"
+                if "fail" in statuses or "warn" in statuses or sequence_status == "warn"
+                else "pass"
+            )
+        )
+    else:
+        overall = (
+            "fail"
+            if "fail" in statuses or sequence_status == "fail"
+            else ("warn" if "warn" in statuses or sequence_status == "warn" else "pass")
+        )
     report = {
         "schema": "hermes.visual_verification",
         "schema_version": SCHEMA_VERSION,

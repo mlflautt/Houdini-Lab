@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from pathlib import Path
 
@@ -9,9 +10,9 @@ from hermes_houdini.schemas.command import Policy, RiskClass
 from skills._lib import build_envelope
 
 SKILL_ID = "lookdev.relic_stage"
-SKILL_VERSION = "1.0.0"
+SKILL_VERSION = "1.2.0"
 RECIPE_ID = "lop.relic_lookdev_stage"
-RECIPE_VERSION = "1.0.0"
+RECIPE_VERSION = "1.2.0"
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,23}\Z")
 
 
@@ -25,9 +26,20 @@ def plan(
     width: int = 640,
     height: int = 360,
     frame: float = 1.0,
+    source_start_frame: float = 1.0,
     time_limit: float = 30.0,
     max_threads: int = 4,
     render_preview: bool = True,
+    dome_intensity: float = 1.0,
+    dome_exposure: float = 0.0,
+    camera_tx: float = 6.0,
+    camera_ty: float = 4.0,
+    camera_tz: float = 8.0,
+    camera_rx: float = -22.3,
+    camera_ry: float = 36.9,
+    camera_rz: float = 0.0,
+    camera_focal_length: float = 45.0,
+    max_primitives: int = 10_000,
 ) -> list[dict[str, object]]:
     """Return graph, MaterialX, USD validation, preview, observation, and snapshot calls."""
     if not source_sop_path.startswith("/") or source_sop_path == "/":
@@ -39,6 +51,36 @@ def plan(
         raise ValueError("artifact_dir must be absolute")
     if not _RUN_ID.fullmatch(run_id):
         raise ValueError("run_id must be 1-24 filename-safe characters")
+    if not float(frame).is_integer() or not float(source_start_frame).is_integer():
+        raise ValueError("frame and source_start_frame must be integer frames")
+    if source_start_frame > frame:
+        raise ValueError("source_start_frame must be <= frame")
+    presentation_controls = {
+        "dome_intensity": (dome_intensity, 0.0, 16.0),
+        "dome_exposure": (dome_exposure, -8.0, 8.0),
+        "camera_tx": (camera_tx, -1000.0, 1000.0),
+        "camera_ty": (camera_ty, -1000.0, 1000.0),
+        "camera_tz": (camera_tz, -1000.0, 1000.0),
+        "camera_rx": (camera_rx, -360.0, 360.0),
+        "camera_ry": (camera_ry, -360.0, 360.0),
+        "camera_rz": (camera_rz, -360.0, 360.0),
+        "camera_focal_length": (camera_focal_length, 1.0, 300.0),
+    }
+    for name, (value, minimum, maximum) in presentation_controls.items():
+        if (
+            not isinstance(value, (int, float))
+            or isinstance(value, bool)
+            or not math.isfinite(float(value))
+            or not minimum <= float(value) <= maximum
+        ):
+            raise ValueError(f"{name} must be a finite number between {minimum} and {maximum}")
+    if (
+        not isinstance(max_primitives, int)
+        or isinstance(max_primitives, bool)
+        or not 1 <= max_primitives <= 100_000
+    ):
+        raise ValueError("max_primitives must be an integer between 1 and 100000")
+    source_frame_count = int(frame) - int(source_start_frame) + 1
 
     run_code = run_id.upper().replace("-", "_")
     checkpoint_dir = artifacts / "checkpoints"
@@ -90,7 +132,7 @@ def plan(
             "roughness": 0.46,
         },
     ]
-    max_prims = 10_000
+    max_prims = max_primitives
     max_memory = 1_073_741_824
     graph_policy = Policy(
         risk=RiskClass.MEDIUM,
@@ -111,15 +153,16 @@ def plan(
         max_seconds=30,
         max_primitives=max_prims,
         max_memory_bytes=max_memory,
+        max_frames=source_frame_count,
         max_resolution=(width, height),
     )
     render_policy = Policy(
         risk=RiskClass.EXTERNAL,
         allow_external_process=True,
-        max_seconds=time_limit,
+        max_seconds=time_limit + 30.0,
         max_primitives=max_prims,
         max_memory_bytes=max_memory,
-        max_frames=1,
+        max_frames=source_frame_count,
         max_output_bytes=536_870_912,
         max_resolution=(width, height),
     )
@@ -146,6 +189,8 @@ def plan(
                     "render_picture": str(preview_path),
                     "width": width,
                     "height": height,
+                    **{name: float(value[0]) for name, value in presentation_controls.items()},
+                    "max_primitives": max_primitives,
                 },
                 "label": f"Hermes {SKILL_ID} {run_id}",
                 "checkpoint_stem": f"lookdev_{run_id}",
@@ -170,6 +215,7 @@ def plan(
             "solaris.stage.validate",
             {
                 "stage_node_path": stage_output_path,
+                "source_sop_path": source_sop_path,
                 "expected_paths": [
                     asset_prim_path,
                     *[material["material_path"] for material in materials],
@@ -179,6 +225,8 @@ def plan(
                 ],
                 "binding_prim_path": asset_prim_path,
                 "max_prims": max_prims,
+                "source_start_frame": source_start_frame,
+                "frame": frame,
             },
             request_id=f"{run_id}-usd-validate",
             policy=stage_policy,
@@ -214,6 +262,8 @@ def plan(
                         "output_path": str(preview_path),
                         "log_path": str(render_log),
                         "frame": frame,
+                        "source_sop_path": source_sop_path,
+                        "source_start_frame": source_start_frame,
                     },
                     request_id=f"{run_id}-karma-render",
                     policy=render_policy,
@@ -256,6 +306,14 @@ def plan(
             "max_threads": max_threads,
             "output": str(preview_path),
         },
+        "presentation": {
+            "dome_intensity": float(dome_intensity),
+            "dome_exposure": float(dome_exposure),
+            "camera_translate": [float(camera_tx), float(camera_ty), float(camera_tz)],
+            "camera_rotate": [float(camera_rx), float(camera_ry), float(camera_rz)],
+            "camera_focal_length": float(camera_focal_length),
+        },
+        "geometry_budget": {"max_primitives": max_primitives},
         "license": {
             "mode": "houdini-apprentice-noncommercial",
             "commercial_use": False,
