@@ -11,13 +11,24 @@
 ## Delivered planning code
 
 - `hermes_houdini/g003_visual_audition.py`
+- `hermes_houdini/g003_execution.py`
 - `scripts/plan_g003_visual_audition.py`
+- `scripts/run_g003_visual_audition.py`
 - `tests/unit/test_g003_visual_audition.py`
+- `tests/unit/test_g003_execution.py`
+- `docs/G003_EXECUTION_RUNNER.md`
 
 The module is Houdini-independent. It loads the exact registered skill contracts, emits one
 canonical non-executing plan, refuses a dirty/drifted accepted source, refuses an existing or
 out-of-project live root, preserves fixed method order, and leaves every approval and human field
 false/null.
+
+The execution layer is also import-safe without Houdini. It validates canonical authority, path
+confinement, the exact 115-call/36-render contract, single-use dispatcher approvals, cancellation,
+resource ceilings, frame restoration, exclusive writes, immutable stopped attempts, and null human
+decisions. The Hython CLI retains the exact operator wording in the live receipt and exposes a
+mutation-free `--preflight-only` mode for Codex, Hermes Agent, OpenCode, DeepSeek harnesses, or local
+agents.
 
 ## Authoritative ignored manifest
 
@@ -152,7 +163,7 @@ manifest records this passing runtime observation and is the sole live-approval 
 
 ```text
 env PYTHONPATH=. '/Users/m1/Houdini Lab/.venv/bin/python' -m pytest -q -p no:cacheprovider
-347 collected; 343 passed and 4 intentional Houdini-environment skips
+354 passed in 7.39s
 
 '/Users/m1/Houdini Lab/.venv/bin/ruff' check --no-cache .
 All checks passed!
@@ -170,6 +181,15 @@ env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
   -m pytest tests/hython/test_integration.py::test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_render \
   -o addopts='' -q
 1 passed in 1.09s
+
+env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
+  /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython \
+  scripts/run_g003_visual_audition.py \
+  --manifest '/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-b-manifest-license-ready.json' \
+  --approved-manifest-sha256 048c008a323790c6117088b4518a60149603f95343aca3cecc72401de40c6551 \
+  --preflight-only
+pass; 115 calls, 36 renders, clean head 027d51c, Apprentice 22.0.368, ffmpeg 9.0.1,
+fresh scene, absent B root, mutation_performed=false
 ```
 
 The first Ruff attempt without `--no-cache` could not create `.ruff_cache` in the external worktree
@@ -184,6 +204,7 @@ repository or global state. Pytest's cache warning was avoided in final collecti
 | acceptance/source | pass | exact protected-main base and successful CI |
 | pure dry manifest | pass | deterministic B canonical and byte hashes; fresh B root absent |
 | registered capability identities | pass | exact four skill-loader identities |
+| portable live-runner preflight | pass | pure contract plus clean Hython/dispatcher/runtime/tool preflight; no mutation |
 | H22 build/license/operator probe | pass | Apprentice acquired; exact build, types, tuples, and unchanged scene state observed |
 | graph edit and cook | partial/stopped | eight A calls passed; call 9 stopped on explicit USD frame contract |
 | scene save | pass for stopped A | non-overwriting partial Calligraphy `.hipnc` preserved |
