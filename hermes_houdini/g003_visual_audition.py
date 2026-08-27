@@ -43,6 +43,7 @@ def _render_calls(
     max_points: int,
     max_primitives: int,
     max_memory_bytes: int,
+    panel_count: int,
 ) -> tuple[list[dict[str, object]], list[str]]:
     calls: list[dict[str, object]] = []
     render_paths: list[str] = []
@@ -130,7 +131,7 @@ def _render_calls(
                 "output_path": str(
                     artifact_dir / "manifests" / f"{run_id}_visual_verification.json"
                 ),
-                "panel_count": 1,
+                "panel_count": panel_count,
                 "panel_rows": 1,
                 "expect_motion": True,
             },
@@ -307,6 +308,7 @@ def build_visual_audition_manifest(
         max_points=100_000,
         max_primitives=100_000,
         max_memory_bytes=536_870_912,
+        panel_count=3,
     )
     calligraphy_calls.extend(extra)
 
@@ -345,7 +347,7 @@ def build_visual_audition_manifest(
             dome_exposure=1.0,
             camera_tx=-2.0,
             camera_ty=0.0,
-            camera_tz=20.0,
+            camera_tz=44.0,
             camera_rx=0.0,
             camera_ry=0.0,
             camera_rz=0.0,
@@ -364,6 +366,7 @@ def build_visual_audition_manifest(
         max_points=50_000,
         max_primitives=50_000,
         max_memory_bytes=536_870_912,
+        panel_count=2,
     )
     differential_calls.extend(extra)
 
@@ -393,6 +396,7 @@ def build_visual_audition_manifest(
         max_points=20_000,
         max_primitives=20_000,
         max_memory_bytes=1_073_741_824,
+        panel_count=1,
     )
     kinetic_calls.extend(extra)
 

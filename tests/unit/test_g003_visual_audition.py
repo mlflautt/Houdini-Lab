@@ -58,6 +58,11 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
         assert [call["policy"]["max_frames"] for call in render_calls] == list(SAMPLE_FRAMES)
         assert all(call["policy"]["allow_external_process"] for call in render_calls)
         assert len(method["render_paths"]) == 12
+    visual_calls = [
+        next(call for call in method["calls"] if call["tool"] == "visual.analyze")
+        for method in methods
+    ]
+    assert [call["arguments"]["panel_count"] for call in visual_calls] == [3, 2, 1]
     calligraphy_stage = next(
         call for call in methods[0]["calls"] if call["tool"] == "solaris.stage.validate"
     )
@@ -76,7 +81,7 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
     )
     assert calligraphy_recipe["arguments"]["inputs"]["camera_tz"] == 8.2
     assert differential_recipe["arguments"]["inputs"]["camera_tx"] == -2.0
-    assert differential_recipe["arguments"]["inputs"]["camera_tz"] == 20.0
+    assert differential_recipe["arguments"]["inputs"]["camera_tz"] == 44.0
     assert differential_recipe["arguments"]["inputs"]["max_primitives"] == 50_000
     assert calligraphy_recipe["arguments"]["inputs"]["dome_exposure"] == 1.0
     assert methods[2]["mode"] == "native_only_mops_false"
