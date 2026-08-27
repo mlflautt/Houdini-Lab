@@ -22,7 +22,7 @@ Stop unless all are true:
 
 Read `AGENTS.md`, `docs/architecture.md`, `docs/apprentice-constraints.md`, the accepted G003 packet,
 the three selected skill manifests/source recipes/docs, `docs/resource-control.md`, and
-`docs/verification-ladder.md` before acting. Retrieve official Houdini 22.0.368 documentation and
+`docs/verification-ladder.md`, and `docs/G003_EXECUTION_RUNNER.md` before acting. Retrieve official Houdini 22.0.368 documentation and
 run read-only operator/parameter probes for every live node type that is not already certified.
 
 ## Worktree and outputs
@@ -40,18 +40,20 @@ and evidence status.
 ## Required sequence
 
 1. Re-run the dry manifest in two clean processes and compare canonical hashes.
-2. Create new scenes/branches through registered tools and stable Hermes IDs. Checkpoint before
+2. Execute the accepted subject with `scripts/run_g003_visual_audition.py`; do not create a
+   harness-local HOM driver or bypass the dispatcher's single-use approval IDs.
+3. Create new scenes/branches through registered tools and stable Hermes IDs. Checkpoint before
    coherent medium-risk edits. Never rely on selection, active pane, current frame, or desktop.
-3. Build Particle Calligraphy, Differential Growth, and native Kinetic Reliquary in stable order.
+4. Build Particle Calligraphy, Differential Growth, and native Kinetic Reliquary in stable order.
    Preserve their explicit candidate branches and do not read a human-selected Switch output.
-4. Validate graph and sampled data beneath each registered capability ceiling before rendering.
-5. Render exactly the approved 12 sampled frames per method with Karma CPU at 640×360 and no more
+5. Validate graph and sampled data beneath each registered capability ceiling before rendering.
+6. Render exactly the approved 12 sampled frames per method with Karma CPU at 640×360 and no more
    than 16 samples. Restore the original frame after every action.
-6. Produce playable previews, labeled stable-order contact sheet, graph manifests, mechanics
+7. Produce playable previews, labeled stable-order contact sheet, graph manifests, mechanics
    reports, and hashes. Retain failed attempts rather than overwriting them.
-7. Verify previews actually change over time. A still, duplicated sequence, mock image, or old
+8. Verify previews actually change over time. A still, duplicated sequence, mock image, or old
    sprint artifact fails Gate V.
-8. Present all three without ranking or recommendation. Record human fields as null and stop for
+9. Present all three without ranking or recommendation. Record human fields as null and stop for
    owner review.
 
 ## Stop conditions
