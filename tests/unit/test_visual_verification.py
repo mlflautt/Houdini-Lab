@@ -153,6 +153,38 @@ def test_motion_sequence_warns_when_change_is_confined_to_a_narrow_band(tmp_path
     assert report["sequence"]["pairs"][0]["motion_bbox_fill_height"] < 0.2
 
 
+def test_motion_sequence_allows_sparse_failed_lead_in_but_requires_visible_terminal_frame(
+    tmp_path,
+):
+    sparse = tmp_path / "sparse.png"
+    visible = tmp_path / "visible.png"
+    failed_terminal = tmp_path / "failed_terminal.png"
+    _write_gray_png(sparse, [[0] * 80 for _ in range(80)])
+    visible_rows = [[0] * 80 for _ in range(80)]
+    for y in range(20, 60):
+        for x in range(20, 60):
+            visible_rows[y][x] = 220
+    _write_gray_png(visible, visible_rows)
+    failed_terminal.write_bytes(sparse.read_bytes())
+
+    emerging = analyze_visual_evidence(
+        image_paths=[str(sparse), str(visible)],
+        output_path=str(tmp_path / "emerging.json"),
+        expect_motion=True,
+    )
+    assert emerging["status"] == "warn"
+    assert emerging["sequence"]["status"] == "warn"
+    assert "sparse_or_exposure_failed_motion_frames" in emerging["sequence"]["flags"]
+
+    regressing = analyze_visual_evidence(
+        image_paths=[str(visible), str(failed_terminal)],
+        output_path=str(tmp_path / "regressing.json"),
+        expect_motion=True,
+    )
+    assert regressing["status"] == "fail"
+    assert "terminal_motion_frame_mechanically_failed" in regressing["sequence"]["flags"]
+
+
 def test_panel_rows_must_evenly_divide_panel_count(tmp_path):
     image = tmp_path / "image.png"
     _write_gray_png(image, [[0, 255], [255, 0]])

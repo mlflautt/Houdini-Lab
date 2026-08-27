@@ -289,7 +289,7 @@ def build_visual_audition_manifest(
             dome_exposure=1.0,
             camera_tx=0.0,
             camera_ty=-0.55,
-            camera_tz=6.4,
+            camera_tz=8.2,
             camera_rx=0.0,
             camera_ry=0.0,
             camera_rz=0.0,

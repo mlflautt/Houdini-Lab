@@ -74,7 +74,7 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
         call for call in methods[1]["calls"] if call["tool"] == "recipe.instantiate"
         and call["arguments"]["recipe_id"] == "lop.relic_lookdev_stage"
     )
-    assert calligraphy_recipe["arguments"]["inputs"]["camera_tz"] == 6.4
+    assert calligraphy_recipe["arguments"]["inputs"]["camera_tz"] == 8.2
     assert differential_recipe["arguments"]["inputs"]["camera_tx"] == -2.0
     assert differential_recipe["arguments"]["inputs"]["camera_tz"] == 20.0
     assert calligraphy_recipe["arguments"]["inputs"]["dome_exposure"] == 1.0
