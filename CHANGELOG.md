@@ -3,6 +3,24 @@
 All notable released changes are recorded here. Versions follow semantic versioning; evidence states
 distinguish pure tests, Houdini runtime tests, authentic pixels, external models, and human review.
 
+## Unreleased — Horizon 3 project compiler kernel
+
+### Added
+
+- Pure, versioned project specification, contract-adapter registry, deterministic project DAG
+  compiler, and project observer/drift index.
+- A fail-closed `validate` / `plan` / `observe` CLI with explicit project roots and exclusive,
+  confined optional outputs; it has no execution mode.
+- A three-direction Living Biome dry fixture with exact capability versions, bounded stages,
+  stable hashes, and blank human-owned decisions.
+
+### Evidence
+
+- Pure: 340 passed, 4 intentional skips; Ruff and diff checks passed.
+- Houdini regression: 52 Hython integration items passed on Apprentice 22.0.368.
+- Dry plan: 15 stages, three equal-status variants, zero blockers, and no automatic execution,
+  ranking, rating, or winner. Live project construction and visual/human evidence remain unrun.
+
 ## 0.35.0 — 2026-08-25
 
 ### Added

@@ -10,22 +10,23 @@ Houdini work; the Grinder controls how this repository is changed.
 ## Start here
 
 1. Read [the Grinder architecture](GRINDER_ARCHITECTURE.md).
-2. Review the accepted
+2. Review the verified-candidate
    [G002 project-compiler manifest](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md).
 3. Verify frozen tag `v0.35.0` resolves to the exact G002 base commit before dispatch.
 4. Use the
    [G002 launch checklist](cycles/G002-v040-project-compiler/LAUNCH_CHECKLIST.md) and paste the
    [one-line worker prompts](cycles/G002-v040-project-compiler/COPY_PASTE_PROMPTS.md).
-5. Keep the [G003 Living Biome outline](cycles/G003-v040-living-biome-shot/PROPOSAL.md) blocked until
-   G002 merges; it intentionally has no launch prompts yet.
+5. Review the [G003 Living Biome outline](cycles/G003-v040-living-biome-shot/PROPOSAL.md). It remains
+   non-dispatchable until G002 merges and the owner chooses a motion direction.
 
 ## Cycle history
 
 - [G001 — v0.35 live verification](cycles/G001-v035-live-verification/CYCLE_MANIFEST.md): released
   as `v0.35.0`; technical evidence lives in `docs/grinder/receipts/G001-I.md`.
-- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): accepted;
-  lanes A-D authorized from frozen `v0.35.0`.
-- [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/PROPOSAL.md): outline, blocked on G002.
+- [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): verified
+  integration candidate; protected-main PR pending.
+- [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/PROPOSAL.md): outline awaiting the
+  exact merged G002 base and an owner-owned motion choice.
 
 ## Dispatch rule
 

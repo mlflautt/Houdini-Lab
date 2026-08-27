@@ -1,0 +1,184 @@
+schema: hermes.houdini.project.v1
+project_id: living-biome-dry
+title: Living Biome Dry Project
+brief: Dry-compile exact registered capabilities while preserving three equal-status biome directions.
+references: []
+compatibility:
+  houdini_build: 22.0.368
+  license_mode: houdini-apprentice-noncommercial
+  package_version: 0.35.0
+  optional_dependencies: []
+roots:
+  project: projects/living_biome
+  assets: projects/living_biome/assets
+  cache: projects/living_biome/cache
+  renders: projects/living_biome/renders
+seed_policy:
+  mode: fixed
+  seed: 420040
+timeline:
+  start_frame: 1
+  end_frame: 48
+  fps: 24
+budgets:
+  aggregate:
+    points: 4000000
+    primitives: 4000000
+    peak_memory_bytes: 34359738368
+    cook_seconds: 3600
+    cache_bytes: 6442450944
+    frames: 360
+    width: 3840
+    height: 2160
+    render_samples: 0
+  stages:
+    - instance_id: botanical
+      limits: {points: 250000, primitives: 250000, peak_memory_bytes: 536870912, cook_seconds: 90, cache_bytes: 0, frames: 1, width: 0, height: 0, render_samples: 0}
+    - instance_id: motion
+      limits: {points: 100000, primitives: 100000, peak_memory_bytes: 536870912, cook_seconds: 90, cache_bytes: 0, frames: 48, width: 0, height: 0, render_samples: 0}
+    - instance_id: world
+      limits: {points: 300000, primitives: 300000, peak_memory_bytes: 2147483648, cook_seconds: 180, cache_bytes: 1073741824, frames: 1, width: 0, height: 0, render_samples: 0}
+    - instance_id: materials
+      limits: {points: 0, primitives: 10000, peak_memory_bytes: 1073741824, cook_seconds: 120, cache_bytes: 536870912, frames: 1, width: 512, height: 512, render_samples: 0}
+    - instance_id: stage
+      limits: {points: 0, primitives: 25000, peak_memory_bytes: 2147483648, cook_seconds: 180, cache_bytes: 536870912, frames: 1, width: 0, height: 0, render_samples: 0}
+capability_instances:
+  - instance_id: botanical
+    capability_id: grow.botanical_grammar
+    capability_version: 1.0.0
+    context: SOP
+    inputs: {}
+    output_contracts: [selected_botanical_contract]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: []
+    requested_evidence: [graph-structure, contract-integrity]
+  - instance_id: motion
+    capability_id: motion.particle_calligraphy
+    capability_version: 1.0.0
+    context: SOP
+    inputs: {}
+    output_contracts: [human_selected_contract]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: []
+    requested_evidence: [graph-structure, human-motion-choice]
+  - instance_id: world
+    capability_id: world.world_seed_atlas_labs
+    capability_version: 1.0.0
+    context: SOP
+    inputs:
+      botanical:
+        contract_id: world_layer_contract
+        from_instance_id: botanical
+        from_port: main
+        adapter_id: project.botanical_geometry_to_world_layer
+        adapter_version: 1.0.0
+        permitted_native_fallbacks: []
+      motion:
+        contract_id: world_layer_contract
+        from_instance_id: motion
+        from_port: main
+        adapter_id: project.motion_geometry_to_world_layer
+        adapter_version: 1.0.0
+        permitted_native_fallbacks: []
+    output_contracts: [three_native_worlds]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: [botanical, motion]
+    requested_evidence: [graph-structure, contract-integrity]
+  - instance_id: materials
+    capability_id: lookdev.procedural_material_foundry
+    capability_version: 1.0.0
+    context: COP
+    inputs: {}
+    output_contracts: [three_usd_material_cop_contracts]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: []
+    requested_evidence: [graph-structure, contract-integrity]
+  - instance_id: stage
+    capability_id: world.world_seed_atlas_labs
+    capability_version: 1.0.0
+    context: LOP
+    inputs:
+      world:
+        contract_id: usd_stage
+        from_instance_id: world
+        from_port: main
+        adapter_id: project.world_geometry_to_solaris
+        adapter_version: 1.0.0
+        permitted_native_fallbacks: []
+      materials:
+        contract_id: named_material_bindings
+        from_instance_id: materials
+        from_port: main
+        adapter_id: project.pbr_channels_to_material_bindings
+        adapter_version: 1.0.0
+        permitted_native_fallbacks: []
+    output_contracts: [usd_stage]
+    variant_scope: [amber-mesa, verdant-rift, lunar-basin]
+    dependencies: [world, materials]
+    requested_evidence: [graph-structure, contract-integrity]
+variants:
+  - variant_id: amber-mesa
+    title: Amber Mesa
+    description: Warm eroded strata with restrained dry botanical rhythm.
+    human_rating: null
+    selected_for_continuation: null
+  - variant_id: verdant-rift
+    title: Verdant Rift
+    description: Humid cleft with dense procedural growth and layered motion.
+    human_rating: null
+    selected_for_continuation: null
+  - variant_id: lunar-basin
+    title: Lunar Basin
+    description: Pale mineral basin with sparse cold vegetation and quiet motion.
+    human_rating: null
+    selected_for_continuation: null
+output_contracts:
+  - contract_id: selected_botanical_contract
+    producer_instance_id: botanical
+    context: SOP
+    name: OUT_BOTANICAL
+    artifact_path: projects/living_biome/outputs/botanical.bgeo.sc
+  - contract_id: human_selected_contract
+    producer_instance_id: motion
+    context: SOP
+    name: OUT_MOTION_TECHNICAL_FIXTURE
+    artifact_path: projects/living_biome/outputs/motion.bgeo.sc
+  - contract_id: three_native_worlds
+    producer_instance_id: world
+    context: SOP
+    name: OUT_WORLDS
+    artifact_path: projects/living_biome/outputs/worlds.bgeo.sc
+  - contract_id: three_usd_material_cop_contracts
+    producer_instance_id: materials
+    context: COP
+    name: OUT_MATERIALS
+    artifact_path: projects/living_biome/outputs/materials.usda
+  - contract_id: usd_stage
+    producer_instance_id: stage
+    context: LOP
+    name: OUT_STAGE
+    artifact_path: projects/living_biome/outputs/living-biome.usda
+evidence_gates:
+  - gate_id: graph-structure
+    evidence_type: graph
+    required: true
+    status: pending
+  - gate_id: contract-integrity
+    evidence_type: data
+    required: true
+    status: pending
+  - gate_id: human-motion-choice
+    evidence_type: human
+    required: true
+    status: pending
+human_decisions:
+  - decision_id: continue-biome-direction
+    prompt: Which equal-status biome lineage should continue into live development?
+    winner: null
+    selected_for_continuation: null
+  - decision_id: choose-motion-system
+    prompt: Which registered motion system should G003 use after comparing viable options?
+    winner: null
+    selected_for_continuation: null
+automatic_ranking: false
+winner: null

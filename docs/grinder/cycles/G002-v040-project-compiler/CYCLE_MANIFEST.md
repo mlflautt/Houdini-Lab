@@ -1,6 +1,6 @@
 # Grinder Cycle G002 — Horizon 3 Project Compiler Kernel
 
-- State: `ACCEPTED — LANES A-D AUTHORIZED`
+- State: `VERIFIED CANDIDATE — PROTECTED-MAIN PR PENDING`
 - Manifest version: `1.0`
 - Proposed on: `2026-08-26`
 - Accepted on: `2026-08-26`

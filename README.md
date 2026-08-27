@@ -113,6 +113,12 @@ plugin, model, and human evidence visibly distinct. The self-hosted Houdini runn
 The integrated candidate evidence is recorded in
 [`docs/releases/v0.35.0.md`](docs/releases/v0.35.0.md).
 
+The Horizon 3 project-compiler kernel adds a pure `hermes.houdini.project.v1` specification,
+versioned contract adapters, deterministic checkpointed DAG compilation, and a coherent dry
+observer/drift index. Use `scripts/plan_project.py` to validate, plan, or observe the included
+[`Living Biome`](projects/living_biome/README.md) fixture. These commands never start Houdini or
+execute a plan; graph, cook, pixel, and human evidence remain separate future gates.
+
 The first executable creative skill is `model.fractal_relic` (Sprint 4). It creates three
 deterministic native-SOP alternatives, keeps them together in `OUT_COMPARISON`, and exposes a
 human-controlled `SELECT_CANDIDATE` Switch feeding `OUT_GEO`. A run produces a checkpoint,
