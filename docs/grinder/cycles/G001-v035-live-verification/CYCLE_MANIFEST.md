@@ -1,6 +1,6 @@
 # Grinder Cycle G001 — v0.35 Live Verification Infrastructure
 
-- State: `ACCEPTED — LANES A-D AUTHORIZED`
+- State: `RELEASED`
 - Manifest version: `1.0`
 - Proposed on: `2026-08-25`
 - Accepted on: `2026-08-25`
@@ -10,6 +10,13 @@
 - Base tag: `v0.30.0`
 - Base commit: `b8b8f4c4b702b4f895bbee3098c90006541a7373`
 - Integration branch after acceptance: `codex/grinder-g001-integration`
+- Integration PR: `https://github.com/mlflautt/Houdini-Lab/pull/15`
+- Integration-head CI: `https://github.com/mlflautt/Houdini-Lab/actions/runs/32984337058` (attempt 2)
+- Protected-main merge commit: `8bb50a9a78bd870ba0d256fbb52c7aa904d21efa`
+- Final-main CI: `https://github.com/mlflautt/Houdini-Lab/actions/runs/32989880360`
+- Release tag: `v0.35.0` at `8bb50a9a78bd870ba0d256fbb52c7aa904d21efa`
+- GitHub release: `https://github.com/mlflautt/Houdini-Lab/releases/tag/v0.35.0`
+- Published on: `2026-08-26`
 - Target runtime: Houdini Apprentice `22.0.368`, Apple silicon, macOS
 - Conservative render ceiling: `1280x720`, Karma CPU
 
@@ -21,6 +28,19 @@ The human owner accepted and froze this cycle with:
 
 Lanes A-D are authorized to begin from the frozen base commit. Material contract changes require a
 manifest amendment approved by the owner.
+
+## Integration completion
+
+PR #15 merged the reviewed A-D integration through protected `main` on `2026-08-26`. The required
+PR check recovered from the GitHub Actions service incident and passed on integration head
+`f45a55f422f93f39f21a120c4142e21a7384129f`; the separately dispatched final-main CI then passed on
+the exact merge commit recorded above. GitHub consequently records component PRs #11-#14 as merged
+because their exact commits are ancestors of `main`; they were not independently squash-merged.
+
+The owner authorized publication on `2026-08-26`. The annotated `v0.35.0` tag was published at the
+exact protected-main merge commit above, and the public GitHub release was verified as neither a
+draft nor a prerelease. Pending PDG, simulation, viewport, Karma, and human gates remain pending;
+publication does not promote them.
 
 ## Outcome
 
