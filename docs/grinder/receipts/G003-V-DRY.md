@@ -1,6 +1,6 @@
 # Grinder Receipt G003-V-DRY — Visual Audition Plan
 
-- State: `dry-ready E — A/B/C stopped safely at USD frame contract; awaiting exact E approval`
+- State: `historical dry/stopped evidence; superseded by G003-V authentic run receipt`
 - Branch: `codex/grinder-g003-v-visual-audition`
 - Accepted protected-main base: `df476c1af5db0cda4b80d8cc7ff5bd384cb51389`
 - Acceptance PR: `#25`
