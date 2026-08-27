@@ -5,8 +5,10 @@ templates, and skills that let an AI agent drive SideFX Houdini (Apprentice/Indi
 **graph-first** — the node graph is the primary executable artifact, not a canvas for
 arbitrary pasted Python/VEX.
 
-Read [`docs/architecture.md`](docs/architecture.md) before doing substantive work. The
-principles below are mandatory.
+Read [`docs/architecture.md`](docs/architecture.md) before doing substantive work. For any creative
+project or visible-output request, also read
+[`docs/CREATIVE_AGENT_START_HERE.md`](docs/CREATIVE_AGENT_START_HERE.md). The principles below are
+mandatory.
 
 ## Design principles (do not violate)
 

@@ -1,34 +1,40 @@
-# G003 Owner Decision — Motion Language
+# G003 Gate H1 — Post-Audition Motion Continuation
 
-Select one direction for the live Living Biome composition. These options are not ranked; each is
-already registered, tested on Houdini 22.0.368, and preserves three candidates.
+This decision is made only after the owner has viewed the authentic artifacts required by
+`VISUAL_AUDITION.md`. Capability prose, old sprint renders, mechanical reports, or worker preference
+cannot substitute for that review.
 
-| Choice | Exact capability | Native shape and contract | Runtime boundary |
-|---|---|---|---|
-| Particle trails | `motion.particle_calligraphy@1.0.0` | Arc, fan, and orbit Particle Trail/PolyWire branches; consume the three explicit tube outputs, not `human_selected_contract` | Medium risk; up to 48 frames and 100,000 trail points; silent fixture unless a separate baked envelope is supplied |
-| Organic growth | `generate.differential_growth@1.0.0` | Three editable curve sources through native Solver growth; consume explicit grown PolyWire outputs | Medium risk; default 24-frame growth solve; 50,000-point class ceiling retained from the registered capability |
-| Kinetic instances | `motion.kinetic_reliquary@1.1.0` | Native packed-copy motion with optional MOPs branches; G003 must use the native branch and unavailable markers unless MOPs receives separate approval | Capability class is external; default 24 frames and 8–64 copies; optional render and MOPs remain off |
+## Required decision record
 
-The decision selects a vocabulary for implementation, not a winning rendered result. Candidate
-ratings and biome continuation remain unresolved after this choice.
+- Audition receipt and manifest hashes
+- Exact artifact hashes for all three studies
+- Stable presentation order confirmation
+- Owner's verbatim feedback
+- One explicit continuation state: one lineage, no lineage, or an owner-described hybrid amendment
+- Decision timestamp and recorder
 
-Reply with one exact sentence:
+No technical metric fills `human_rating`, `winner`, `why`, or `selected_for_continuation`.
 
-```text
-Use motion.particle_calligraphy@1.0.0 for G003.
-```
+## Simple continuation sentences
 
-or
-
-```text
-Use generate.differential_growth@1.0.0 for G003.
-```
-
-or
+After viewing all three studies, the owner may use one of these exact forms:
 
 ```text
-Use motion.kinetic_reliquary@1.1.0 native-only for G003.
+Continue G003 with motion.particle_calligraphy@1.0.0 from the reviewed Gate V artifacts.
 ```
 
-The orchestrator must then amend `CYCLE_MANIFEST.md` with the selected ID/version, exact three
-candidate outputs, final stage ceilings, and the verbatim decision before launch acceptance.
+```text
+Continue G003 with generate.differential_growth@1.0.0 from the reviewed Gate V artifacts.
+```
+
+```text
+Continue G003 with motion.kinetic_reliquary@1.1.0 native-only from the reviewed Gate V artifacts.
+```
+
+The owner may instead say that none should continue or describe a hybrid. A hybrid is not inferred:
+it requires an amended contract, resource review, new dry plan, and explicit acceptance before lane
+dispatch.
+
+Once a continuation is recorded, the orchestrator freezes the exact capability ID/version, three
+candidate outputs, seeds, timing contract, risk class, and reduced-or-equal ceilings in the launch
+record. It then creates the four worktrees from the exact protected-main accepted base.

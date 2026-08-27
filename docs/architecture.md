@@ -23,6 +23,11 @@ from. The recommended loop: inspect → translate intent → validate → checkp
 First objective: a **dependable, reversible, graph-first procedural substrate** from which
 increasingly sophisticated skills compose.
 
+For creative work, the substrate is exercised through thin visible vertical slices: propose
+meaningfully different hypotheses, produce the cheapest authentic pixels or motion that can test
+them, obtain human critique, preserve before/after lineage, and promote only proven methods. See
+[`CREATIVE_AGENT_START_HERE.md`](CREATIVE_AGENT_START_HERE.md).
+
 Houdini becomes Hermes's procedural laboratory for: generative geometry, simulation, motion,
 world-building, data viz, materials, USD assembly, procedural variation/batches, render-pass
 generation for downstream AI, and reusable creative systems (not one-off meshes).

@@ -1,162 +1,185 @@
-# Grinder Cycle G003 — Living Biome Live Composition
+# Grinder Cycle G003 — Creative-First Living Biome
 
-- State: `PROPOSED — OWNER MOTION CHOICE AND ACCEPTANCE REQUIRED`
-- Manifest version: `1.0-draft`
+- State: `PROPOSED — OWNER ACCEPTANCE AND LIVE AUDITION AUTHORITY REQUIRED`
+- Manifest version: `2.0-creative-first-draft`
 - Proposed on: `2026-08-26`
-- Target horizon: Horizon 3 live reference composition
+- Target horizon: Horizon 3 visible reference composition
 - Repository: `mlflautt/Houdini-Lab`
-- Frozen base commit: `44727325ecb5262a613d259d6db2ff23274ed211`
-- Base provenance: protected-main merge of G002 PR #22; final-main CI run `33029329282` passed
+- Base selector: protected-main commit carrying this manifest version; resolve and record its exact
+  full SHA in the launch record before creating worktrees
 - Target runtime: Houdini Apprentice 22.0.368, Apple silicon, macOS
 - Package-version intent: remain `0.35.0` during development; release decision is separate
-- Motion selection: `UNSET — DO NOT DISPATCH`
+- Motion selection: `UNSET UNTIL AUTHENTIC THREE-WAY VISUAL AUDITION`
 
-## Decision and launch authority
+## Why this amendment exists
 
-G003 is not accepted and its prompts are inert. Before dispatch, the owner must select exactly one
-motion capability from `MOTION_DECISION.md`. The orchestrator then records the exact ID/version,
-candidate contract, ceilings, and approval class here, changes the state to `ACCEPTED`, and records
-the owner's words. Only then may the owner use:
+G003 must produce work the owner can see and creatively judge. The former plan could complete a
+live graph/data build while leaving pixels optional and required the owner to choose a motion
+language from prose. That ordering did not serve the creative purpose of Houdini Lab.
 
-> Accept Grinder Cycle G003 and launch lanes A-D from 44727325.
+This cycle therefore begins with a small serial visual audition using three already registered
+motion capabilities. The owner chooses a continuation only after reviewing authentic motion. The
+parallel implementation lanes then build the Living Biome around that evidence, and the integrated
+cycle ends with a visible animated comparison and at least one owner-directed revision.
 
-That acceptance authorizes repository development and read-only Hython probes. It does not itself
-authorize a live artist-scene edit, a full-range cook, simulation, viewport automation, Karma,
-plugin installation, model call, or downstream application. The integration captain must present
-the final dry run manifest and request the exact bounded graph/data action separately.
+## Authority boundaries
 
-## Outcome
+Acceptance of this cycle authorizes repository development and read-only Houdini probes. It does
+not authorize a graph mutation, cook, viewport capture, Karma render, file cache, plugin install,
+external model, or downstream application.
 
-Turn G002's stable 15-stage dry plan into a guarded, resumable live Living Biome build. The result
-must remain a readable graph: registered World Seed, Botanical Grammar, the owner-selected motion
-system, Material Foundry, small adapter subgraphs, and Solaris assembly. It preserves Amber Mesa,
-Verdant Rift, and Lunar Basin simultaneously, with no automatic rating, ranking, or winner.
+The first execution request must name the exact visual-audition action and ceilings in
+`VISUAL_AUDITION.md`. After that bounded action is approved and its artifacts are reviewed, the
+owner may record one motion continuation in `MOTION_DECISION.md`. Parallel lanes remain inert until
+both the audition receipt and the owner's exact continuation words exist.
 
-G003 succeeds when a fresh `.hipnc` can be rebuilt in a new scene from source, each stage is bound
-to the exact dry-plan/source identity, the graph and sampled data pass beneath declared ceilings,
-the observer consumes real stage receipts and artifact hashes, and another agent can continue from
-the saved project without hidden UI state. Pixels remain a separate optional gate.
+No approval may be inferred from a prior cycle or widened from one evidence rung to another.
 
-## Non-goals
+## Creative outcome
 
-- No arbitrary Python/VEX, Python SOP, destructive artist-network replacement, implicit current
-  selection/pane/frame, background execution, or unbounded retry.
-- No automatic capability/adapter selection, aesthetic ranking, biome winner, motion winner,
-  material winner, or silent candidate Switch choice.
-- No full-range simulation, PDG child work, cache population, Karma render, plugin install, external
-  model, or downstream transfer in the base G003 authorization.
-- No monolithic builder that recreates skill internals. Compose registered skills and small native
-  adapter recipes; Houdini performs geometry work.
-- No release tag or public `v0.40.0` claim merely because the development cycle merges.
+Build a readable, animated Living Biome composition from registered World Seed, Botanical Grammar,
+the owner-selected motion lineage, Material Foundry, small native adapters, and Solaris. Preserve
+Amber Mesa, Verdant Rift, and Lunar Basin simultaneously. Produce authentic visual and temporal
+evidence in stable order so the owner can critique form, rhythm, material, light, atmosphere, and
+camera without any technical metric becoming a taste score.
 
-## Frozen composition invariants
+G003 succeeds only when:
+
+1. the three motion languages have authentic, comparable audition artifacts;
+2. the owner has explicitly selected or declined a continuation after seeing them;
+3. a fresh `.hipnc` rebuilds from source into a readable three-biome graph;
+4. graph and sampled data pass beneath declared ceilings;
+5. authentic pixels and motion evidence show the integrated result;
+6. at least one exact owner critique is translated into a bounded revision with before/after
+   lineage; and
+7. another agent can resume from the project specification, scene, artifacts, and creative handoff
+   without hidden UI state.
+
+## Creative review invariants
+
+- Alternatives remain equal-status until the owner acts. Stable presentation order is always
+  Particle Calligraphy, Differential Growth, Kinetic Instances for the audition, then Amber Mesa,
+  Verdant Rift, Lunar Basin for the integrated comparison.
+- `selected_for_continuation`, `human_rating`, `winner`, and `why` stay null until populated from
+  the owner's exact words after viewing exact artifact hashes.
+- Mechanical visual analysis may reject blank, duplicate, corrupt, cropped, or badly exposed proof.
+  It may not rank beauty, originality, mood, usefulness, or preference.
+- Rejected and superseded attempts are retained with lineage. A revision never overwrites the
+  artifact it is meant to improve.
+- Still images cannot prove motion. Every motion claim binds a time range, sampled frames, and an
+  authentic sequence or flipbook.
+
+## Frozen project inputs
 
 - Source plan schema: `hermes.houdini.project_plan.v1`.
 - Source fixture: `projects/living_biome/project.yaml`.
-- Variants, in immutable presentation order: `amber-mesa`, `verdant-rift`, `lunar-basin`.
-- World capability: `world.world_seed_atlas_labs@1.0.0`, with `labs_available: false` unless a
-  later explicit plugin decision records exact capability evidence.
-- Botanical capability: `grow.botanical_grammar@1.0.0`.
-- Material capability: `lookdev.procedural_material_foundry@1.0.0`.
-- Motion capability: owner-selected exact ID/version only; the G002 particle choice is a technical
-  fixture and carries no aesthetic authority.
-- Every capability's three explicit candidate outputs remain addressable. Composition adapters may
-  bind stable candidate IDs to stable biome variant IDs, but must not consume a skill's
-  human-selected output as a shortcut.
-- Parent paths, contexts, stable Hermes IDs, checkpoints, outputs, frame range, seeds, budgets,
-  approvals, and evidence are explicit. The current frame is restored after every allowed cook.
-- Apprentice outputs are `.hipnc`/non-commercial, project-confined, non-overwriting, and no render
-  exceeds 1280×720.
+- Biome order: `amber-mesa`, `verdant-rift`, `lunar-basin`.
+- World: `world.world_seed_atlas_labs@1.0.0`, native fallback unless a later plugin decision records
+  exact SideFX Labs evidence.
+- Botanical: `grow.botanical_grammar@1.0.0`.
+- Material: `lookdev.procedural_material_foundry@1.0.0`.
+- Audition motions, all required and none preselected:
+  `motion.particle_calligraphy@1.0.0`, `generate.differential_growth@1.0.0`, and
+  `motion.kinetic_reliquary@1.1.0` native-only.
+- Integrated motion: exactly one owner-selected audition lineage, or a separately amended
+  composition if the owner explicitly requests a hybrid after review.
+- Every capability's explicit candidates remain addressable; no skill's human-selected Switch
+  output may be consumed as a shortcut.
 
-## Lane DAG and ownership
+## Cycle sequence
 
 ```text
-protected-main G002 base
-  +-- G003-A run governor -----------------+
-  +-- G003-B SOP composition --------------+--> G003-I live integration
-  +-- G003-C Solaris assembly -------------+
-  +-- G003-D execution receipt/handoff ----+
+accepted manifest
+  -> V: serial three-way visual audition
+  -> H1: owner reviews exact artifacts and selects/declines continuation
+  -> A: world and spatial composition --------+
+  -> B: selected motion and temporal design ---+--> I: live integrated composition
+  -> C: material, light, camera, presentation -+
+  -> D: review, critique, continuation --------+
+  -> H2: owner critiques integrated comparison
+  -> R1: one bounded revision and before/after review
+  -> protected-main integration and separate release decision
 ```
 
-| Lane | Owned implementation | Owned tests/docs | Must not edit |
+The audition and integrated scene are serialized because they mutate Houdini projects and produce
+shared visual artifacts. Lanes A-D develop isolated recipes, planners, validators, and review
+contracts in parallel after H1.
+
+## Lane ownership
+
+| Lane | Creative responsibility | Owned implementation | Owned docs/tests |
 |---|---|---|---|
-| A | `hermes_houdini/project_runtime.py` | `tests/unit/test_project_runtime.py`, `docs/project-runtime.md`, `docs/grinder/receipts/G003-A.md` | recipes, skills, observer/compiler, live execution |
-| B | `hermes_houdini/living_biome_sop.py`, `recipes/sop/living_biome_*.yaml` | `tests/unit/test_living_biome_sop.py`, `tests/fixtures/projects/g003-sop-*.json`, `docs/living-biome-sop.md`, `docs/grinder/receipts/G003-B.md` | LOPs, runtime governor, receipts, shared metadata |
-| C | `hermes_houdini/living_biome_stage.py`, `recipes/lop/living_biome_*.yaml` | `tests/unit/test_living_biome_stage.py`, `tests/fixtures/projects/g003-stage-*.json`, `docs/living-biome-stage.md`, `docs/grinder/receipts/G003-C.md` | SOPs, runtime governor, receipts, shared metadata |
-| D | `hermes_houdini/project_run_receipt.py` | `tests/unit/test_project_run_receipt.py`, `docs/project-run-receipt.md`, `docs/grinder/receipts/G003-D.md` | recipes, skills, compiler/observer, live execution |
-| I | `skills/project.living_biome/*`, `projects/living_biome/*`, `tests/unit/test_living_biome_project.py`, `tests/hython/test_living_biome_project.py` | narrow registration/package exports, shared docs, `docs/grinder/receipts/G003-I.md` | lane history, automatic taste decisions, inferred evidence |
+| A | world form, botanical distribution, spatial hierarchy, three-biome composition | `hermes_houdini/living_biome_world.py`, `recipes/sop/living_biome_world_*.yaml` | matching unit fixtures/docs and `G003-A.md` |
+| B | selected motion integration, timing, rhythm, temporal sampling | `hermes_houdini/living_biome_motion.py`, `recipes/sop/living_biome_motion_*.yaml` | matching unit fixtures/docs and `G003-B.md` |
+| C | materials, lighting, atmosphere, camera, Solaris presentation | `hermes_houdini/living_biome_lookdev.py`, `recipes/lop/living_biome_lookdev_*.yaml` | matching unit fixtures/docs and `G003-C.md` |
+| D | artifact comparison, exact feedback binding, revision hypotheses, portable creative handoff | `hermes_houdini/creative_review.py` | matching unit fixtures/docs and `G003-D.md` |
+| I | serial audition/integration execution, project skill, scene, shared verification and receipt | `skills/project.living_biome/*`, `projects/living_biome/*`, narrow shared wiring | integration tests/docs and `G003-I.md` |
 
-No lane imports a sibling lane. Integration alone wires the four public plain-mapping APIs.
+Exact paths, exclusions, public APIs, tests, and stop conditions live in each lane brief. No lane
+imports a sibling lane. Integration alone wires public plain-mapping APIs.
 
-## Frozen cross-lane interfaces
+## Resource ceilings
 
-### A — run governor
+These are upper bounds, not targets. Any widening requires a manifest amendment and fresh approval.
 
-Pure functions accept a G002 dry plan plus explicit runtime identity and approval records. They emit
-canonical `hermes.houdini.project_run.v1` state with exact plan/source hashes, ordered stage states,
-dependency readiness, risk/approval requirements, budgets, checkpoints, and
-`automatic_execution: false`. `next_runnable_stage` returns zero or one stage description; it never
-calls a tool, starts Houdini, grants approval, discovers a scene, or retries.
+| Resource | Visual audition | Integrated Living Biome |
+|---|---:|---:|
+| scenes | 3 new non-overwriting `.hipnc` | 1 new scene plus revisions |
+| timeline | frames 1–24 | frames 1–48 |
+| motion frames delivered | 12 evenly sampled frames per study | at least 12 evenly sampled frames |
+| resolution | 640×360 | 768×432 default; 1280×720 hard ceiling |
+| Karma | CPU only, 16 samples maximum | CPU only, 32 samples maximum |
+| render time | 20 minutes aggregate | 30 minutes per approved comparison/revision |
+| points/primitives | capability ceiling, never widened | 300,000 per biome variant |
+| aggregate peak memory | 4 GiB | 8 GiB |
+| retained cache | 0 bytes | 0 bytes unless separately approved |
+| output bytes | 1 GiB aggregate | 2 GiB per approved review round |
 
-### B — SOP composition fragment
+The operator must stop rather than silently reduce fidelity or substitute generated/mock pixels if
+the bounded runtime cannot produce authentic evidence.
 
-Pure planning accepts explicit registered candidate paths for world, botanical, and selected motion
-outputs plus the stable biome mapping. It emits only registered `recipe.instantiate` envelopes and
-named contracts beneath an explicit `/obj` parent. Native nodes perform transforms, merges, packing,
-attribute tagging, and output contracts. The fragment retains all three variants and exposes
-`OUT_AMBER_MESA`, `OUT_VERDANT_RIFT`, `OUT_LUNAR_BASIN`, and `OUT_BIOME_COMPARE` without a winner.
+## Required artifact ladder
 
-### C — Solaris fragment
+### Gate V — motion audition
 
-Pure planning accepts the three SOP output paths and three exact Material Foundry material prims.
-It emits a registered LOP recipe plan for three explicit SOP Imports, material bindings, stable
-variant prim paths, camera/light/render-settings contracts, and one non-rendering `OUT_STAGE` Null.
-No lane call launches Karma, changes the desktop, or silently selects a variant.
+- three project-confined `.hipnc` scenes or one scene with three explicitly addressable branches;
+- three labeled 12-frame sequences and playable previews;
+- one stable-order contact sheet;
+- graph snapshots or graph manifests for each method;
+- mechanics reports proving nonblank, nonduplicate temporal evidence;
+- live-byte hashes, runtime/build/license, exact seeds, parameters, frame sampling, and failures.
 
-### D — run receipt
+### Gate I — integrated composition
 
-Pure functions bind the dry-plan hash, source commit/dirty state, runtime identity, exact stage
-records, checkpoint/scene/artifact byte hashes, evidence rung, budgets, warnings, approvals, and
-pending human fields into canonical `hermes.houdini.project_run_receipt.v1`. Missing evidence stays
-pending; mismatched identities or bytes block continuation. A handoff view uses project-relative
-portable paths and preserves rejected/unfinished lineage.
+- readable three-biome `.hipnc` and graph manifest;
+- three individual beauty frames plus one stable-order comparison;
+- one authentic motion preview showing all three lineages or three synchronized previews;
+- graph/data/USD/material/camera/light validation;
+- no automatic winner and all unreviewed human fields null.
 
-## Baseline live ceilings
+### Gate R1 — refinement
 
-These are upper bounds, not targets. The accepted motion choice may reduce them but may not widen
-them without a manifest amendment.
+- verbatim user critique bound to reviewed artifact hashes and candidate IDs;
+- bounded revision plan naming graph/parameter/timing/material/light/camera hypotheses;
+- new non-overwriting scene/artifacts with before/after presentation;
+- continuation handoff stating what was liked, disliked, rejected, changed, and not yet judged.
 
-| Resource | Cycle ceiling |
-|---|---:|
-| points per SOP variant | 300,000 |
-| primitives per SOP variant | 300,000 |
-| aggregate peak memory | 8 GiB |
-| graph-edit time | 300 s |
-| sampled data-cook time | 600 s |
-| sampled frames | start, midpoint, end only |
-| frame range | 1–48 |
-| retained cache | 0 bytes unless separately approved |
-| viewport/Karma | unapproved; optional later, max 1280×720 |
+## Non-goals
 
-## Integration sequence and evidence gates
+- No arbitrary Python/VEX, Python SOP, destructive artist-network replacement, hidden selection,
+  active-pane dependency, unbounded simulation, automatic retry, or monolithic builder.
+- No automatic aesthetic rating/ranking, motion winner, biome winner, material winner, or silent
+  hybridization.
+- No plugin installation, external visual model, downstream transfer, HDA publish, or release tag
+  under the base cycle authority.
+- No claim that structural validation, a still, or a generated mockup constitutes creative motion
+  evidence.
 
-1. Re-audit each lane head/PR/receipt and ownership, then merge A→B→C→D with ordinary commits.
-2. Wire the project skill and regenerate the dry plan. Stop on any source, catalog, adapter, build,
-   license, budget, or motion-selection drift.
-3. Run pure/Ruff and full Hython regression. Perform read-only operator/parameter probes against
-   22.0.368; do not infer a missing node from an older build's docs.
-4. Produce a no-side-effect run manifest and present its exact graph/data approvals and ceilings.
-5. Only after explicit approval: create a fresh project scene, checkpoint before each coherent
-   medium-risk edit, instantiate registered graphs, sample only declared frames, restore timeline,
-   validate graph/data, save a new `.hipnc`, and build the run receipt.
-6. Optional viewport/Karma proof requires a later independent approval and does not become human
-   taste evidence. Present the three variants in stable order and ask the owner which lineage, if
-   any, should continue.
-7. Merge through protected main. A package tag/release is a separate decision after evidence review.
+## Exit gate
 
-## Cycle exit gate
+Protected-main CI, clean pure/Ruff, Houdini 22.0.368 Hython regression, current-build probes,
+repeatable manifests, readable source-built graph, bounded graph/data proof, hashed `.hipnc`, Gate V
+and Gate I authentic pixels, at least one H2/R1 human-directed revision, preserved alternatives,
+portable handoff, and truthful pending statuses for every unrun plugin/model/downstream gate.
 
-Required: protected-main CI, clean pure/Ruff, H22.0.368 Hython regression, exact current-build probes,
-repeatable dry/run manifests, readable three-variant graph, sampled graph/data proof, hashed `.hipnc`
-and continuation receipt, preserved alternatives, and blank human fields. Pixel, plugin, model,
-downstream, and human gates must remain accurately pending/not applicable unless separately run.
+No `v0.40.0` tag or release is implied by cycle completion.

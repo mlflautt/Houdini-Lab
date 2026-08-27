@@ -13,10 +13,14 @@ Houdini work; the Grinder controls how this repository is changed.
 2. Treat the verified
    [G002 project-compiler manifest](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md) as the
    current composition-contract baseline.
-3. Review the proposed
-   [G003 live-composition manifest](cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md).
-4. Make the owner-owned [motion decision](cycles/G003-v040-living-biome-shot/MOTION_DECISION.md).
-5. Only after the manifest records that choice and explicit acceptance, use the
+3. Review the proposed creative-first
+   [G003 Living Biome manifest](cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md).
+4. Accept and run the bounded
+   [three-way visual audition](cycles/G003-v040-living-biome-shot/VISUAL_AUDITION.md); the operator
+   stops for exact live/render authority before producing pixels.
+5. After viewing all three authentic motion studies, record the owner-owned
+   [continuation decision](cycles/G003-v040-living-biome-shot/MOTION_DECISION.md).
+6. Only after that reviewed decision and explicit lane acceptance, use the
    [G003 launch checklist](cycles/G003-v040-living-biome-shot/LAUNCH_CHECKLIST.md) and
    [one-line worker prompts](cycles/G003-v040-living-biome-shot/COPY_PASTE_PROMPTS.md).
 
@@ -26,8 +30,9 @@ Houdini work; the Grinder controls how this repository is changed.
   as `v0.35.0`; technical evidence lives in `docs/grinder/receipts/G001-I.md`.
 - [G002 — project compiler kernel](cycles/G002-v040-project-compiler/CYCLE_MANIFEST.md): verified and
   merged through protected main at `44727325ecb5262a613d259d6db2ff23274ed211`.
-- [G003 — Living Biome Shot](cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md): complete proposed
-  parallel packet on the exact G002 merge; blocked only on owner motion choice and acceptance.
+- [G003 — Creative-First Living Biome](cycles/G003-v040-living-biome-shot/CYCLE_MANIFEST.md): proposed
+  visible vertical slice; begins with three authentic motion auditions, then creative-discipline
+  lanes, an integrated animated comparison, owner critique, and one preserved revision.
 
 ## Dispatch rule
 

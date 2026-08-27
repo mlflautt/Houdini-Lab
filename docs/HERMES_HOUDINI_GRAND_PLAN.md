@@ -224,17 +224,23 @@ Deliverables:
 5. **Dependency and drift report** — exact Houdini/plugin/operator requirements plus native fallback
    coverage before execution.
 
-Reference creative study: **Living Biome Shot**. Compose World Seed terrain, procedural materials,
-botanical grammar, one motion system, Solaris staging, and one optional bounded simulation into a
-short shot. Preserve three equal-status biome directions and ask the user which lineage to continue.
+Reference creative study: **Living Biome Shot**. First render three equal-status motion auditions
+from registered capabilities so the owner chooses from authentic temporal evidence rather than
+prose. Then compose World Seed terrain, procedural materials, botanical grammar, the reviewed
+motion lineage, and Solaris staging into a short shot. Preserve three equal-status biome directions
+and ask the user which lineage, if any, to continue.
 
 Exit evidence: rebuild the project from its specification and source recipes; compare hashes and
-declared tolerances; open a readable scene in which an artist can continue every major layer.
+declared tolerances; open a readable scene in which an artist can continue every major layer;
+deliver authentic still and motion evidence; bind exact owner critique to exact artifacts; and
+complete at least one bounded, non-overwriting before/after revision. Pixels are required for this
+creative milestone even though their graph, cook, viewport, and Karma authorities remain separate.
 
 Kernel evidence: G002 dry-compiles the three-direction Living Biome specification into a stable
 15-stage DAG with exact capability/adapter identities, explicit budgets and blockers, a coherent
-observer index, and no execution authority. The live readable scene, cooked data, authentic pixels,
-and owner motion/lineage selections remain G003 work.
+observer index, and no execution authority. G003 manifest 2.0 reorders the remaining work around a
+visual audition, creative-discipline parallel lanes, a live readable scene, authentic animated
+pixels, owner critique, and a bounded revision.
 
 ### Horizon 4 — Human-guided refinement and creative memory (`v0.50` candidate)
 
@@ -253,8 +259,9 @@ Deliverables:
 - a handoff summary that tells the next agent what the user liked, disliked, rejected, and has not
   yet judged.
 
-Exit evidence: perform two user-led revision cycles on one composition. Show that a new agent can
-apply the feedback consistently without reversing A/B identity or overwriting the rejected branch.
+Exit evidence: generalize G003's first project-local review into at least two further user-led
+revision cycles. Show that a new agent can apply the feedback consistently without reversing A/B
+identity, overwriting the rejected branch, or treating contextual taste as a universal score.
 
 ### Horizon 5 — Advanced creative verticals (`v0.60` candidates)
 

@@ -1,14 +1,21 @@
-# Grinder Cycle G003 Proposal — Living Biome Live Composition
+# Grinder Cycle G003 Proposal — Create First, Generalize from the Work
 
-G002 is merged and G003 now has a complete proposed architecture, frozen base, ownership matrix,
-worker briefs, launch checklist, and one-line prompts. See `CYCLE_MANIFEST.md` for the governing
-scope.
+G003 is the first project cycle whose primary acceptance evidence is a work the owner can see,
+watch, and art-direct. It begins with three authentic motion auditions made from already registered
+capabilities. Only after the owner reviews those artifacts does the system freeze a motion lineage
+and launch parallel development around the Living Biome composition.
 
-It is intentionally not dispatchable yet. The remaining owner decision is which registered motion
-language the live composition should use. `MOTION_DECISION.md` presents the exact viable choices
-and technical consequences without ranking their aesthetics. After that choice is recorded, the
-orchestrator will freeze the selected contract and change the manifest to `ACCEPTED` only on the
-owner's explicit launch instruction.
+The architecture remains graph-first and reusable, but infrastructure is developed in service of a
+real creative act. Every lane owns one creative discipline, and the serial integrator owns the live
+scene, authentic capture, and human review loop.
 
-This sequence prevents four parallel workers from guessing different motion paths while retaining
-creative selection as a human decision.
+Read in this order:
+
+1. `CYCLE_MANIFEST.md` — authority, sequence, ceilings, evidence, ownership.
+2. `VISUAL_AUDITION.md` — the first bounded visible output.
+3. `MOTION_DECISION.md` — post-audition human continuation record.
+4. `LAUNCH_CHECKLIST.md` — acceptance, audition, lane, integration, and review gates.
+5. `COPY_PASTE_PROMPTS.md` — one-line prompts for the four isolated workers and integrator.
+
+The current packet is proposed, not accepted. Repository work, live graph/data work, motion capture,
+and Karma each retain explicit authority boundaries.
