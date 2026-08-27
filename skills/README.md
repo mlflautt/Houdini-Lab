@@ -68,7 +68,7 @@ The first simulation skill is `simulate.vellum_relic_drop@1.0.0`. It composes
 graph observation, an optional final-frame viewport capture, and a non-writing versioned File
 Cache boundary. See `docs/vellum-simulation.md`.
 
-The first Solaris/lookdev skill is `lookdev.relic_stage@1.1.0`. It composes a native LOP recipe,
+The first Solaris/lookdev skill is `lookdev.relic_stage@1.2.0`. It composes a native LOP recipe,
 three MaterialX builder candidates, explicit USD stage/material-binding validation, deterministic
 graph observation, and an optional separately approved one-frame Karma CPU render. See
 `docs/solaris-lookdev.md`.

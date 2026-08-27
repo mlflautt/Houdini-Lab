@@ -77,6 +77,7 @@ def test_manifest_preserves_three_methods_and_exact_temporal_render_contract(tmp
     assert calligraphy_recipe["arguments"]["inputs"]["camera_tz"] == 8.2
     assert differential_recipe["arguments"]["inputs"]["camera_tx"] == -2.0
     assert differential_recipe["arguments"]["inputs"]["camera_tz"] == 20.0
+    assert differential_recipe["arguments"]["inputs"]["max_primitives"] == 50_000
     assert calligraphy_recipe["arguments"]["inputs"]["dome_exposure"] == 1.0
     assert methods[2]["mode"] == "native_only_mops_false"
     assert manifest["postprocess"][0]["kind"] == "stable_order_contact_sheet"

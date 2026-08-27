@@ -10,9 +10,9 @@ from hermes_houdini.schemas.command import Policy, RiskClass
 from skills._lib import build_envelope
 
 SKILL_ID = "lookdev.relic_stage"
-SKILL_VERSION = "1.1.0"
+SKILL_VERSION = "1.2.0"
 RECIPE_ID = "lop.relic_lookdev_stage"
-RECIPE_VERSION = "1.1.0"
+RECIPE_VERSION = "1.2.0"
 _RUN_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_-]{0,23}\Z")
 
 
@@ -39,6 +39,7 @@ def plan(
     camera_ry: float = 36.9,
     camera_rz: float = 0.0,
     camera_focal_length: float = 45.0,
+    max_primitives: int = 10_000,
 ) -> list[dict[str, object]]:
     """Return graph, MaterialX, USD validation, preview, observation, and snapshot calls."""
     if not source_sop_path.startswith("/") or source_sop_path == "/":
@@ -73,6 +74,12 @@ def plan(
             or not minimum <= float(value) <= maximum
         ):
             raise ValueError(f"{name} must be a finite number between {minimum} and {maximum}")
+    if (
+        not isinstance(max_primitives, int)
+        or isinstance(max_primitives, bool)
+        or not 1 <= max_primitives <= 100_000
+    ):
+        raise ValueError("max_primitives must be an integer between 1 and 100000")
     source_frame_count = int(frame) - int(source_start_frame) + 1
 
     run_code = run_id.upper().replace("-", "_")
@@ -125,7 +132,7 @@ def plan(
             "roughness": 0.46,
         },
     ]
-    max_prims = 10_000
+    max_prims = max_primitives
     max_memory = 1_073_741_824
     graph_policy = Policy(
         risk=RiskClass.MEDIUM,
@@ -183,6 +190,7 @@ def plan(
                     "width": width,
                     "height": height,
                     **{name: float(value[0]) for name, value in presentation_controls.items()},
+                    "max_primitives": max_primitives,
                 },
                 "label": f"Hermes {SKILL_ID} {run_id}",
                 "checkpoint_stem": f"lookdev_{run_id}",
@@ -305,6 +313,7 @@ def plan(
             "camera_rotate": [float(camera_rx), float(camera_ry), float(camera_rz)],
             "camera_focal_length": float(camera_focal_length),
         },
+        "geometry_budget": {"max_primitives": max_primitives},
         "license": {
             "mode": "houdini-apprentice-noncommercial",
             "commercial_use": False,

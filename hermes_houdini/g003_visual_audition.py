@@ -350,6 +350,7 @@ def build_visual_audition_manifest(
             camera_ry=0.0,
             camera_rz=0.0,
             camera_focal_length=45.0,
+            max_primitives=50_000,
         )
     )
     extra, differential_renders = _render_calls(

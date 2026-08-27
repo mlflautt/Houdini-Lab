@@ -3,11 +3,11 @@
 Sprint 8 adds the first graph-first USD/lookdev lane. It keeps three resource decisions
 separate:
 
-1. `lop.relic_lookdev_stage@1.1.0` creates a readable LOP graph without cooking it;
+1. `lop.relic_lookdev_stage@1.2.0` creates a readable LOP graph without cooking it;
 2. `solaris.stage.validate` explicitly composes one bounded USD stage;
 3. `render.karma.preview` launches one separately approved external `husk` process.
 
-The high-level entry point is `lookdev.relic_stage@1.1.0`.
+The high-level entry point is `lookdev.relic_stage@1.2.0`.
 
 ## Editable graph contract
 
@@ -16,9 +16,10 @@ Switch, Dome Light, Camera, Karma Render Settings, and output Null LOPs. The thr
 branches remain connected to Switch inputs 0–2. `candidate_index` changes only the previewed
 input; it does not delete alternatives, fill rating fields, or imply a winner.
 
-Version 1.1 makes neutral dome intensity/exposure and camera translation, rotation, and focal
+Version 1.2 makes neutral dome intensity/exposure and camera translation, rotation, and focal
 length explicit bounded inputs. The recipe uses the pinned unversioned Dome Light LOP's stable
-`intensity` and `exposure` parameter names; callers use the same descriptive skill arguments.
+`intensity` and `exposure` parameter names; callers use the same descriptive skill arguments. Its
+explicit `max_primitives` input lets stage validation inherit a bounded upstream geometry budget.
 
 MaterialX builder subnets must live inside the Material Library in Houdini 20 and later. The
 narrow `solaris.materialx.populate` tool uses Houdini's pinned builder utility, creates exactly

@@ -488,10 +488,11 @@ def test_relic_lookdev_skill_separates_stage_validation_and_external_render(tmp_
     ]
     recipe = calls[0]
     assert recipe["arguments"]["recipe_id"] == "lop.relic_lookdev_stage"
-    assert recipe["arguments"]["version"] == "1.1.0"
+    assert recipe["arguments"]["version"] == "1.2.0"
     assert recipe["arguments"]["inputs"]["candidate_index"] == 1
     assert recipe["arguments"]["inputs"]["dome_intensity"] == 1.0
     assert recipe["arguments"]["inputs"]["camera_focal_length"] == 45.0
+    assert recipe["arguments"]["inputs"]["max_primitives"] == 10_000
     materials = calls[1]["arguments"]["materials"]
     assert [item["id"] for item in materials] == ["oxide", "amber", "ivory"]
     stage = calls[2]
@@ -512,12 +513,19 @@ def test_relic_lookdev_skill_separates_stage_validation_and_external_render(tmp_
     }
     assert all(item["human_rating"]["score"] is None for item in metadata["materials"])
     assert metadata["presentation"]["camera_translate"] == [6.0, 4.0, 8.0]
+    assert metadata["geometry_budget"] == {"max_primitives": 10_000}
 
     with pytest.raises(ValueError, match="camera_focal_length"):
         skill.plan(
             source_sop_path="/obj/RELIC/OUT_GEO",
             artifact_dir=str(tmp_path),
             camera_focal_length=0.0,
+        )
+    with pytest.raises(ValueError, match="max_primitives"):
+        skill.plan(
+            source_sop_path="/obj/RELIC/OUT_GEO",
+            artifact_dir=str(tmp_path),
+            max_primitives=100_001,
         )
 
     no_render = skill.plan(

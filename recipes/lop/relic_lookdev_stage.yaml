@@ -1,6 +1,6 @@
 {
   "id": "lop.relic_lookdev_stage",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "summary": "Import one explicit SOP contract into USD and preserve three editable MaterialX lookdev branches for human selection.",
   "contexts": ["LOP"],
   "inputs": {
@@ -19,7 +19,8 @@
     "camera_rx": {"type": "number", "min": -360.0, "max": 360.0, "default": -22.3},
     "camera_ry": {"type": "number", "min": -360.0, "max": 360.0, "default": 36.9},
     "camera_rz": {"type": "number", "min": -360.0, "max": 360.0, "default": 0.0},
-    "camera_focal_length": {"type": "number", "min": 1.0, "max": 300.0, "default": 45.0}
+    "camera_focal_length": {"type": "number", "min": 1.0, "max": 300.0, "default": 45.0},
+    "max_primitives": {"type": "integer", "min": 1, "max": 100000, "default": 10000}
   },
   "nodes": [
     {
@@ -170,7 +171,7 @@
     "graph_first": true,
     "automatic_ranking": false,
     "renderer": "Karma CPU",
-    "cook_budget": {"scope": "single_lop_stage", "max_prims": 10000, "max_seconds": 30},
+    "cook_budget": {"scope": "single_lop_stage", "max_prims": "{{max_primitives}}", "max_seconds": 30},
     "license": {"mode": "houdini-apprentice-noncommercial", "render_ceiling": [1280, 720]}
   }
 }

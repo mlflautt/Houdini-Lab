@@ -258,7 +258,7 @@ def test_lop_lookdev_recipe_preserves_three_assignments_and_human_switch():
     )
     creates = [operation for operation in fragment["operations"] if operation["op"] == "create"]
     connects = [operation for operation in fragment["operations"] if operation["op"] == "connect"]
-    assert fragment["recipe"] == {"id": "lop.relic_lookdev_stage", "version": "1.1.0"}
+    assert fragment["recipe"] == {"id": "lop.relic_lookdev_stage", "version": "1.2.0"}
     assert len(creates) == 10
     assert len(connects) == 11
     assert all(operation["category"] == "Lop" for operation in creates)
