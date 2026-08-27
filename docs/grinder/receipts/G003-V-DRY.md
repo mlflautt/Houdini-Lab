@@ -214,7 +214,7 @@ manifest records this passing runtime observation and is the sole live-approval 
 
 ```text
 env PYTHONPATH=. '/Users/m1/Houdini Lab/.venv/bin/python' -m pytest -q -p no:cacheprovider
-354 passed in 7.39s
+352 passed, 4 sandbox socket skips in 5.23s
 
 '/Users/m1/Houdini Lab/.venv/bin/ruff' check --no-cache .
 All checks passed!
@@ -229,18 +229,20 @@ env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
 
 env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
   /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython \
-  -m pytest tests/hython/test_integration.py::test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_render \
+  -m pytest \
+    tests/hython/test_integration.py::test_relic_lookdev_skill_builds_materialx_and_validates_usd_stage_without_render \
+    tests/hython/test_integration.py::test_particle_calligraphy_lookdev_recooks_declared_source_after_temporal_validation \
   -o addopts='' -q
-1 passed in 0.86s
+2 passed in 3.61s
 
 env HOUDINI_PACKAGE_SKIPLIST=SideFXLabs22.0.json PYTHONPATH=. \
   /Applications/Houdini/Houdini22.0.368/Frameworks/Houdini.framework/Versions/22.0/Resources/bin/hython \
   scripts/run_g003_visual_audition.py \
-  --manifest '/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-c-manifest-explicit-lop-frame.json' \
-  --approved-manifest-sha256 e7b6af650d6e6d01677732d287f0fa1119733be8fcbff2b0b821e00c88771351 \
+  --manifest '/Users/m1/Houdini Lab/.hermes/g003/plans/g003-v-20260827-e-manifest-sequential-source-cook.json' \
+  --approved-manifest-sha256 e7baa437bb0804adac5001c3cb4ab11efe550d6fa5d1f350e1b6cfd529377c3f \
   --preflight-only
-pass; 115 calls, 36 renders, clean head 77e6542, Apprentice 22.0.368, ffmpeg 9.0.1,
-fresh scene, absent C root, mutation_performed=false
+pass; 115 calls, 36 renders, clean head d138bac, Apprentice 22.0.368, ffmpeg 9.0.1,
+fresh scene, absent E root, mutation_performed=false
 ```
 
 The first Ruff attempt without `--no-cache` could not create `.ruff_cache` in the external worktree
