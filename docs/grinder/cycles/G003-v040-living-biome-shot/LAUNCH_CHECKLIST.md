@@ -1,5 +1,9 @@
 # G003 Creative-First Launch Checklist
 
+> **Historical record — do not re-run these setup commands.** The original peer-worktree paths are
+> retained below as evidence. New cycles must follow the project-contained `.worktrees/` convention
+> in `docs/grinder/GRINDER_ARCHITECTURE.md`.
+
 Do not skip gates. A later gate never retroactively authorizes an earlier or broader action.
 
 ## 1. Merge and accept the planning packet
