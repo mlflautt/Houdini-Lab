@@ -122,7 +122,14 @@ For cycle `GNNN`, use:
 - lane branches: `codex/grinder-gnnn-<lane>-<slug>`
 - planning branch: `codex/grinder-architecture` or a cycle-specific planning branch
 
-Prefer one separate Git worktree or clone per Codex instance. Each instance must print and record:
+Prefer one separate Git worktree or clone per Codex instance. All new worktrees must live beneath
+the canonical checkout at `<repository-root>/.worktrees/<cycle>-<lane>`; never create a peer
+directory beside the repository or elsewhere in a user's home directory. `.worktrees/` is local
+and ignored. The integration captain creates it with `mkdir -p .worktrees` and removes each clean,
+merged worktree with `git worktree remove <path>` immediately after integration. An unclean or
+unmerged worktree is a stop-and-report condition, never a force-delete candidate.
+
+Each instance must print and record:
 
 ```bash
 git rev-parse --show-toplevel
@@ -183,4 +190,3 @@ Use a cycle when the integrated outcome can be accepted as one coherent release 
 to five build lanes; beyond that, coordination cost usually exceeds useful parallelism. A lane
 should fit one independent Codex task and produce one reviewable PR. Sequential work belongs in the
 integration lane or the next cycle.
-

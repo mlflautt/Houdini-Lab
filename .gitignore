@@ -44,6 +44,7 @@ Thumbs.db
 bridge_secret.txt
 *.session
 .hermes/
+.worktrees/
 
 # Project-managed optional plugins are reproducibly pinned by registry records and
 # bootstrap scripts; their third-party payloads remain local and uncommitted.
