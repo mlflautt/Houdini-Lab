@@ -1,5 +1,9 @@
 # G002 Launch Checklist
 
+> **Historical record — do not re-run these setup commands.** The original peer-worktree paths are
+> retained below as evidence. New cycles must follow the project-contained `.worktrees/` convention
+> in `docs/grinder/GRINDER_ARCHITECTURE.md`.
+
 Use only after the G001 integration is merged, its release base is tagged, every manifest base
 placeholder is replaced, and the owner explicitly accepts G002.
 

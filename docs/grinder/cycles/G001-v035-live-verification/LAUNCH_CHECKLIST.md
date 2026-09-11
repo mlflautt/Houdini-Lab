@@ -1,5 +1,9 @@
 # G001 Launch Checklist
 
+> **Historical record — do not re-run these setup commands.** The original peer-worktree paths are
+> retained below as evidence. New cycles must follow the project-contained `.worktrees/` convention
+> in `docs/grinder/GRINDER_ARCHITECTURE.md`.
+
 Use this checklist once the owner has accepted G001. It is written for the human orchestrator
 creating separate Codex tasks.
 
